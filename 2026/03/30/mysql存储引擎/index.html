@@ -20,30 +20,35 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Good timing!">
-<meta property="og:type" content="website">
-<meta property="og:title" content="Lucius">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="mysql存储引擎1.InnoDB 介绍mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。 目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql存储引擎">
+<meta property="og:url" content="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/index.html">
 <meta property="og:site_name" content="Lucius">
-<meta property="og:description" content="Good timing!">
+<meta property="og:description" content="mysql存储引擎1.InnoDB 介绍mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。 目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png">
+<meta property="article:published_time" content="2026-03-30T14:44:26.000Z">
+<meta property="article:modified_time" content="2026-04-02T12:44:42.252Z">
 <meta property="article:author" content="Lucius">
+<meta property="article:tag" content="mysql">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">
 
 
 <script id="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Lucius</title>
+  <title>mysql存储引擎 | Lucius</title>
   
 
 
@@ -152,13 +157,14 @@
         <div class="content-wrap">
           
 
-          <div class="content index posts-expand">
+          <div class="content post posts-expand">
             
-      
+
+    
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2026/04/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8Fgolang%E7%89%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -170,10 +176,9 @@
       <meta itemprop="name" content="Lucius">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2026/04/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8Fgolang%E7%89%88/" class="post-title-link" itemprop="url">设计模式golang版</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          mysql存储引擎
+        </h1>
 
         <div class="post-meta">
             <span class="post-meta-item">
@@ -182,14 +187,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2026-04-02 20:46:40" itemprop="dateCreated datePublished" datetime="2026-04-02T20:46:40+08:00">2026-04-02</time>
+              <time title="创建时间：2026-03-30 22:44:26" itemprop="dateCreated datePublished" datetime="2026-03-30T22:44:26+08:00">2026-03-30</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-04-03 00:04:01" itemprop="dateModified" datetime="2026-04-03T00:04:01+08:00">2026-04-03</time>
+                <time title="修改时间：2026-04-02 20:44:42" itemprop="dateModified" datetime="2026-04-02T20:44:42+08:00">2026-04-02</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -202,6 +207,13 @@
             </span>
 
           
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
 
         </div>
       </header>
@@ -212,30 +224,87 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h1><h2 id="1-创建型"><a href="#1-创建型" class="headerlink" title="1.创建型"></a>1.创建型</h2><h3 id="1-1-工厂方法模式"><a href="#1-1-工厂方法模式" class="headerlink" title="1.1.工厂方法模式"></a>1.1.工厂方法模式</h3><p><strong>核心思想</strong>:不再提供一个统一的工厂类来创建所有产品，而是为每个产品提供一个对应的工厂。</p>
-<p>在web项目开发过程中，会涉及到数据库，假设这里有两种数据库，我们需要创建它们对应的驱动</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+        <h1 id="mysql存储引擎"><a href="#mysql存储引擎" class="headerlink" title="mysql存储引擎"></a>mysql存储引擎</h1><h2 id="1-InnoDB-介绍"><a href="#1-InnoDB-介绍" class="headerlink" title="1.InnoDB 介绍"></a>1.InnoDB 介绍</h2><p>mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。</p>
+<p>目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数据加载到内存中，写入的时候把内容刷新到磁盘上。</p>
+<h3 id="1-1-InnoDB页"><a href="#1-1-InnoDB页" class="headerlink" title="1.1.InnoDB页"></a>1.1.InnoDB页</h3><p>相对于内存来说，磁盘的读写速度是很慢的，所以从表里一条一条读取数据是非常慢的。这时候就需要一个好的存储引擎InnoDB。</p>
+<p>InnoDB处理方式：<strong>将数据划分为若干页，以页作为磁盘和内存之间交互的基本单位，InnoDB中页的大小一般为16KB</strong></p>
+<p>也就是说，磁盘和内存之间最低交换内容的大小为16KB。</p>
+<h3 id="1-2-InnoDB行格式"><a href="#1-2-InnoDB行格式" class="headerlink" title="1.2.InnoDB行格式"></a>1.2.InnoDB行格式</h3><p>我们平时看到的数据库表中的数据是一条一条插入的，这些记录在磁盘中的存放格式被称为行格式、记录格式。mysql的作者们设计了4种不同类型的行格式，分别是Compact、Redundant、Dynamic和Compressed行格式。</p>
+<table>
+<thead>
+<tr>
+<th>mysql版本</th>
+<th>默认行格式</th>
+<th>关键参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.x&#x2F;5.0之前</td>
+<td>REDUNDANT（冗余）</td>
+<td>仅支持Redundant</td>
+</tr>
+<tr>
+<td>5.0~5.1</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.5~5.6</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.7</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_default_row_format&#x3D;DYNAMIC</td>
+</tr>
+<tr>
+<td>8.0+</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_file_format已废弃</td>
+</tr>
+</tbody></table>
+<p>从COMPACT行格式讲起</p>
+<h4 id="1-2-1-compact行"><a href="#1-2-1-compact行" class="headerlink" title="1.2.1.compact行"></a>1.2.1.compact行</h4><img src="/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png" class="" title="截图描述">
 
+<p>一条完整的记录被分为<strong>额外信息</strong>和<strong>真实数据</strong>两大部分</p>
+<h5 id="1-2-1-1-额外信息"><a href="#1-2-1-1-额外信息" class="headerlink" title="1.2.1.1.额外信息"></a>1.2.1.1.额外信息</h5><p>额外信息是服务器为了描述这条记录而不得不额外添加的一些信息，这些额外信息分为3类，分别是<strong>变长字段长度列表</strong> <strong>NULL值列表</strong> 和 <strong>记录头信息</strong>。</p>
+<p><strong>变长字段长度列表</strong>:MySQL支持一些变长的数据类型，比如VARCHAR(M)、VARBINARY(M) 、各种 TEXT 类型，各种BLOB类型，我们也可以把拥有这些数据类型的列称为变长字段 ，变长字段中存储多少字节的数据是不固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来，一行内所有变长字段占用的字节大小以逆序的形式放到<strong>变长字段长度列表</strong>。</p>
+<p>…</p>
+<p>时间空闲了，会把后面的内容整理出来</p>
+<p>…</p>
 
-      
     </div>
 
     
     
     
+
       <footer class="post-footer">
-        <div class="post-eof"></div>
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2026/03/30/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/" rel="prev" title="mysql字符集与排序规则">
+      <i class="fa fa-chevron-left"></i> mysql字符集与排序规则
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2026/04/02/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8Fgolang%E7%89%88/" rel="next" title="设计模式golang版">
+      设计模式golang版 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
       </footer>
+    
   </article>
   
   
   
-
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -287,6 +356,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E"><span class="nav-number">1.</span> <span class="nav-text">mysql存储引擎</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-InnoDB-%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.</span> <span class="nav-text">1.InnoDB 介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-InnoDB%E9%A1%B5"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.InnoDB页</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-InnoDB%E8%A1%8C%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2.InnoDB行格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1-2-1-compact%E8%A1%8C"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">1.2.1.compact行</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-1-1-%E9%A2%9D%E5%A4%96%E4%BF%A1%E6%81%AF"><span class="nav-number">1.1.2.1.1.</span> <span class="nav-text">1.2.1.1.额外信息</span></a></li></ol></li></ol></li></ol></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
