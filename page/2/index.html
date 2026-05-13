@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/10/linux%E4%B9%8Bbash/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">mysql存储引擎</a>
+            <a href="/2025/05/10/linux%E4%B9%8Bbash/" class="post-title-link" itemprop="url">linux之bash</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2026-03-30 22:44:26" itemprop="dateCreated datePublished" datetime="2026-03-30T22:44:26+08:00">2026-03-30</time>
+              <time title="创建时间：2025-05-10 23:52:40" itemprop="dateCreated datePublished" datetime="2025-05-10T23:52:40+08:00">2025-05-10</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 20:11:16" itemprop="dateModified" datetime="2026-05-13T20:11:16+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-13 20:19:35" itemprop="dateModified" datetime="2026-05-13T20:19:35+08:00">2026-05-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,55 +212,150 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="mysql存储引擎"><a href="#mysql存储引擎" class="headerlink" title="mysql存储引擎"></a>mysql存储引擎</h1><h2 id="1-InnoDB-介绍"><a href="#1-InnoDB-介绍" class="headerlink" title="1.InnoDB 介绍"></a>1.InnoDB 介绍</h2><p>mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。</p>
-<p>目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数据加载到内存中，写入的时候把内容刷新到磁盘上。</p>
-<h3 id="1-1-InnoDB页"><a href="#1-1-InnoDB页" class="headerlink" title="1.1.InnoDB页"></a>1.1.InnoDB页</h3><p>相对于内存来说，磁盘的读写速度是很慢的，所以从表里一条一条读取数据是非常慢的。这时候就需要一个好的存储引擎InnoDB。</p>
-<p>InnoDB处理方式：<strong>将数据划分为若干页，以页作为磁盘和内存之间交互的基本单位，InnoDB中页的大小一般为16KB</strong></p>
-<p>也就是说，磁盘和内存之间最低交换内容的大小为16KB。</p>
-<h3 id="1-2-InnoDB行格式"><a href="#1-2-InnoDB行格式" class="headerlink" title="1.2.InnoDB行格式"></a>1.2.InnoDB行格式</h3><p>我们平时看到的数据库表中的数据是一条一条插入的，这些记录在磁盘中的存放格式被称为行格式、记录格式。mysql的作者们设计了4种不同类型的行格式，分别是Compact、Redundant、Dynamic和Compressed行格式。</p>
-<table>
+          <h2 id="1-shell与bash基础"><a href="#1-shell与bash基础" class="headerlink" title="1.shell与bash基础"></a>1.shell与bash基础</h2><p><strong>shell</strong>:用户与linux内核沟通的<strong>命令解释器</strong></p>
+<p>内核负责硬件管理，shell负责接收用户命令、翻译给内核执行</p>
+<p>linux默认shell几乎都是bash</p>
+<p><strong>bash可以干什么？</strong>:</p>
+<p><strong>1.命令历史记录</strong>：上下键翻历史命令</p>
+<p><strong>2.命令与文件补全</strong>：<code>Tab</code> 键补全</p>
+<p><strong>3.命令别名</strong>：<code>alias</code> 自定义简化命令</p>
+<p><strong>4.工作控制</strong>：前台、后台任务管理</p>
+<p><strong>5.脚本编程</strong>：Shell 脚本自动化运维</p>
+<p><strong>6.通配符、管道、重定向</strong> 强大组合能力</p>
+<h3 id="1-2-命令历史"><a href="#1-2-命令历史" class="headerlink" title="1.2.命令历史"></a>1.2.命令历史</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">history</span>          <span class="comment"># 查看所有历史命令</span></span><br><span class="line"><span class="built_in">history</span> n        <span class="comment"># 显示最近 n 条</span></span><br><span class="line">!n               <span class="comment"># 执行历史第 n 条命令</span></span><br><span class="line">!!               <span class="comment"># 执行上一条命令</span></span><br><span class="line">!字符串          <span class="comment"># 最近一条以该字符串开头的命令</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-命令别名"><a href="#1-3-命令别名" class="headerlink" title="1.3.命令别名"></a>1.3.命令别名</h3><p>自定义别名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -lha&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">rm</span>=<span class="string">&#x27;rm -i&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>永久别名：</p>
+<p>别名写入配置文件~&#x2F;.bashrc，然后生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>取消别名:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unalias</span> ll</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-环境变量"><a href="#1-4-环境变量" class="headerlink" title="1.4.环境变量"></a>1.4.环境变量</h3><p>变量查看:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">env</span>      <span class="comment"># 所有环境变量</span></span><br><span class="line"><span class="built_in">set</span>      <span class="comment"># 环境变量+自定义变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span>   <span class="comment"># 打印单个变量</span></span><br></pre></td></tr></table></figure>
+
+<p>常用系统变量:</p>
+<p><code>PATH</code>：命令查找路径</p>
+<p><code>HOME</code>：用户家目录</p>
+<p><code>SHELL</code>：当前 Shell</p>
+<p><code>USER</code>：当前用户名</p>
+<p><code>LANG</code>：语系编码</p>
+<p>自定义变量:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name=<span class="string">&quot;linux操作&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$name</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-管道符、重定向"><a href="#1-5-管道符、重定向" class="headerlink" title="1.5.管道符、重定向"></a>1.5.管道符、重定向</h3><h4 id="输出重定向"><a href="#输出重定向" class="headerlink" title="输出重定向"></a>输出重定向</h4><table>
 <thead>
 <tr>
-<th>mysql版本</th>
-<th>默认行格式</th>
-<th>关键参数</th>
+<th align="center">符号</th>
+<th align="center">作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td>4.x&#x2F;5.0之前</td>
-<td>REDUNDANT（冗余）</td>
-<td>仅支持Redundant</td>
+<td align="center"><code>&gt;</code></td>
+<td align="center">覆盖写入文件</td>
 </tr>
 <tr>
-<td>5.0~5.1</td>
-<td>COMPACT（紧凑）</td>
-<td>innodb_file_format&#x3D;Antelope</td>
+<td align="center"><code>&gt;&gt;</code></td>
+<td align="center">追加写入文件</td>
 </tr>
 <tr>
-<td>5.5~5.6</td>
-<td>COMPACT（紧凑）</td>
-<td>innodb_file_format&#x3D;Antelope</td>
+<td align="center"><code>2&gt;</code></td>
+<td align="center">错误信息重定向</td>
 </tr>
 <tr>
-<td>5.7</td>
-<td>DYNAMIC（动态）</td>
-<td>innodb_default_row_format&#x3D;DYNAMIC</td>
-</tr>
-<tr>
-<td>8.0+</td>
-<td>DYNAMIC（动态）</td>
-<td>innodb_file_format已废弃</td>
+<td align="center"><code>&amp;&gt;</code></td>
+<td align="center">正确 + 错误全部重定向</td>
 </tr>
 </tbody></table>
-<p>从COMPACT行格式讲起</p>
-<h4 id="1-2-1-compact行"><a href="#1-2-1-compact行" class="headerlink" title="1.2.1.compact行"></a>1.2.1.compact行</h4><img src="/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png" class="" title="截图描述">
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 ls 结果写入 list.txt，覆盖原有内容</span></span><br><span class="line"><span class="built_in">ls</span> -l &gt; list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件</span></span><br><span class="line"><span class="built_in">cat</span> list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把正确输出写入文件，追加在文件末尾，不覆盖</span></span><br><span class="line"><span class="built_in">ls</span> /home &gt;&gt; list.txt</span><br><span class="line"><span class="built_in">ls</span> /etc &gt;&gt; list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误信息写入 err.log，屏幕看不到报错</span></span><br><span class="line">abcdef 2&gt; err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看错误日志</span></span><br><span class="line"><span class="built_in">cat</span> err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误信息追加到文件，不覆盖。</span></span><br><span class="line">abc 2&gt;&gt; err.log</span><br><span class="line">def 2&gt;&gt; err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不管对错，所有信息都写入 all.log</span></span><br><span class="line"><span class="built_in">ls</span> /home /不存在目录 &amp;&gt; all.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不管正确还是错误都追加到文件里，常用</span></span><br><span class="line">命令 &gt;&gt; 日志文件 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
 
-<p>一条完整的记录被分为<strong>额外信息</strong>和<strong>真实数据</strong>两大部分</p>
-<h5 id="1-2-1-1-额外信息"><a href="#1-2-1-1-额外信息" class="headerlink" title="1.2.1.1.额外信息"></a>1.2.1.1.额外信息</h5><p>额外信息是服务器为了描述这条记录而不得不额外添加的一些信息，这些额外信息分为3类，分别是<strong>变长字段长度列表</strong> <strong>NULL值列表</strong> 和 <strong>记录头信息</strong>。</p>
-<p><strong>变长字段长度列表</strong>:MySQL支持一些变长的数据类型，比如VARCHAR(M)、VARBINARY(M) 、各种 TEXT 类型，各种BLOB类型，我们也可以把拥有这些数据类型的列称为变长字段 ，变长字段中存储多少字节的数据是不固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来，一行内所有变长字段占用的字节大小以逆序的形式放到<strong>变长字段长度列表</strong>。</p>
-<p>…</p>
-<p>时间空闲了，会把后面的内容整理出来</p>
-<p>…</p>
+<h4 id="输入重定向"><a href="#输入重定向" class="headerlink" title="输入重定向 &lt;"></a>输入重定向 <code>&lt;</code></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 等价于 cat test.txt</span></span><br><span class="line"><span class="built_in">cat</span> &lt; test.txt</span><br><span class="line"><span class="comment"># 把 list.txt 内容作为 wc 的输入，统计行数</span></span><br><span class="line"><span class="built_in">wc</span> -l &lt; list.txt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在终端里直接写多行内容作为命令输入，写到标记为止。</span></span><br><span class="line"><span class="comment"># EOF 是自定义结束符，前后一致即可</span></span><br><span class="line"><span class="comment"># 中间所有文字都会写入 myfile.txt</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; myfile.txt</span></span><br><span class="line"><span class="string">这是第一行内容</span></span><br><span class="line"><span class="string">这是第二行</span></span><br><span class="line"><span class="string">Linux 重定向操作</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="管道符"><a href="#管道符" class="headerlink" title="管道符 |"></a>管道符 <code>|</code></h4><p>把前一个命令<strong>输出</strong>当作后一个命令<strong>输入</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l | grep txt</span><br><span class="line">ps aux | grep nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-通配符与特殊符号"><a href="#1-6-通配符与特殊符号" class="headerlink" title="1.6.通配符与特殊符号"></a>1.6.通配符与特殊符号</h3><p>通配符</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>*</code></td>
+<td align="center">匹配任意多个字符</td>
+</tr>
+<tr>
+<td align="center"><code>?</code></td>
+<td align="center">匹配<strong>单个</strong>字符</td>
+</tr>
+<tr>
+<td align="center"><code>[]</code></td>
+<td align="center">匹配括号内任意一个</td>
+</tr>
+<tr>
+<td align="center"><code>[0-9]</code></td>
+<td align="center">匹配数字</td>
+</tr>
+<tr>
+<td align="center"><code>[a-z]</code></td>
+<td align="center">匹配小写字母</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls *.txt</span><br><span class="line">ls file?</span><br><span class="line">ls [abc]*</span><br></pre></td></tr></table></figure>
+
+<p>常用特殊符号</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>#</code></td>
+<td align="center">注释</td>
+</tr>
+<tr>
+<td align="center"><code>\</code></td>
+<td align="center">转义符</td>
+</tr>
+<tr>
+<td align="center"><code>;</code></td>
+<td align="center">一行执行多个命令</td>
+</tr>
+<tr>
+<td align="center"><code>&amp;</code></td>
+<td align="center">后台运行程序</td>
+</tr>
+<tr>
+<td align="center">&#96;&#96;&#96; &#96;</td>
+<td align="center">命令替换（反引号）</td>
+</tr>
+</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">date</span>; <span class="built_in">ls</span> -l     <span class="comment"># 依次执行两条命令</span></span><br><span class="line">ping baidu.com &amp;</span><br><span class="line"><span class="built_in">echo</span> `<span class="built_in">date</span>`</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-工作管理（前台-后台）"><a href="#1-7-工作管理（前台-后台）" class="headerlink" title="1.7.工作管理（前台 &#x2F; 后台）"></a>1.7.工作管理（前台 &#x2F; 后台）</h3><p>相关命令</p>
+<ul>
+<li><code>Ctrl + z</code>：把当前程序<strong>放到后台暂停</strong></li>
+<li><code>jobs</code>：查看后台任务</li>
+<li><code>bg %n</code>：后台暂停任务<strong>继续后台运行</strong></li>
+<li><code>fg %n</code>：后台任务调到<strong>前台</strong></li>
+</ul>
+<h3 id="1-8-后台运行程序"><a href="#1-8-后台运行程序" class="headerlink" title="1.8.后台运行程序"></a>1.8.后台运行程序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序 &amp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-9-Bash-配置文件"><a href="#1-9-Bash-配置文件" class="headerlink" title="1.9.Bash 配置文件"></a>1.9.Bash 配置文件</h3><p>系统级（所有用户）</p>
+<p>&#x2F;etc&#x2F;profile</p>
+<p>&#x2F;etc&#x2F;bashrc</p>
+<p>用户级（当前用户）</p>
+<p>~&#x2F;.bash_profile</p>
+<p>~&#x2F;.bashrc</p>
+<p>修改配置后生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
 
       
     </div>

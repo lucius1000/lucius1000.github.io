@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/10/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/09/springboot%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8grpc/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/10/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/" class="post-title-link" itemprop="url">linux之vim编辑器</a>
+            <a href="/2025/05/09/springboot%E4%B8%AD%E5%A6%82%E4%BD%95%E4%BD%BF%E7%94%A8grpc/" class="post-title-link" itemprop="url">springboot中如何使用grpc</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-10 23:52:40" itemprop="dateCreated datePublished" datetime="2025-05-10T23:52:40+08:00">2025-05-10</time>
+              <time title="创建时间：2025-05-09 23:08:56" itemprop="dateCreated datePublished" datetime="2025-05-09T23:08:56+08:00">2025-05-09</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 20:11:29" itemprop="dateModified" datetime="2026-05-13T20:11:29+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-13 20:10:45" itemprop="dateModified" datetime="2026-05-13T20:10:45+08:00">2026-05-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,339 +212,39 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-vi和vim区别"><a href="#1-vi和vim区别" class="headerlink" title="1.vi和vim区别"></a>1.vi和vim区别</h2><p>vi是Unix和linux系统自带，经典文本编辑器，功能基础。</p>
-<p>vim是vi的增强版，语法高亮、代码折叠、自动缩进等功能。</p>
-<h2 id="2-三种工作模式"><a href="#2-三种工作模式" class="headerlink" title="2.三种工作模式"></a>2.三种工作模式</h2><p>执行命令，进入vim模式</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim filename</span><br></pre></td></tr></table></figure>
+          <h1 id="在springboot中使用gRPC"><a href="#在springboot中使用gRPC" class="headerlink" title="在springboot中使用gRPC"></a>在springboot中使用gRPC</h1><h2 id="1-简单说明"><a href="#1-简单说明" class="headerlink" title="1.简单说明"></a>1.简单说明</h2><p>​	RPC是分布式系统的核心技术，目的是为了让服务间调用像本地方法一样简单。在使用java开发的微服务项目中，我们经常能看到OpenFeign、Dubbo这样的RPC框架，使用率非常高，网上总是能看到大量相关的技术文档。</p>
+<p>​	google在2015年开源了一款高性能RPC框架名叫<strong>gRPC</strong>，基于 HTTP&#x2F;2 + Protobuf，支持跨语言、跨平台，默认使用长连接与二进制序列化，适合微服务间通信。</p>
+<h2 id="2-环境配置"><a href="#2-环境配置" class="headerlink" title="2.环境配置"></a>2.环境配置</h2><p>​	java项目中需要用到管理第三方依赖库的工具maven，如果没有请提前安装。装好后记得在开发工具中配置一下本机maven，我自己使用的开发工具是IDEA。</p>
+<p>这是我本地的maven.xml文件，java版本为17</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">project</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">         <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">modelVersion</span>&gt;</span>4.0.0<span class="tag">&lt;/<span class="name">modelVersion</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">parent</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter-parent<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.5<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">relativePath</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">parent</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.rpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-demo<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.0.1-SNAPSHOT<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">name</span>&gt;</span>grpc-demo<span class="tag">&lt;/<span class="name">name</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">description</span>&gt;</span>grpc-demo<span class="tag">&lt;/<span class="name">description</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">properties</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">java.version</span>&gt;</span>17<span class="tag">&lt;/<span class="name">java.version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">grpc.version</span>&gt;</span>1.80.0<span class="tag">&lt;/<span class="name">grpc.version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">protobuf.version</span>&gt;</span>3.25.3<span class="tag">&lt;/<span class="name">protobuf.version</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">properties</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">dependencies</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-starter<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- gRPC 核心（阿里云 100% 有） --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-netty-shaded<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-protobuf<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>io.grpc<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>grpc-stub<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;grpc.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.google.protobuf<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-java<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>$&#123;protobuf.version&#125;<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="comment">&lt;!-- 解决 jakarta 注解问题 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>jakarta.annotation<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>jakarta.annotation-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">dependencies</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">build</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">extensions</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">extension</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>kr.motd.maven<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>os-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>1.7.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">extension</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">extensions</span>&gt;</span></span><br><span class="line"></span><br><span class="line">        <span class="tag">&lt;<span class="name">plugins</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.xolstice.maven.plugins<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>protobuf-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">version</span>&gt;</span>0.6.1<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">protocArtifact</span>&gt;</span>com.google.protobuf:protoc:$&#123;protobuf.version&#125;:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">protocArtifact</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">pluginId</span>&gt;</span>grpc-java<span class="tag">&lt;/<span class="name">pluginId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">pluginArtifact</span>&gt;</span>io.grpc:protoc-gen-grpc-java:$&#123;grpc.version&#125;:exe:$&#123;os.detected.classifier&#125;<span class="tag">&lt;/<span class="name">pluginArtifact</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">executions</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">execution</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;<span class="name">goals</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>compile<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                            <span class="tag">&lt;<span class="name">goal</span>&gt;</span>compile-custom<span class="tag">&lt;/<span class="name">goal</span>&gt;</span></span><br><span class="line">                        <span class="tag">&lt;/<span class="name">goals</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;/<span class="name">execution</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">executions</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line"></span><br><span class="line">            <span class="tag">&lt;<span class="name">plugin</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.springframework.boot<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>spring-boot-maven-plugin<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">plugin</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">plugins</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">build</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">project</span>&gt;</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="2-1-一般命令模式"><a href="#2-1-一般命令模式" class="headerlink" title="2.1.一般命令模式"></a>2.1.一般命令模式</h3><h4 id="1-光标移动"><a href="#1-光标移动" class="headerlink" title="1. 光标移动"></a>1. 光标移动</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">h</td>
-<td align="center">光标左移一个字符</td>
-</tr>
-<tr>
-<td align="center">j</td>
-<td align="center">光标下移一行</td>
-</tr>
-<tr>
-<td align="center">k</td>
-<td align="center">光标上移一行</td>
-</tr>
-<tr>
-<td align="center">l</td>
-<td align="center">光标右移一个字符</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="center">跳到本行行首</td>
-</tr>
-<tr>
-<td align="center">$</td>
-<td align="center">跳到本行行尾</td>
-</tr>
-<tr>
-<td align="center">gg</td>
-<td align="center">跳到文档第一行</td>
-</tr>
-<tr>
-<td align="center">G</td>
-<td align="center">跳到文档最后一行</td>
-</tr>
-<tr>
-<td align="center">nG</td>
-<td align="center">跳到第 n 行，如 <code>10G</code> 跳第 10 行</td>
-</tr>
-<tr>
-<td align="center">Ctrl + f</td>
-<td align="center">向下翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + b</td>
-<td align="center">向上翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + d</td>
-<td align="center">向下翻半页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + u</td>
-<td align="center">向上翻半页</td>
-</tr>
-</tbody></table>
-<h4 id="2-删除操作"><a href="#2-删除操作" class="headerlink" title="2. 删除操作"></a>2. 删除操作</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">x</td>
-<td align="center">删除光标所在<strong>后一个</strong>字符</td>
-</tr>
-<tr>
-<td align="center">X</td>
-<td align="center">删除光标所在<strong>前一个</strong>字符</td>
-</tr>
-<tr>
-<td align="center">dd</td>
-<td align="center">删除光标所在整行</td>
-</tr>
-<tr>
-<td align="center">ndd</td>
-<td align="center">删除光标开始往下 n 行，如 <code>5dd</code></td>
-</tr>
-<tr>
-<td align="center">d$</td>
-<td align="center">删除光标到行尾</td>
-</tr>
-<tr>
-<td align="center">d0</td>
-<td align="center">删除光标到行首</td>
-</tr>
-</tbody></table>
-<h4 id="3-复制与粘贴"><a href="#3-复制与粘贴" class="headerlink" title="3. 复制与粘贴"></a>3. 复制与粘贴</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">yy</td>
-<td align="center">复制光标所在整行</td>
-</tr>
-<tr>
-<td align="center">nyy</td>
-<td align="center">复制往下 n 行，如 <code>3yy</code></td>
-</tr>
-<tr>
-<td align="center">p</td>
-<td align="center">粘贴到光标<strong>下一行</strong></td>
-</tr>
-<tr>
-<td align="center">P</td>
-<td align="center">粘贴到光标<strong>上一行</strong></td>
-</tr>
-</tbody></table>
-<h4 id="4-撤销与重做"><a href="#4-撤销与重做" class="headerlink" title="4. 撤销与重做"></a>4. 撤销与重做</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">u</td>
-<td align="center">撤销上一步操作</td>
-</tr>
-<tr>
-<td align="center">Ctrl + r</td>
-<td align="center">重做（恢复撤销）</td>
-</tr>
-</tbody></table>
-<h4 id="5-区块选择（可视化模式）"><a href="#5-区块选择（可视化模式）" class="headerlink" title="5. 区块选择（可视化模式）"></a>5. 区块选择（可视化模式）</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">v</td>
-<td align="center">字符区块选择，按光标范围选字符</td>
-</tr>
-<tr>
-<td align="center">V</td>
-<td align="center">整行区块选择，按行选中</td>
-</tr>
-<tr>
-<td align="center">Ctrl + v</td>
-<td align="center">矩形区块选择（列选择）</td>
-</tr>
-<tr>
-<td align="center">选中后 y</td>
-<td align="center">复制选中区块</td>
-</tr>
-<tr>
-<td align="center">选中后 d</td>
-<td align="center">删除选中区块</td>
-</tr>
-</tbody></table>
-<h3 id="2-2-编辑模式"><a href="#2-2-编辑模式" class="headerlink" title="2.2.编辑模式"></a>2.2.编辑模式</h3><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">进入编辑位置</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">i</td>
-<td align="center">光标<strong>前面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">I</td>
-<td align="center">本行<strong>行首</strong>插入</td>
-</tr>
-<tr>
-<td align="center">a</td>
-<td align="center">光标<strong>后面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">A</td>
-<td align="center">本行<strong>行尾</strong>插入</td>
-</tr>
-<tr>
-<td align="center">o</td>
-<td align="center">光标<strong>下一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">O</td>
-<td align="center">光标<strong>上一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">r</td>
-<td align="center">只<strong>替换一个字符</strong>，自动回到命令模式</td>
-</tr>
-<tr>
-<td align="center">R</td>
-<td align="center">持续替换模式，按 ESC 退出</td>
-</tr>
-</tbody></table>
-<h3 id="2-3-底线命令模式（-开头）"><a href="#2-3-底线命令模式（-开头）" class="headerlink" title="2.3.底线命令模式（: 开头）"></a>2.3.底线命令模式（: 开头）</h3><h4 id="1-保存与退出"><a href="#1-保存与退出" class="headerlink" title="1. 保存与退出"></a>1. 保存与退出</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:q</td>
-<td align="center">正常退出（无修改可退）</td>
-</tr>
-<tr>
-<td align="center">:q!</td>
-<td align="center">强制退出，<strong>放弃所有修改</strong></td>
-</tr>
-<tr>
-<td align="center">:w</td>
-<td align="center">保存文件</td>
-</tr>
-<tr>
-<td align="center">:w!</td>
-<td align="center">强制保存（只读文件）</td>
-</tr>
-<tr>
-<td align="center">:wq</td>
-<td align="center">保存并退出</td>
-</tr>
-<tr>
-<td align="center">:x</td>
-<td align="center">保存并退出，同 <code>:wq</code></td>
-</tr>
-<tr>
-<td align="center">:w 文件名</td>
-<td align="center">另存为新文件</td>
-</tr>
-</tbody></table>
-<h4 id="2-行号与设置"><a href="#2-行号与设置" class="headerlink" title="2. 行号与设置"></a>2. 行号与设置</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:set nu</td>
-<td align="center">显示行号</td>
-</tr>
-<tr>
-<td align="center">:set nonu</td>
-<td align="center">取消行号</td>
-</tr>
-<tr>
-<td align="center">:set hlsearch</td>
-<td align="center">搜索高亮</td>
-</tr>
-<tr>
-<td align="center">:set nohlsearch</td>
-<td align="center">取消搜索高亮</td>
-</tr>
-</tbody></table>
-<h4 id="3-查找与替换"><a href="#3-查找与替换" class="headerlink" title="3. 查找与替换"></a>3. 查找与替换</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">&#x2F; 关键词</td>
-<td align="center">向下搜索关键词，n 下一个，N 上一个</td>
-</tr>
-<tr>
-<td align="center">? 关键词</td>
-<td align="center">向上搜索关键词</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new</td>
-<td align="center">当前行第一个 old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center">当前行<strong>所有</strong>old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:%s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center"><strong>全文</strong>所有 old 替换为 new</td>
-</tr>
-</tbody></table>
-<h4 id="4-多文件-分屏"><a href="#4-多文件-分屏" class="headerlink" title="4. 多文件 &#x2F; 分屏"></a>4. 多文件 &#x2F; 分屏</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">切换到下一个文件</td>
-</tr>
-<tr>
-<td align="center">:N</td>
-<td align="center">切换到上一个文件</td>
-</tr>
-<tr>
-<td align="center">:files</td>
-<td align="center">查看所有打开的文件</td>
-</tr>
-<tr>
-<td align="center">:sp</td>
-<td align="center">水平分屏（上下）</td>
-</tr>
-<tr>
-<td align="center">:vsp</td>
-<td align="center">垂直分屏（左右）</td>
-</tr>
-</tbody></table>
-<h4 id="5-跳转行"><a href="#5-跳转行" class="headerlink" title="5. 跳转行"></a>5. 跳转行</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">直接跳到第 n 行，如 <code>:20</code></td>
-</tr>
-</tbody></table>
+<p>application.yaml文件配置</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">application:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">grpc-demo</span></span><br><span class="line"><span class="attr">grpc:</span></span><br><span class="line">  <span class="attr">server:</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">9999</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="3-代码实现"><a href="#3-代码实现" class="headerlink" title="3.代码实现"></a>3.代码实现</h2><p>需要先定义一个proto文件，proto文件可以理解为客户端与服务端之间的约定规范，文件里可以定义数据格式、服务接口。</p>
+<p>1.这里以订单服务举例，定义一个order.proto文件，默认放在src&#x2F;main&#x2F;proto路径下</p>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> com.rpc.grpcdemo;</span><br><span class="line"><span class="keyword">option</span> java_multiple_files = <span class="literal">true</span>;</span><br><span class="line"><span class="keyword">option</span> java_package = <span class="string">&quot;com.rpc.grpcdemo.order&quot;</span>;</span><br><span class="line"><span class="keyword">option</span> java_outer_classname = <span class="string">&quot;OrderProto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">service </span><span class="title class_">OrderService</span> &#123;</span><br><span class="line">  <span class="comment">// 1.简单rpc</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> GetOrder (OrderRequest) <span class="keyword">returns</span> (OrderResponse)</span>;</span><br><span class="line">  <span class="comment">// 2.服务端流</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> ListOrders (OrderRequest) <span class="keyword">returns</span> (stream OrderResponse)</span>;</span><br><span class="line">  <span class="comment">// 3.客户端流</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> BatchCreateOrders (stream OrderRequest) <span class="keyword">returns</span> (OrderResponse)</span>;</span><br><span class="line">  <span class="comment">// 4.双向流</span></span><br><span class="line">  <span class="function"><span class="keyword">rpc</span> ChatOrder (stream OrderRequest) <span class="keyword">returns</span> (stream OrderResponse)</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">OrderRequest</span> &#123;</span><br><span class="line">  <span class="type">string</span> orderId = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> goodsName = <span class="number">2</span>;</span><br><span class="line">  <span class="type">int32</span> price = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">message </span><span class="title class_">OrderResponse</span> &#123;</span><br><span class="line">  <span class="type">string</span> orderId = <span class="number">1</span>;</span><br><span class="line">  <span class="type">string</span> status = <span class="number">2</span>;</span><br><span class="line">  <span class="type">string</span> msg = <span class="number">3</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>2.再次执行maven命令生成grpc代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mvn clean compile</span><br></pre></td></tr></table></figure>
+
+<p>3.在项目中的target目录下generated-sources目录下能看到生成的rpc代码。</p>
+<p><strong>注意target目录必须是蓝色的（Generated sources root）状态，否则后面应用代码的时候会爆红找不到生成的代码</strong></p>
+<p><strong>下面使用java实现gRPC常见的四种通信模式</strong>。</p>
+<p>服务端代码，路径src&#x2F;main&#x2F;java&#x2F;com&#x2F;rpc&#x2F;grpcdemo&#x2F;service：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rpc.grpcdemo.service;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> io.grpc.stub.StreamObserver;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Service;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderGrpcService</span> <span class="keyword">extends</span> <span class="title class_">com</span>.rpc.grpcdemo.service.OrderServiceGrpc.OrderServiceImplBase &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 1. 简单 RPC</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">getOrder</span><span class="params">(com.rpc.grpcdemo.service.OrderRequest request, StreamObserver&lt;com.rpc.grpcdemo.service.OrderResponse&gt; responseObserver)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;【简单RPC】查询订单：&quot;</span> + request.getOrderId());</span><br><span class="line"></span><br><span class="line">        com.rpc.grpcdemo.service.<span class="type">OrderResponse</span> <span class="variable">response</span> <span class="operator">=</span> com.rpc.grpcdemo.service.OrderResponse.newBuilder()</span><br><span class="line">                .setOrderId(<span class="string">&quot;orderId&quot;</span> + request.getOrderId())</span><br><span class="line">                .setStatus(<span class="string">&quot;SUCCESS&quot;</span>)</span><br><span class="line">                .setMsg(<span class="string">&quot;订单查询成功：&quot;</span> + request.getGoodsName())</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        responseObserver.onNext(response);</span><br><span class="line">        responseObserver.onCompleted();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 2. 服务端流</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">listOrders</span><span class="params">(com.rpc.grpcdemo.service.OrderRequest request, StreamObserver&lt;com.rpc.grpcdemo.service.OrderResponse&gt; responseObserver)</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;【服务端流】推送订单列表&quot;</span>);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">100</span>; i++) &#123;</span><br><span class="line">            com.rpc.grpcdemo.service.<span class="type">OrderResponse</span> <span class="variable">resp</span> <span class="operator">=</span> com.rpc.grpcdemo.service.OrderResponse.newBuilder()</span><br><span class="line">                    .setOrderId(<span class="string">&quot;orderId:&quot;</span> + i)</span><br><span class="line">                    .setStatus(<span class="string">&quot;FINISH&quot;</span>)</span><br><span class="line">                    .setMsg(<span class="string">&quot;订单流推送 &quot;</span> + i)</span><br><span class="line">                    .build();</span><br><span class="line">            responseObserver.onNext(resp);</span><br><span class="line">            <span class="keyword">try</span> &#123; Thread.sleep(<span class="number">300</span>); &#125; <span class="keyword">catch</span> (InterruptedException ignored) &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">        responseObserver.onCompleted();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 3. 客户端流</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> StreamObserver&lt;com.rpc.grpcdemo.service.OrderRequest&gt; batchCreateOrders(StreamObserver&lt;com.rpc.grpcdemo.service.OrderResponse&gt; responseObserver) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;com.rpc.grpcdemo.service.OrderRequest&gt;() &#123;</span><br><span class="line">            <span class="type">int</span> <span class="variable">count</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(com.rpc.grpcdemo.service.OrderRequest request)</span> &#123;</span><br><span class="line">                count++;</span><br><span class="line">                System.out.println(<span class="string">&quot;【客户端流】收到：&quot;</span> + request.getGoodsName());</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;&#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">                com.rpc.grpcdemo.service.<span class="type">OrderResponse</span> <span class="variable">resp</span> <span class="operator">=</span> com.rpc.grpcdemo.service.OrderResponse.newBuilder()</span><br><span class="line">                        .setStatus(<span class="string">&quot;SUCCESS&quot;</span>)</span><br><span class="line">                        .setMsg(<span class="string">&quot;批量创建完成，共&quot;</span> + count + <span class="string">&quot;单&quot;</span>)</span><br><span class="line">                        .build();</span><br><span class="line">                responseObserver.onNext(resp);</span><br><span class="line">                responseObserver.onCompleted();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 4. 双向流</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> StreamObserver&lt;com.rpc.grpcdemo.service.OrderRequest&gt; chatOrder(StreamObserver&lt;com.rpc.grpcdemo.service.OrderResponse&gt; responseObserver) &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;com.rpc.grpcdemo.service.OrderRequest&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(com.rpc.grpcdemo.service.OrderRequest request)</span> &#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;【双向流】接收：&quot;</span> + request.getGoodsName());</span><br><span class="line">                com.rpc.grpcdemo.service.<span class="type">OrderResponse</span> <span class="variable">resp</span> <span class="operator">=</span> com.rpc.grpcdemo.service.OrderResponse.newBuilder()</span><br><span class="line">                        .setOrderId(<span class="string">&quot;orderId:&quot;</span> + request.getOrderId())</span><br><span class="line">                        .setStatus(<span class="string">&quot;PROCESSING&quot;</span>)</span><br><span class="line">                        .setMsg(<span class="string">&quot;已处理：&quot;</span> + request.getGoodsName())</span><br><span class="line">                        .build();</span><br><span class="line">                responseObserver.onNext(resp);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;&#125;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123;</span><br><span class="line">                responseObserver.onCompleted();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>配置代码，路径src&#x2F;main&#x2F;java&#x2F;com&#x2F;rpc&#x2F;grpcdemo&#x2F;config:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rpc.grpcdemo.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.rpc.grpcdemo.service.OrderGrpcService;</span><br><span class="line"><span class="keyword">import</span> io.grpc.Server;</span><br><span class="line"><span class="keyword">import</span> io.grpc.ServerBuilder;</span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Value;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GrpcServerConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Value(&quot;$&#123;grpc.server.port:9999&#125;&quot;)</span></span><br><span class="line">    <span class="keyword">private</span> <span class="type">int</span> grpcPort;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> Server <span class="title function_">grpcServer</span><span class="params">(OrderGrpcService orderGrpcService)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">Server</span> <span class="variable">server</span> <span class="operator">=</span> ServerBuilder.forPort(grpcPort)</span><br><span class="line">                .addService(orderGrpcService)</span><br><span class="line">                .build()</span><br><span class="line">                .start(); <span class="comment">// 服务启动</span></span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;服务启动成功，端口：&quot;</span> + grpcPort);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 让服务一直运行，不退出</span></span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">Thread</span>(() -&gt; &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                server.awaitTermination();</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                Thread.currentThread().interrupt();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> server;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客户端代码，路径src&#x2F;main&#x2F;java&#x2F;com&#x2F;rpc&#x2F;grpcdemo&#x2F;client：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rpc.grpcdemo.client;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.rpc.grpcdemo.service.OrderRequest;</span><br><span class="line"><span class="keyword">import</span> com.rpc.grpcdemo.service.OrderResponse;</span><br><span class="line"><span class="keyword">import</span> com.rpc.grpcdemo.service.OrderServiceGrpc;</span><br><span class="line"><span class="keyword">import</span> io.grpc.ManagedChannel;</span><br><span class="line"><span class="keyword">import</span> io.grpc.ManagedChannelBuilder;</span><br><span class="line"><span class="keyword">import</span> io.grpc.stub.StreamObserver;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.Iterator;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.CountDownLatch;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">OrderClient</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException &#123;</span><br><span class="line">        <span class="type">ManagedChannel</span> <span class="variable">channel</span> <span class="operator">=</span> ManagedChannelBuilder.forAddress(<span class="string">&quot;localhost&quot;</span>, <span class="number">9999</span>)</span><br><span class="line">                .usePlaintext()</span><br><span class="line">                .build();</span><br><span class="line"></span><br><span class="line">        OrderServiceGrpc.<span class="type">OrderServiceBlockingStub</span> <span class="variable">blockingStub</span> <span class="operator">=</span> OrderServiceGrpc.newBlockingStub(channel);</span><br><span class="line">        OrderServiceGrpc.<span class="type">OrderServiceStub</span> <span class="variable">asyncStub</span> <span class="operator">=</span> OrderServiceGrpc.newStub(channel);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 1. 简单RPC</span></span><br><span class="line">        System.out.println(<span class="string">&quot;===== 1. 简单RPC =====&quot;</span>);</span><br><span class="line">        <span class="type">OrderRequest</span> <span class="variable">req1</span> <span class="operator">=</span> OrderRequest.newBuilder().setOrderId(<span class="string">&quot;ORDER_001&quot;</span>).setGoodsName(<span class="string">&quot;手机&quot;</span>).build();</span><br><span class="line">        <span class="type">OrderResponse</span> <span class="variable">resp1</span> <span class="operator">=</span> blockingStub.getOrder(req1);</span><br><span class="line">        System.out.println(resp1.getMsg());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 服务端流</span></span><br><span class="line">        System.out.println(<span class="string">&quot;===== 2. 服务端流 =====&quot;</span>);</span><br><span class="line">        Iterator&lt;OrderResponse&gt; iterator = blockingStub.listOrders(OrderRequest.getDefaultInstance());</span><br><span class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</span><br><span class="line">            System.out.println(iterator.next().getMsg());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 3. 客户端流</span></span><br><span class="line">        System.out.println(<span class="string">&quot;===== 3. 客户端流 =====&quot;</span>);</span><br><span class="line">        <span class="type">CountDownLatch</span> <span class="variable">latch1</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">1</span>);</span><br><span class="line">        StreamObserver&lt;OrderRequest&gt; stream1 = asyncStub.batchCreateOrders(<span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;OrderResponse&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(OrderResponse value)</span> &#123; System.out.println(value.getMsg()); &#125;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;&#125;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123; latch1.countDown(); &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">100</span>; i++) &#123;</span><br><span class="line">            stream1.onNext(OrderRequest.newBuilder().setGoodsName(<span class="string">&quot;商品&quot;</span>+i).setPrice(<span class="number">100</span>+i).build());</span><br><span class="line">            Thread.sleep(<span class="number">300</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        stream1.onCompleted();</span><br><span class="line">        latch1.await();</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 4. 双向流</span></span><br><span class="line">        System.out.println(<span class="string">&quot;===== 4. 双向流 =====&quot;</span>);</span><br><span class="line">        <span class="type">CountDownLatch</span> <span class="variable">latch2</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">CountDownLatch</span>(<span class="number">1</span>);</span><br><span class="line">        StreamObserver&lt;OrderRequest&gt; stream2 = asyncStub.chatOrder(<span class="keyword">new</span> <span class="title class_">StreamObserver</span>&lt;OrderResponse&gt;() &#123;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onNext</span><span class="params">(OrderResponse value)</span> &#123; System.out.println(value.getMsg()); &#125;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onError</span><span class="params">(Throwable t)</span> &#123;&#125;</span><br><span class="line">            <span class="meta">@Override</span> <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">onCompleted</span><span class="params">()</span> &#123; latch2.countDown(); &#125;</span><br><span class="line">        &#125;);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">1</span>; i &lt;= <span class="number">10</span>; i++) &#123;</span><br><span class="line">            stream2.onNext(OrderRequest.newBuilder().setOrderId(<span class="string">&quot;CHAT_00&quot;</span>+i).setGoodsName(<span class="string">&quot;实时消息&quot;</span>+i).build());</span><br><span class="line">            Thread.sleep(<span class="number">500</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        stream2.onCompleted();</span><br><span class="line">        latch2.await();</span><br><span class="line"></span><br><span class="line">        channel.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>启动类代码:</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.rpc.grpcdemo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.SpringApplication;</span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.autoconfigure.SpringBootApplication;</span><br><span class="line"></span><br><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GrpcDemoApplication</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(GrpcDemoApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 
       
     </div>
