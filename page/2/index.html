@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/10/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/10/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/" class="post-title-link" itemprop="url">linux之vim编辑器</a>
+            <a href="/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">mysql存储引擎</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-10 23:52:40" itemprop="dateCreated datePublished" datetime="2025-05-10T23:52:40+08:00">2025-05-10</time>
+              <time title="创建时间：2026-03-30 22:44:26" itemprop="dateCreated datePublished" datetime="2026-03-30T22:44:26+08:00">2026-03-30</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 20:11:29" itemprop="dateModified" datetime="2026-05-13T20:11:29+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-13 20:11:16" itemprop="dateModified" datetime="2026-05-13T20:11:16+08:00">2026-05-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,339 +212,55 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-vi和vim区别"><a href="#1-vi和vim区别" class="headerlink" title="1.vi和vim区别"></a>1.vi和vim区别</h2><p>vi是Unix和linux系统自带，经典文本编辑器，功能基础。</p>
-<p>vim是vi的增强版，语法高亮、代码折叠、自动缩进等功能。</p>
-<h2 id="2-三种工作模式"><a href="#2-三种工作模式" class="headerlink" title="2.三种工作模式"></a>2.三种工作模式</h2><p>执行命令，进入vim模式</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim filename</span><br></pre></td></tr></table></figure>
+          <h1 id="mysql存储引擎"><a href="#mysql存储引擎" class="headerlink" title="mysql存储引擎"></a>mysql存储引擎</h1><h2 id="1-InnoDB-介绍"><a href="#1-InnoDB-介绍" class="headerlink" title="1.InnoDB 介绍"></a>1.InnoDB 介绍</h2><p>mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。</p>
+<p>目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数据加载到内存中，写入的时候把内容刷新到磁盘上。</p>
+<h3 id="1-1-InnoDB页"><a href="#1-1-InnoDB页" class="headerlink" title="1.1.InnoDB页"></a>1.1.InnoDB页</h3><p>相对于内存来说，磁盘的读写速度是很慢的，所以从表里一条一条读取数据是非常慢的。这时候就需要一个好的存储引擎InnoDB。</p>
+<p>InnoDB处理方式：<strong>将数据划分为若干页，以页作为磁盘和内存之间交互的基本单位，InnoDB中页的大小一般为16KB</strong></p>
+<p>也就是说，磁盘和内存之间最低交换内容的大小为16KB。</p>
+<h3 id="1-2-InnoDB行格式"><a href="#1-2-InnoDB行格式" class="headerlink" title="1.2.InnoDB行格式"></a>1.2.InnoDB行格式</h3><p>我们平时看到的数据库表中的数据是一条一条插入的，这些记录在磁盘中的存放格式被称为行格式、记录格式。mysql的作者们设计了4种不同类型的行格式，分别是Compact、Redundant、Dynamic和Compressed行格式。</p>
+<table>
+<thead>
+<tr>
+<th>mysql版本</th>
+<th>默认行格式</th>
+<th>关键参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.x&#x2F;5.0之前</td>
+<td>REDUNDANT（冗余）</td>
+<td>仅支持Redundant</td>
+</tr>
+<tr>
+<td>5.0~5.1</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.5~5.6</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.7</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_default_row_format&#x3D;DYNAMIC</td>
+</tr>
+<tr>
+<td>8.0+</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_file_format已废弃</td>
+</tr>
+</tbody></table>
+<p>从COMPACT行格式讲起</p>
+<h4 id="1-2-1-compact行"><a href="#1-2-1-compact行" class="headerlink" title="1.2.1.compact行"></a>1.2.1.compact行</h4><img src="/2026/03/30/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png" class="" title="截图描述">
 
-<h3 id="2-1-一般命令模式"><a href="#2-1-一般命令模式" class="headerlink" title="2.1.一般命令模式"></a>2.1.一般命令模式</h3><h4 id="1-光标移动"><a href="#1-光标移动" class="headerlink" title="1. 光标移动"></a>1. 光标移动</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">h</td>
-<td align="center">光标左移一个字符</td>
-</tr>
-<tr>
-<td align="center">j</td>
-<td align="center">光标下移一行</td>
-</tr>
-<tr>
-<td align="center">k</td>
-<td align="center">光标上移一行</td>
-</tr>
-<tr>
-<td align="center">l</td>
-<td align="center">光标右移一个字符</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="center">跳到本行行首</td>
-</tr>
-<tr>
-<td align="center">$</td>
-<td align="center">跳到本行行尾</td>
-</tr>
-<tr>
-<td align="center">gg</td>
-<td align="center">跳到文档第一行</td>
-</tr>
-<tr>
-<td align="center">G</td>
-<td align="center">跳到文档最后一行</td>
-</tr>
-<tr>
-<td align="center">nG</td>
-<td align="center">跳到第 n 行，如 <code>10G</code> 跳第 10 行</td>
-</tr>
-<tr>
-<td align="center">Ctrl + f</td>
-<td align="center">向下翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + b</td>
-<td align="center">向上翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + d</td>
-<td align="center">向下翻半页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + u</td>
-<td align="center">向上翻半页</td>
-</tr>
-</tbody></table>
-<h4 id="2-删除操作"><a href="#2-删除操作" class="headerlink" title="2. 删除操作"></a>2. 删除操作</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">x</td>
-<td align="center">删除光标所在<strong>后一个</strong>字符</td>
-</tr>
-<tr>
-<td align="center">X</td>
-<td align="center">删除光标所在<strong>前一个</strong>字符</td>
-</tr>
-<tr>
-<td align="center">dd</td>
-<td align="center">删除光标所在整行</td>
-</tr>
-<tr>
-<td align="center">ndd</td>
-<td align="center">删除光标开始往下 n 行，如 <code>5dd</code></td>
-</tr>
-<tr>
-<td align="center">d$</td>
-<td align="center">删除光标到行尾</td>
-</tr>
-<tr>
-<td align="center">d0</td>
-<td align="center">删除光标到行首</td>
-</tr>
-</tbody></table>
-<h4 id="3-复制与粘贴"><a href="#3-复制与粘贴" class="headerlink" title="3. 复制与粘贴"></a>3. 复制与粘贴</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">yy</td>
-<td align="center">复制光标所在整行</td>
-</tr>
-<tr>
-<td align="center">nyy</td>
-<td align="center">复制往下 n 行，如 <code>3yy</code></td>
-</tr>
-<tr>
-<td align="center">p</td>
-<td align="center">粘贴到光标<strong>下一行</strong></td>
-</tr>
-<tr>
-<td align="center">P</td>
-<td align="center">粘贴到光标<strong>上一行</strong></td>
-</tr>
-</tbody></table>
-<h4 id="4-撤销与重做"><a href="#4-撤销与重做" class="headerlink" title="4. 撤销与重做"></a>4. 撤销与重做</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">u</td>
-<td align="center">撤销上一步操作</td>
-</tr>
-<tr>
-<td align="center">Ctrl + r</td>
-<td align="center">重做（恢复撤销）</td>
-</tr>
-</tbody></table>
-<h4 id="5-区块选择（可视化模式）"><a href="#5-区块选择（可视化模式）" class="headerlink" title="5. 区块选择（可视化模式）"></a>5. 区块选择（可视化模式）</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">v</td>
-<td align="center">字符区块选择，按光标范围选字符</td>
-</tr>
-<tr>
-<td align="center">V</td>
-<td align="center">整行区块选择，按行选中</td>
-</tr>
-<tr>
-<td align="center">Ctrl + v</td>
-<td align="center">矩形区块选择（列选择）</td>
-</tr>
-<tr>
-<td align="center">选中后 y</td>
-<td align="center">复制选中区块</td>
-</tr>
-<tr>
-<td align="center">选中后 d</td>
-<td align="center">删除选中区块</td>
-</tr>
-</tbody></table>
-<h3 id="2-2-编辑模式"><a href="#2-2-编辑模式" class="headerlink" title="2.2.编辑模式"></a>2.2.编辑模式</h3><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">进入编辑位置</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">i</td>
-<td align="center">光标<strong>前面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">I</td>
-<td align="center">本行<strong>行首</strong>插入</td>
-</tr>
-<tr>
-<td align="center">a</td>
-<td align="center">光标<strong>后面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">A</td>
-<td align="center">本行<strong>行尾</strong>插入</td>
-</tr>
-<tr>
-<td align="center">o</td>
-<td align="center">光标<strong>下一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">O</td>
-<td align="center">光标<strong>上一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">r</td>
-<td align="center">只<strong>替换一个字符</strong>，自动回到命令模式</td>
-</tr>
-<tr>
-<td align="center">R</td>
-<td align="center">持续替换模式，按 ESC 退出</td>
-</tr>
-</tbody></table>
-<h3 id="2-3-底线命令模式（-开头）"><a href="#2-3-底线命令模式（-开头）" class="headerlink" title="2.3.底线命令模式（: 开头）"></a>2.3.底线命令模式（: 开头）</h3><h4 id="1-保存与退出"><a href="#1-保存与退出" class="headerlink" title="1. 保存与退出"></a>1. 保存与退出</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:q</td>
-<td align="center">正常退出（无修改可退）</td>
-</tr>
-<tr>
-<td align="center">:q!</td>
-<td align="center">强制退出，<strong>放弃所有修改</strong></td>
-</tr>
-<tr>
-<td align="center">:w</td>
-<td align="center">保存文件</td>
-</tr>
-<tr>
-<td align="center">:w!</td>
-<td align="center">强制保存（只读文件）</td>
-</tr>
-<tr>
-<td align="center">:wq</td>
-<td align="center">保存并退出</td>
-</tr>
-<tr>
-<td align="center">:x</td>
-<td align="center">保存并退出，同 <code>:wq</code></td>
-</tr>
-<tr>
-<td align="center">:w 文件名</td>
-<td align="center">另存为新文件</td>
-</tr>
-</tbody></table>
-<h4 id="2-行号与设置"><a href="#2-行号与设置" class="headerlink" title="2. 行号与设置"></a>2. 行号与设置</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:set nu</td>
-<td align="center">显示行号</td>
-</tr>
-<tr>
-<td align="center">:set nonu</td>
-<td align="center">取消行号</td>
-</tr>
-<tr>
-<td align="center">:set hlsearch</td>
-<td align="center">搜索高亮</td>
-</tr>
-<tr>
-<td align="center">:set nohlsearch</td>
-<td align="center">取消搜索高亮</td>
-</tr>
-</tbody></table>
-<h4 id="3-查找与替换"><a href="#3-查找与替换" class="headerlink" title="3. 查找与替换"></a>3. 查找与替换</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">&#x2F; 关键词</td>
-<td align="center">向下搜索关键词，n 下一个，N 上一个</td>
-</tr>
-<tr>
-<td align="center">? 关键词</td>
-<td align="center">向上搜索关键词</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new</td>
-<td align="center">当前行第一个 old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center">当前行<strong>所有</strong>old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:%s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center"><strong>全文</strong>所有 old 替换为 new</td>
-</tr>
-</tbody></table>
-<h4 id="4-多文件-分屏"><a href="#4-多文件-分屏" class="headerlink" title="4. 多文件 &#x2F; 分屏"></a>4. 多文件 &#x2F; 分屏</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">切换到下一个文件</td>
-</tr>
-<tr>
-<td align="center">:N</td>
-<td align="center">切换到上一个文件</td>
-</tr>
-<tr>
-<td align="center">:files</td>
-<td align="center">查看所有打开的文件</td>
-</tr>
-<tr>
-<td align="center">:sp</td>
-<td align="center">水平分屏（上下）</td>
-</tr>
-<tr>
-<td align="center">:vsp</td>
-<td align="center">垂直分屏（左右）</td>
-</tr>
-</tbody></table>
-<h4 id="5-跳转行"><a href="#5-跳转行" class="headerlink" title="5. 跳转行"></a>5. 跳转行</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">直接跳到第 n 行，如 <code>:20</code></td>
-</tr>
-</tbody></table>
+<p>一条完整的记录被分为<strong>额外信息</strong>和<strong>真实数据</strong>两大部分</p>
+<h5 id="1-2-1-1-额外信息"><a href="#1-2-1-1-额外信息" class="headerlink" title="1.2.1.1.额外信息"></a>1.2.1.1.额外信息</h5><p>额外信息是服务器为了描述这条记录而不得不额外添加的一些信息，这些额外信息分为3类，分别是<strong>变长字段长度列表</strong> <strong>NULL值列表</strong> 和 <strong>记录头信息</strong>。</p>
+<p><strong>变长字段长度列表</strong>:MySQL支持一些变长的数据类型，比如VARCHAR(M)、VARBINARY(M) 、各种 TEXT 类型，各种BLOB类型，我们也可以把拥有这些数据类型的列称为变长字段 ，变长字段中存储多少字节的数据是不固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来，一行内所有变长字段占用的字节大小以逆序的形式放到<strong>变长字段长度列表</strong>。</p>
+<p>…</p>
+<p>时间空闲了，会把后面的内容整理出来</p>
+<p>…</p>
 
       
     </div>
