@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/28/linux%E4%B9%8B%E7%A8%8B%E5%BA%8F%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/" class="post-title-link" itemprop="url">linux账号管理与权限</a>
+            <a href="/2025/06/28/linux%E4%B9%8B%E7%A8%8B%E5%BA%8F%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">linux之程序管理</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-14 20:44:44" itemprop="dateCreated datePublished" datetime="2025-05-14T20:44:44+08:00">2025-05-14</time>
+              <time title="创建时间：2025-06-28 20:41:23" itemprop="dateCreated datePublished" datetime="2025-06-28T20:41:23+08:00">2025-06-28</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 21:13:11" itemprop="dateModified" datetime="2026-05-13T21:13:11+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-25 23:14:29" itemprop="dateModified" datetime="2026-05-25T23:14:29+08:00">2026-05-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,196 +212,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-linux用户和组"><a href="#1-linux用户和组" class="headerlink" title="1.linux用户和组"></a>1.linux用户和组</h2><h3 id="1-1-账号分类"><a href="#1-1-账号分类" class="headerlink" title="1.1.账号分类"></a>1.1.账号分类</h3><p><strong>超级管理员</strong>：<code>root</code>，UID&#x3D;0，最高权限</p>
-<p><strong>系统用户</strong>：UID 1~999，系统进程、服务专用，<strong>不能登录</strong></p>
-<p><strong>普通用户</strong>：UID 1000 起，日常登录使用</p>
-<h3 id="1-2-核心配置文件"><a href="#1-2-核心配置文件" class="headerlink" title="1.2.核心配置文件"></a>1.2.核心配置文件</h3><table>
-<thead>
-<tr>
-<th align="center">文件</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><code>/etc/passwd</code></td>
-<td align="center">用户账号基本信息（所有人可读）</td>
-</tr>
-<tr>
-<td align="center"><code>/etc/shadow</code></td>
-<td align="center"><strong>密码、有效期</strong>（仅 root 可读）</td>
-</tr>
-<tr>
-<td align="center"><code>/etc/group</code></td>
-<td align="center">用户组配置</td>
-</tr>
-<tr>
-<td align="center"><code>/etc/gshadow</code></td>
-<td align="center">组密码、组管理员</td>
-</tr>
-</tbody></table>
-<h2 id="2-etc-passwd-字段详解"><a href="#2-etc-passwd-字段详解" class="headerlink" title="2.&#x2F;etc&#x2F;passwd 字段详解"></a>2.&#x2F;etc&#x2F;passwd 字段详解</h2><p>每行一个用户，<strong>冒号分隔 7 段</strong></p>
-<p>格式：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">账号:密码占位x:UID:GID:说明:家目录:登录Shell</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>账号名</li>
-<li>密码占位符 <code>x</code>（真正密码在 shadow）</li>
-<li>UID 用户 ID</li>
-<li>GID 初始组 ID</li>
-<li>用户注释信息</li>
-<li>家目录：<code>/home/用户名</code></li>
-<li>登录 Shell：<code>/bin/bash</code> 可登录，<code>/sbin/nologin</code> 不可登录</li>
-</ol>
-<h2 id="3-etc-shadow-字段详解"><a href="#3-etc-shadow-字段详解" class="headerlink" title="3.&#x2F;etc&#x2F;shadow 字段详解"></a>3.&#x2F;etc&#x2F;shadow 字段详解</h2><p>存放<strong>加密密码、过期规则</strong>，普通用户无权限看</p>
-<ol>
-<li>账号名</li>
-<li>加密密码（!! 表示无密码、不能登录）</li>
-<li>密码最后修改日期</li>
-<li>密码最短使用天数</li>
-<li>密码最长有效期</li>
-<li>过期前警告天数</li>
-<li>过期后宽限天数</li>
-<li>账号失效日期</li>
-<li>保留字段</li>
-</ol>
-<h2 id="4-用户组概念"><a href="#4-用户组概念" class="headerlink" title="4.用户组概念"></a>4.用户组概念</h2><p>1.初始组（主组）</p>
-<p>​	用户创建时默认所属组，GID 对应 &#x2F;etc&#x2F;passwd</p>
-<p>2.附加组（附属组）</p>
-<p>​	额外加入的组，可拥有多个组权限</p>
-<p>一条用户同时属于：<strong>1 个主组 + 多个附加组</strong></p>
-<p>查看当前用户所属组：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span></span><br><span class="line"><span class="built_in">groups</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="5-账号管理常用命令"><a href="#5-账号管理常用命令" class="headerlink" title="5.账号管理常用命令"></a>5.账号管理常用命令</h2><h3 id="1-添加用户-useradd"><a href="#1-添加用户-useradd" class="headerlink" title="1.添加用户 useradd"></a>1.添加用户 useradd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd 用户名</span><br></pre></td></tr></table></figure>
-
-<p>默认自动：</p>
-<p>​	创建家目录 <code>/home/用户名</code></p>
-<p>​	创建同名初始组	</p>
-<p>​	Shell 设为 <code>/bin/bash</code></p>
-<p>常用参数：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">useradd -u 1100 tom      <span class="comment"># 指定UID</span></span><br><span class="line">useradd -g 组名 tom       <span class="comment"># 指定初始组</span></span><br><span class="line">useradd -G 组名 tom       <span class="comment"># 指定附加组</span></span><br><span class="line">useradd -s /sbin/nologin tom  <span class="comment"># 不可登录用户</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="2-设置密码-passwd"><a href="#2-设置密码-passwd" class="headerlink" title="2.设置密码 passwd"></a>2.设置密码 passwd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">passwd 用户名       <span class="comment"># root可给任何人改密码</span></span><br><span class="line">passwd              <span class="comment"># 普通用户改自己密码</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-修改用户属性-usermod"><a href="#3-修改用户属性-usermod" class="headerlink" title="3.修改用户属性 usermod"></a>3.修改用户属性 usermod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usermod -u 1200 tom     <span class="comment"># 修改UID</span></span><br><span class="line">usermod -g 组名 tom     <span class="comment"># 修改主组</span></span><br><span class="line">usermod -aG 组名 tom    <span class="comment"># 追加附加组（重点常用）</span></span><br><span class="line">usermod -L tom          <span class="comment"># 锁定账号</span></span><br><span class="line">usermod -U tom          <span class="comment"># 解锁账号</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="4-删除用户-userdel"><a href="#4-删除用户-userdel" class="headerlink" title="4.删除用户 userdel"></a>4.删除用户 userdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">userdel 用户名          <span class="comment"># 只删账号，保留家目录</span></span><br><span class="line">userdel -r 用户名       <span class="comment"># 删账号 + 删掉家目录、邮件</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="6-用户组管理命令"><a href="#6-用户组管理命令" class="headerlink" title="6.用户组管理命令"></a>6.用户组管理命令</h2><h3 id="6-1-创建组-groupadd"><a href="#6-1-创建组-groupadd" class="headerlink" title="6.1.创建组 groupadd"></a>6.1.创建组 groupadd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupadd 组名</span><br><span class="line">groupadd -g 2000 组名   <span class="comment"># 指定GID</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="6-2-修改组-groupmod"><a href="#6-2-修改组-groupmod" class="headerlink" title="6.2.修改组 groupmod"></a>6.2.修改组 groupmod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupmod -n 新组名 旧组名</span><br></pre></td></tr></table></figure>
-
-<h3 id="6-3-删除组-groupdel"><a href="#6-3-删除组-groupdel" class="headerlink" title="6.3.删除组 groupdel"></a>6.3.删除组 groupdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel 组名</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="7-Linux文件权限底层详解"><a href="#7-Linux文件权限底层详解" class="headerlink" title="7.Linux文件权限底层详解"></a>7.Linux文件权限底层详解</h2><h3 id="7-1-权限身份"><a href="#7-1-权限身份" class="headerlink" title="7.1.权限身份"></a>7.1.权限身份</h3><p>文件对三种身份设权限：</p>
-<p><strong>所有者 u</strong>：文件拥有者</p>
-<p><strong>所属组 g</strong>：同组用户</p>
-<p><strong>其他人 o</strong>：非所有者、非同组</p>
-<h3 id="7-2-三种权限"><a href="#7-2-三种权限" class="headerlink" title="7.2.三种权限"></a>7.2.三种权限</h3><table>
-<thead>
-<tr>
-<th align="center">权限</th>
-<th align="center">字符</th>
-<th align="center">数字</th>
-<th align="center">对文件作用</th>
-<th align="center">对目录作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">读</td>
-<td align="center">r</td>
-<td align="center">4</td>
-<td align="center">查看内容</td>
-<td align="center">列出目录列表</td>
-</tr>
-<tr>
-<td align="center">写</td>
-<td align="center">w</td>
-<td align="center">2</td>
-<td align="center">修改内容</td>
-<td align="center">增删改名文件</td>
-</tr>
-<tr>
-<td align="center">执行</td>
-<td align="center">x</td>
-<td align="center">1</td>
-<td align="center">程序可运行</td>
-<td align="center">可进入目录、切换 cd</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>目录<strong>必须要有 x 权限</strong>才能 cd 进入</p>
-</blockquote>
-<h3 id="3-权限数字计算"><a href="#3-权限数字计算" class="headerlink" title="3. 权限数字计算"></a>3. 权限数字计算</h3><p>r&#x3D;4  w&#x3D;2  x&#x3D;1</p>
-<p>例：</p>
-<ul>
-<li>rwx  &#x3D; 4+2+1 &#x3D; 7</li>
-<li>r-x  &#x3D; 4+1   &#x3D; 5</li>
-<li>rw-  &#x3D; 4+2   &#x3D; 6</li>
-</ul>
-<p>常见权限：</p>
-<ul>
-<li><code>755</code>：u&#x3D;rwx g&#x3D;rx o&#x3D;rx</li>
-<li><code>644</code>：u&#x3D;rw  g&#x3D;r  o&#x3D;r</li>
-</ul>
-<h2 id="8-修改权限与所有者"><a href="#8-修改权限与所有者" class="headerlink" title="8.修改权限与所有者"></a>8.修改权限与所有者</h2><h3 id="8-1-修改权限-chmod"><a href="#8-1-修改权限-chmod" class="headerlink" title="8.1.修改权限 chmod"></a>8.1.修改权限 chmod</h3><h4 id="字符方式"><a href="#字符方式" class="headerlink" title="字符方式"></a>字符方式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> u+rwx file</span><br><span class="line"><span class="built_in">chmod</span> g-w file</span><br><span class="line"><span class="built_in">chmod</span> o=r file</span><br><span class="line"><span class="built_in">chmod</span> a+x file   <span class="comment"># 所有人加执行</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="数字方式（最常用）"><a href="#数字方式（最常用）" class="headerlink" title="数字方式（最常用）"></a>数字方式（最常用）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 755 test.sh</span><br><span class="line"><span class="built_in">chmod</span> 644 a.txt</span><br></pre></td></tr></table></figure>
-
-<h3 id="8-2-修改所有者-chown"><a href="#8-2-修改所有者-chown" class="headerlink" title="8.2.修改所有者 chown"></a>8.2.修改所有者 chown</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> 用户名 文件        <span class="comment"># 改所有者</span></span><br><span class="line"><span class="built_in">chown</span> 用户:组 文件      <span class="comment"># 同时改所有者+所属组</span></span><br><span class="line"><span class="built_in">chown</span> -R 用户 目录      <span class="comment"># 递归修改目录下所有文件</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-修改所属组-chgrp"><a href="#3-修改所属组-chgrp" class="headerlink" title="3. 修改所属组 chgrp"></a>3. 修改所属组 chgrp</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chgrp</span> 组名 文件</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="9-特殊权限-SUID-SGID-SBIT"><a href="#9-特殊权限-SUID-SGID-SBIT" class="headerlink" title="9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT"></a>9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT</h2><h3 id="9-1-SUID-4xxx"><a href="#9-1-SUID-4xxx" class="headerlink" title="9.1.SUID 4xxx"></a>9.1.SUID 4xxx</h3><ul>
-<li>作用：<strong>普通用户执行该文件时，临时拥有文件所有者权限</strong></li>
-<li>仅对<strong>二进制可执行文件</strong>有效</li>
-<li>数字：<code>4755</code></li>
-</ul>
-<h3 id="9-2-SGID-2xxx"><a href="#9-2-SGID-2xxx" class="headerlink" title="9.2.SGID 2xxx"></a>9.2.SGID 2xxx</h3><ul>
-<li>文件：执行时拥有<strong>所属组权限</strong></li>
-<li>目录：目录内新建文件<strong>自动继承目录所属组</strong></li>
-<li>数字：<code>2755</code></li>
-</ul>
-<h3 id="9-3-SBIT-粘滞位-1xxx"><a href="#9-3-SBIT-粘滞位-1xxx" class="headerlink" title="9.3.SBIT 粘滞位 1xxx"></a>9.3.SBIT 粘滞位 1xxx</h3><ul>
-<li>只对<strong>目录</strong>生效，典型：<code>/tmp</code></li>
-<li>作用：任何人可在目录建文件，<strong>只能删自己的文件，不能删别人的</strong></li>
-<li>数字：<code>1777</code></li>
-</ul>
-<hr>
-<h2 id="10-默认权限-umask"><a href="#10-默认权限-umask" class="headerlink" title="10.默认权限 umask"></a>10.默认权限 umask</h2><h3 id="10-1-作用"><a href="#10-1-作用" class="headerlink" title="10.1.作用"></a>10.1.作用</h3><p>控制<strong>新建文件 &#x2F; 目录的默认权限</strong></p>
-<p>查看：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">umask</span></span><br></pre></td></tr></table></figure>
-
-<p>规则：</p>
-<ul>
-<li>目录默认最大 <code>777</code> 减 umask</li>
-<li>文件默认最大 <code>666</code> 减 umask</li>
-</ul>
-<p>示例：umask&#x3D;022</p>
-<ul>
-<li>新建目录：777-022 &#x3D; <strong>755</strong></li>
-<li>新建文件：666-022 &#x3D; <strong>644</strong></li>
-</ul>
-<hr>
-<h2 id="11-sudo-权限（普通用户提权）"><a href="#11-sudo-权限（普通用户提权）" class="headerlink" title="11.sudo 权限（普通用户提权）"></a>11.sudo 权限（普通用户提权）</h2><ol>
-<li>作用：给普通用户<strong>临时执行 root 命令权限</strong>，不用知道 root 密码</li>
-<li>配置文件：<code>/etc/sudoers</code></li>
-<li>编辑配置：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
-
-<p>添加：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tom  ALL=(ALL)  ALL</span><br></pre></td></tr></table></figure>
-
-<ol>
-<li>使用：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">ls</span> /root</span><br></pre></td></tr></table></figure>
-
-
+          
       
     </div>
 
@@ -419,7 +230,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/9/">9</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -487,7 +298,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">12</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
