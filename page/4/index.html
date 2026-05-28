@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/25/linux%E4%B9%8B%E7%A3%81%E7%9B%98%E9%85%8D%E9%A2%9D%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/" class="post-title-link" itemprop="url">linux账号管理与权限</a>
+            <a href="/2025/06/25/linux%E4%B9%8B%E7%A3%81%E7%9B%98%E9%85%8D%E9%A2%9D%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">linux之磁盘配额与文件系统管理</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-14 20:44:44" itemprop="dateCreated datePublished" datetime="2025-05-14T20:44:44+08:00">2025-05-14</time>
+              <time title="创建时间：2025-06-25 23:08:08" itemprop="dateCreated datePublished" datetime="2025-06-25T23:08:08+08:00">2025-06-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 21:13:11" itemprop="dateModified" datetime="2026-05-13T21:13:11+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-25 23:53:44" itemprop="dateModified" datetime="2026-05-25T23:53:44+08:00">2026-05-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,194 +212,285 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-linux用户和组"><a href="#1-linux用户和组" class="headerlink" title="1.linux用户和组"></a>1.linux用户和组</h2><h3 id="1-1-账号分类"><a href="#1-1-账号分类" class="headerlink" title="1.1.账号分类"></a>1.1.账号分类</h3><p><strong>超级管理员</strong>：<code>root</code>，UID&#x3D;0，最高权限</p>
-<p><strong>系统用户</strong>：UID 1~999，系统进程、服务专用，<strong>不能登录</strong></p>
-<p><strong>普通用户</strong>：UID 1000 起，日常登录使用</p>
-<h3 id="1-2-核心配置文件"><a href="#1-2-核心配置文件" class="headerlink" title="1.2.核心配置文件"></a>1.2.核心配置文件</h3><table>
+          <h2 id="一、磁盘配额（Quota）"><a href="#一、磁盘配额（Quota）" class="headerlink" title="一、磁盘配额（Quota）"></a>一、磁盘配额（Quota）</h2><h3 id="1-作用与适用场景"><a href="#1-作用与适用场景" class="headerlink" title="1. 作用与适用场景"></a>1. 作用与适用场景</h3><p>磁盘配额（Quota）：<strong>限制用户 &#x2F; 用户组在分区内可使用的磁盘容量、文件数量</strong>，防止单人占用全部磁盘资源。</p>
+<ul>
+<li>适用：多人共用服务器、FTP、共享目录</li>
+<li>限制维度：<ol>
+<li><strong>容量 (block)</strong>：占用磁盘大小</li>
+<li><strong>文件数 (inode)</strong>：创建文件 &#x2F; 目录总个数</li>
+</ol>
+</li>
+<li>限制级别：<ul>
+<li><strong>软限制 (soft)</strong>：警告阈值，可临时超出，有宽限期</li>
+<li><strong>硬限制 (hard)</strong>：绝对上限，到达后无法再写入 &#x2F; 新建文件</li>
+</ul>
+</li>
+</ul>
+<h3 id="2-linux文件系统"><a href="#2-linux文件系统" class="headerlink" title="2. linux文件系统"></a>2. linux文件系统</h3><p>​	<strong>文件系统是操作系统管理磁盘数据的规则与结构</strong>。</p>
+<h4 id="2-1-文件系统核心特性"><a href="#2-1-文件系统核心特性" class="headerlink" title="2.1. 文件系统核心特性"></a>2.1. 文件系统核心特性</h4><p>1.<strong>一切皆文件</strong>：硬件、目录、进程、套接字、设备都以文件形式访问</p>
+<p>2.<strong>单一根目录</strong>：整个系统只有一个根 <code>/</code>，所有分区、磁盘都<strong>挂载</strong>到根目录下，无 Windows C&#x2F;D 盘符概念</p>
+<p>3.<strong>目录树结构</strong>：树形层级目录，从 <code>/</code> 向下延伸</p>
+<h4 id="2-2-linux目录结构"><a href="#2-2-linux目录结构" class="headerlink" title="2.2. linux目录结构"></a>2.2. linux目录结构</h4><table>
 <thead>
 <tr>
-<th align="center">文件</th>
+<th>目录</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td>根目录，所有目录起点</td>
+</tr>
+<tr>
+<td><code>/bin</code></td>
+<td>普通用户可执行基础命令（ls、cp、cd 等）</td>
+</tr>
+<tr>
+<td><code>/sbin</code></td>
+<td>系统管理员命令（开机、修复、运维命令，多为 root 使用）</td>
+</tr>
+<tr>
+<td><code>/boot</code></td>
+<td>开机引导文件、内核、grub 引导程序</td>
+</tr>
+<tr>
+<td><code>/dev</code></td>
+<td>设备文件（硬盘、分区、光驱、终端等硬件抽象）</td>
+</tr>
+<tr>
+<td><code>/etc</code></td>
+<td>系统、服务、软件<strong>配置文件</strong>目录</td>
+</tr>
+<tr>
+<td><code>/home</code></td>
+<td>普通用户家目录，<code>/home/用户名</code></td>
+</tr>
+<tr>
+<td><code>/lib /lib64</code></td>
+<td>系统运行依赖的库文件、模块</td>
+</tr>
+<tr>
+<td><code>/media</code></td>
+<td>自动挂载点：U 盘、光盘、移动硬盘</td>
+</tr>
+<tr>
+<td><code>/mnt</code></td>
+<td>临时手动挂载目录（挂载分区、共享目录常用）</td>
+</tr>
+<tr>
+<td><code>/opt</code></td>
+<td>第三方额外软件安装目录</td>
+</tr>
+<tr>
+<td><code>/proc</code></td>
+<td><strong>伪文件系统</strong>，实时存放内核、进程运行信息（不占磁盘空间）</td>
+</tr>
+<tr>
+<td><code>/root</code></td>
+<td>root 管理员家目录</td>
+</tr>
+<tr>
+<td><code>/run</code></td>
+<td>运行时临时数据，进程 PID、套接字，重启清空</td>
+</tr>
+<tr>
+<td><code>/tmp</code></td>
+<td>临时文件目录，所有用户可读写，定期清理</td>
+</tr>
+<tr>
+<td><code>/usr</code></td>
+<td>系统软件、文档、帮助、源码、应用程序（最大目录之一）</td>
+</tr>
+<tr>
+<td><code>/var</code></td>
+<td>动态变化数据：日志、缓存、数据库、邮件</td>
+</tr>
+</tbody></table>
+<h4 id="2-3-文件系统核心组成（Ext-XFS-通用底层结构）"><a href="#2-3-文件系统核心组成（Ext-XFS-通用底层结构）" class="headerlink" title="2.3. 文件系统核心组成（Ext&#x2F;XFS 通用底层结构）"></a>2.3. 文件系统核心组成（Ext&#x2F;XFS 通用底层结构）</h4><p>一块格式化后的分区，被文件系统划分为三大核心部分：</p>
+<p>1.超级块（Super Block）整个文件系统的<strong>总描述信息</strong>。</p>
+<p>记录：文件系统类型、总容量、块大小、空闲块数量、挂载状态、日志信息、UUID</p>
+<p>超级块损坏 → 整个分区无法挂载、数据丢失</p>
+<p>为防损坏，系统会<strong>多处备份超级块</strong></p>
+<p>2.Inode（索引节点）记录<strong>文件元数据</strong>（属性信息），<strong>不存储文件内容</strong>。每一个文件 &#x2F; 目录对应<strong>唯一 inode 编号</strong>。</p>
+<p>Inode 包含信息</p>
+<ul>
+<li>文件类型、权限、UID、GID</li>
+<li>文件大小、硬链接数</li>
+<li>三个时间戳：访问时间 (atime)、修改时间 (mtime)、状态改动时间 (ctime)</li>
+<li><strong>数据块指针</strong>：指向真实存放内容的磁盘块</li>
+</ul>
+<p>Inode特点:</p>
+<p>​	<strong>同分区内 inode 号唯一</strong>，跨分区可重复</p>
+<p>​	新建文件就占用一个 inode，磁盘满分两种情况：1.空间不足：block 耗尽。2.文件过多：inode 耗尽（小文件大量场景常见）</p>
+<p>​	磁盘配额中 <code>inodes</code> 限制，就是限制文件 &#x2F; 目录总数</p>
+<p>查看Inode</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -i        <span class="comment"># 查看文件 inode 号</span></span><br><span class="line"><span class="built_in">df</span> -i        <span class="comment"># 查看分区 inode 使用情况</span></span><br></pre></td></tr></table></figure>
+
+<p>3.Block（数据块）</p>
+<ul>
+<li>真正<strong>存放文件内容</strong>的磁盘最小单位</li>
+<li>格式化时指定块大小（常见 1K&#x2F;2K&#x2F;4K）</li>
+<li>一个大文件会占用多个 block；极小文件也至少占</li>
+</ul>
+<h3 id="3-前置条件"><a href="#3-前置条件" class="headerlink" title="3. 前置条件"></a>3. 前置条件</h3><ol>
+<li><p>文件系统必须支持 Quota：<code>ext2/ext3/ext4/xfs</code>（主流都支持）</p>
+</li>
+<li><p>挂载分区时</p>
+<p>开启配额参数</p>
+<ul>
+<li>ext 系列：挂载参数 <code>usrquota,grpquota</code></li>
+<li>xfs 系列：挂载参数 <code>uquota,gquota</code></li>
+</ul>
+</li>
+<li><p>仅对<strong>独立分区</strong>生效，不能针对单一目录</p>
+</li>
+</ol>
+<h3 id="4-分区开启配额（以-ext4-为例）"><a href="#4-分区开启配额（以-ext4-为例）" class="headerlink" title="4. 分区开启配额（以 ext4 为例）"></a>4. 分区开启配额（以 ext4 为例）</h3><h4 id="4-1-临时生效（重启失效）"><a href="#4-1-临时生效（重启失效）" class="headerlink" title="4.1. 临时生效（重启失效）"></a>4.1. 临时生效（重启失效）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新挂载分区并开启用户、组配额</span></span><br><span class="line">mount -o remount,usrquota,grpquota /挂载点</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-2-永久生效（修改-etc-fstab）"><a href="#4-2-永久生效（修改-etc-fstab）" class="headerlink" title="4.2. 永久生效（修改 /etc/fstab）"></a>4.2. 永久生效（修改 <code>/etc/fstab</code>）</h4><p>编辑文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
+
+<p>在对应分区字段添加挂载参数：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/sdb1  /data  ext4  defaults,usrquota,grpquota  0 0</span><br></pre></td></tr></table></figure>
+
+<p>重新挂载生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o remount /data</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-ext4-配额完整实操流程"><a href="#5-ext4-配额完整实操流程" class="headerlink" title="5. ext4 配额完整实操流程"></a>5. ext4 配额完整实操流程</h3><h4 id="5-1-生成配额数据库文件"><a href="#5-1-生成配额数据库文件" class="headerlink" title="5.1. 生成配额数据库文件"></a>5.1. 生成配额数据库文件</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quotacheck`：扫描分区、创建配额记录文件 `aquota.user`、`aquota.group</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -a 所有分区 -u 用户 -g 组 -m 强制扫描（不挂载只读）</span></span><br><span class="line">quotacheck -augm</span><br></pre></td></tr></table></figure>
+
+<p>执行后在分区根目录生成隐藏配额文件。</p>
+<h4 id="5-2-开启-关闭配额服务"><a href="#5-2-开启-关闭配额服务" class="headerlink" title="5.2. 开启 &#x2F; 关闭配额服务"></a>5.2. 开启 &#x2F; 关闭配额服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">quotaon -auvg   <span class="comment"># 开启所有分区配额</span></span><br><span class="line">quotaoff -auvg  <span class="comment"># 关闭所有分区配额</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="5-3-配置用户配额-edquota"><a href="#5-3-配置用户配额-edquota" class="headerlink" title="5.3. 配置用户配额 edquota"></a>5.3. 配置用户配额 <code>edquota</code></h4><p>编辑单个用户配额：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota 用户名</span><br></pre></td></tr></table></figure>
+
+<p>编辑界面字段说明：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filesystem       blocks   soft   hard   inodes   soft   hard</span><br><span class="line">/dev/sdb1          0     10240  20480    0      200    500</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>blocks</code>：已占用磁盘块 (KB)</li>
+<li><code>soft(块)</code>：容量软限制 (10M)</li>
+<li><code>hard(块)</code>：容量硬限制 (20M)</li>
+<li><code>inodes</code>：已创建文件数</li>
+<li><code>soft(节点)</code>：文件数软限制 (200 个)</li>
+<li><code>hard(节点)</code>：文件数硬限制 (500 个)</li>
+</ul>
+<h4 id="5-4-配置组配额"><a href="#5-4-配置组配额" class="headerlink" title="5.4. 配置组配额"></a>5.4. 配置组配额</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -g 组名</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-5-复制配额规则（批量用户）"><a href="#5-5-复制配额规则（批量用户）" class="headerlink" title="5.5. 复制配额规则（批量用户）"></a>5.5. 复制配额规则（批量用户）</h4><p>把 A 用户规则复制给 B&#x2F;C 用户：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -u 源用户 --duplicate 目标用户1 目标用户2</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-6-设置宽限时间"><a href="#5-6-设置宽限时间" class="headerlink" title="5.6. 设置宽限时间"></a>5.6. 设置宽限时间</h4><p>超出软限制后，允许继续使用的天数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -t</span><br></pre></td></tr></table></figure>
+
+<h4 id="5-7-查看配额状态"><a href="#5-7-查看配额状态" class="headerlink" title="5.7. 查看配额状态"></a>5.7. 查看配额状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">quota 用户名        <span class="comment"># 查看单个用户配额</span></span><br><span class="line">quota -g 组名       <span class="comment"># 查看组配额</span></span><br><span class="line">repquota -a         <span class="comment"># 汇总查看所有分区配额报表（运维常用）</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="6-XFS-文件系统配额（CentOS-7-默认）"><a href="#6-XFS-文件系统配额（CentOS-7-默认）" class="headerlink" title="6. XFS 文件系统配额（CentOS 7+ 默认）"></a>6. XFS 文件系统配额（CentOS 7+ 默认）</h3><p>XFS <strong>不使用 aquota 数据库</strong>，配额直接记录在文件系统内，命令不同：</p>
+<ol>
+<li>fstab 添加挂载参数：<code>uquota,gquota</code></li>
+<li>无需 <code>quotacheck</code>，挂载即生效</li>
+<li>管理命令：<code>xfs_quota</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入交互模式</span></span><br><span class="line">xfs_quota -x /挂载点</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置用户配额</span></span><br><span class="line"><span class="built_in">limit</span> bsoft=10m bhard=20m isoft=200 ihard=500 用户名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看配额</span></span><br><span class="line">report -ubh</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="二、进阶文件系统管理"><a href="#二、进阶文件系统管理" class="headerlink" title="二、进阶文件系统管理"></a>二、进阶文件系统管理</h2><h3 id="1-文件系统日志：日志式文件系统"><a href="#1-文件系统日志：日志式文件系统" class="headerlink" title="1. 文件系统日志：日志式文件系统"></a>1. 文件系统日志：日志式文件系统</h3><p>传统 ext2 无日志，异常断电易损坏文件系统。</p>
+<ul>
+<li><strong>ext3&#x2F;ext4&#x2F;xfs</strong> 均为<strong>日志文件系统</strong></li>
+<li>作用：记录文件读写操作日志，宕机后快速修复，减少数据丢失</li>
+<li>日志模式（ext3）：<ol>
+<li><code>journal</code>：完整日志，性能低、安全性高</li>
+<li><code>ordered</code>：默认，仅记录元数据，均衡性能与安全</li>
+<li><code>writeback</code>：只回写，性能高、安全性弱</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-文件系统检测与修复"><a href="#2-文件系统检测与修复" class="headerlink" title="2. 文件系统检测与修复"></a>2. 文件系统检测与修复</h3><p>断电、异常关机导致文件系统损坏，使用 <code>fsck</code> 修复。</p>
+<blockquote>
+<p>⚠️ <strong>重要：修复时分区必须卸载，严禁在挂载状态执行！</strong></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载分区</span></span><br><span class="line">umount /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动修复交互问题</span></span><br><span class="line">fsck /dev/sdb1</span><br><span class="line">fsck -y /dev/sdb1  <span class="comment"># 全部自动确认修复（谨慎使用）</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>开机自检：系统异常关机，开机自动执行 <code>fsck</code></li>
+<li><code>/etc/fstab</code> 最后一列：设置开机自检优先级</li>
+</ul>
+<h3 id="3-调整文件系统大小（resize2fs-xfs-growfs）"><a href="#3-调整文件系统大小（resize2fs-xfs-growfs）" class="headerlink" title="3. 调整文件系统大小（resize2fs &#x2F;xfs_growfs）"></a>3. 调整文件系统大小（resize2fs &#x2F;xfs_growfs）</h3><h4 id="场景：分区扩容后，同步放大文件系统"><a href="#场景：分区扩容后，同步放大文件系统" class="headerlink" title="场景：分区扩容后，同步放大文件系统"></a>场景：分区扩容后，同步放大文件系统</h4><h4 id="1）ext2-ext3-ext4：resize2fs"><a href="#1）ext2-ext3-ext4：resize2fs" class="headerlink" title="1）ext2&#x2F;ext3&#x2F;ext4：resize2fs"></a>1）ext2&#x2F;ext3&#x2F;ext4：resize2fs</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先卸载分区</span></span><br><span class="line">umount /data</span><br><span class="line"><span class="comment"># 检测文件系统</span></span><br><span class="line">e2fsck -f /dev/sdb1</span><br><span class="line"><span class="comment"># 扩容文件系统（匹配分区大小）</span></span><br><span class="line">resize2fs /dev/sdb1</span><br><span class="line"><span class="comment"># 重新挂载</span></span><br><span class="line">mount /dev/sdb1 /data</span><br></pre></td></tr></table></figure>
+
+<h4 id="2）XFS：仅支持扩容，不支持缩容"><a href="#2）XFS：仅支持扩容，不支持缩容" class="headerlink" title="2）XFS：仅支持扩容，不支持缩容"></a>2）XFS：仅支持扩容，不支持缩容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 无需卸载，直接在线扩容</span></span><br><span class="line">xfs_growfs /挂载点</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-挂载参数进阶-特殊挂载"><a href="#4-挂载参数进阶-特殊挂载" class="headerlink" title="4. 挂载参数进阶 &amp; 特殊挂载"></a>4. 挂载参数进阶 &amp; 特殊挂载</h3><h4 id="1）常用高级挂载参数（写入-fstab）"><a href="#1）常用高级挂载参数（写入-fstab）" class="headerlink" title="1）常用高级挂载参数（写入 fstab）"></a>1）常用高级挂载参数（写入 fstab）</h4><table>
+<thead>
+<tr>
+<th align="center">参数</th>
 <th align="center">作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><code>/etc/passwd</code></td>
-<td align="center">用户账号基本信息（所有人可读）</td>
+<td align="center"><code>ro</code></td>
+<td align="center">只读挂载</td>
 </tr>
 <tr>
-<td align="center"><code>/etc/shadow</code></td>
-<td align="center"><strong>密码、有效期</strong>（仅 root 可读）</td>
+<td align="center"><code>rw</code></td>
+<td align="center">读写挂载（默认）</td>
 </tr>
 <tr>
-<td align="center"><code>/etc/group</code></td>
-<td align="center">用户组配置</td>
+<td align="center"><code>noexec</code></td>
+<td align="center">禁止分区内执行二进制程序（安全加固）</td>
 </tr>
 <tr>
-<td align="center"><code>/etc/gshadow</code></td>
-<td align="center">组密码、组管理员</td>
+<td align="center"><code>nosuid</code></td>
+<td align="center">禁用 SUID&#x2F;SGID 特殊权限</td>
+</tr>
+<tr>
+<td align="center"><code>nodev</code></td>
+<td align="center">不识别设备文件</td>
+</tr>
+<tr>
+<td align="center"><code>noatime</code></td>
+<td align="center">不更新文件访问时间，提升 IO 性能</td>
 </tr>
 </tbody></table>
-<h2 id="2-etc-passwd-字段详解"><a href="#2-etc-passwd-字段详解" class="headerlink" title="2.&#x2F;etc&#x2F;passwd 字段详解"></a>2.&#x2F;etc&#x2F;passwd 字段详解</h2><p>每行一个用户，<strong>冒号分隔 7 段</strong></p>
-<p>格式：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">账号:密码占位x:UID:GID:说明:家目录:登录Shell</span><br></pre></td></tr></table></figure>
+<p>示例（只读挂载）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o ro /dev/sdb1 /data</span><br></pre></td></tr></table></figure>
+
+<h4 id="2）临时绑定挂载-bind"><a href="#2）临时绑定挂载-bind" class="headerlink" title="2）临时绑定挂载 --bind"></a>2）临时绑定挂载 <code>--bind</code></h4><p>将目录 A 挂载到目录 B，实现目录复用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount --<span class="built_in">bind</span> /原目录 /目标目录</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-虚拟内存：Swap-交换分区"><a href="#5-虚拟内存：Swap-交换分区" class="headerlink" title="5. 虚拟内存：Swap 交换分区"></a>5. 虚拟内存：Swap 交换分区</h3><p>Swap 即<strong>交换分区</strong>，硬盘空间充当虚拟内存，物理内存不足时使用。</p>
+<h4 id="1）查看当前-Swap"><a href="#1）查看当前-Swap" class="headerlink" title="1）查看当前 Swap"></a>1）查看当前 Swap</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">free -h</span><br><span class="line">swapon -s</span><br></pre></td></tr></table></figure>
+
+<h4 id="2）新建-Swap-分区（分区方式）"><a href="#2）新建-Swap-分区（分区方式）" class="headerlink" title="2）新建 Swap 分区（分区方式）"></a>2）新建 Swap 分区（分区方式）</h4><ol>
+<li>用 <code>fdisk</code> 新建分区，分区类型设为 <strong>82(Linux swap)</strong></li>
+<li>格式化 swap：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkswap /dev/sdb2</span><br></pre></td></tr></table></figure>
 
 <ol>
-<li>账号名</li>
-<li>密码占位符 <code>x</code>（真正密码在 shadow）</li>
-<li>UID 用户 ID</li>
-<li>GID 初始组 ID</li>
-<li>用户注释信息</li>
-<li>家目录：<code>/home/用户名</code></li>
-<li>登录 Shell：<code>/bin/bash</code> 可登录，<code>/sbin/nologin</code> 不可登录</li>
+<li>启用 swap：</li>
 </ol>
-<h2 id="3-etc-shadow-字段详解"><a href="#3-etc-shadow-字段详解" class="headerlink" title="3.&#x2F;etc&#x2F;shadow 字段详解"></a>3.&#x2F;etc&#x2F;shadow 字段详解</h2><p>存放<strong>加密密码、过期规则</strong>，普通用户无权限看</p>
-<ol>
-<li>账号名</li>
-<li>加密密码（!! 表示无密码、不能登录）</li>
-<li>密码最后修改日期</li>
-<li>密码最短使用天数</li>
-<li>密码最长有效期</li>
-<li>过期前警告天数</li>
-<li>过期后宽限天数</li>
-<li>账号失效日期</li>
-<li>保留字段</li>
-</ol>
-<h2 id="4-用户组概念"><a href="#4-用户组概念" class="headerlink" title="4.用户组概念"></a>4.用户组概念</h2><p>1.初始组（主组）</p>
-<p>​	用户创建时默认所属组，GID 对应 &#x2F;etc&#x2F;passwd</p>
-<p>2.附加组（附属组）</p>
-<p>​	额外加入的组，可拥有多个组权限</p>
-<p>一条用户同时属于：<strong>1 个主组 + 多个附加组</strong></p>
-<p>查看当前用户所属组：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span></span><br><span class="line"><span class="built_in">groups</span></span><br></pre></td></tr></table></figure>
-
-<h2 id="5-账号管理常用命令"><a href="#5-账号管理常用命令" class="headerlink" title="5.账号管理常用命令"></a>5.账号管理常用命令</h2><h3 id="1-添加用户-useradd"><a href="#1-添加用户-useradd" class="headerlink" title="1.添加用户 useradd"></a>1.添加用户 useradd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd 用户名</span><br></pre></td></tr></table></figure>
-
-<p>默认自动：</p>
-<p>​	创建家目录 <code>/home/用户名</code></p>
-<p>​	创建同名初始组	</p>
-<p>​	Shell 设为 <code>/bin/bash</code></p>
-<p>常用参数：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">useradd -u 1100 tom      <span class="comment"># 指定UID</span></span><br><span class="line">useradd -g 组名 tom       <span class="comment"># 指定初始组</span></span><br><span class="line">useradd -G 组名 tom       <span class="comment"># 指定附加组</span></span><br><span class="line">useradd -s /sbin/nologin tom  <span class="comment"># 不可登录用户</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="2-设置密码-passwd"><a href="#2-设置密码-passwd" class="headerlink" title="2.设置密码 passwd"></a>2.设置密码 passwd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">passwd 用户名       <span class="comment"># root可给任何人改密码</span></span><br><span class="line">passwd              <span class="comment"># 普通用户改自己密码</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-修改用户属性-usermod"><a href="#3-修改用户属性-usermod" class="headerlink" title="3.修改用户属性 usermod"></a>3.修改用户属性 usermod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usermod -u 1200 tom     <span class="comment"># 修改UID</span></span><br><span class="line">usermod -g 组名 tom     <span class="comment"># 修改主组</span></span><br><span class="line">usermod -aG 组名 tom    <span class="comment"># 追加附加组（重点常用）</span></span><br><span class="line">usermod -L tom          <span class="comment"># 锁定账号</span></span><br><span class="line">usermod -U tom          <span class="comment"># 解锁账号</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="4-删除用户-userdel"><a href="#4-删除用户-userdel" class="headerlink" title="4.删除用户 userdel"></a>4.删除用户 userdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">userdel 用户名          <span class="comment"># 只删账号，保留家目录</span></span><br><span class="line">userdel -r 用户名       <span class="comment"># 删账号 + 删掉家目录、邮件</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="6-用户组管理命令"><a href="#6-用户组管理命令" class="headerlink" title="6.用户组管理命令"></a>6.用户组管理命令</h2><h3 id="6-1-创建组-groupadd"><a href="#6-1-创建组-groupadd" class="headerlink" title="6.1.创建组 groupadd"></a>6.1.创建组 groupadd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupadd 组名</span><br><span class="line">groupadd -g 2000 组名   <span class="comment"># 指定GID</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="6-2-修改组-groupmod"><a href="#6-2-修改组-groupmod" class="headerlink" title="6.2.修改组 groupmod"></a>6.2.修改组 groupmod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupmod -n 新组名 旧组名</span><br></pre></td></tr></table></figure>
-
-<h3 id="6-3-删除组-groupdel"><a href="#6-3-删除组-groupdel" class="headerlink" title="6.3.删除组 groupdel"></a>6.3.删除组 groupdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel 组名</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="7-Linux文件权限底层详解"><a href="#7-Linux文件权限底层详解" class="headerlink" title="7.Linux文件权限底层详解"></a>7.Linux文件权限底层详解</h2><h3 id="7-1-权限身份"><a href="#7-1-权限身份" class="headerlink" title="7.1.权限身份"></a>7.1.权限身份</h3><p>文件对三种身份设权限：</p>
-<p><strong>所有者 u</strong>：文件拥有者</p>
-<p><strong>所属组 g</strong>：同组用户</p>
-<p><strong>其他人 o</strong>：非所有者、非同组</p>
-<h3 id="7-2-三种权限"><a href="#7-2-三种权限" class="headerlink" title="7.2.三种权限"></a>7.2.三种权限</h3><table>
-<thead>
-<tr>
-<th align="center">权限</th>
-<th align="center">字符</th>
-<th align="center">数字</th>
-<th align="center">对文件作用</th>
-<th align="center">对目录作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">读</td>
-<td align="center">r</td>
-<td align="center">4</td>
-<td align="center">查看内容</td>
-<td align="center">列出目录列表</td>
-</tr>
-<tr>
-<td align="center">写</td>
-<td align="center">w</td>
-<td align="center">2</td>
-<td align="center">修改内容</td>
-<td align="center">增删改名文件</td>
-</tr>
-<tr>
-<td align="center">执行</td>
-<td align="center">x</td>
-<td align="center">1</td>
-<td align="center">程序可运行</td>
-<td align="center">可进入目录、切换 cd</td>
-</tr>
-</tbody></table>
-<blockquote>
-<p>目录<strong>必须要有 x 权限</strong>才能 cd 进入</p>
-</blockquote>
-<h3 id="3-权限数字计算"><a href="#3-权限数字计算" class="headerlink" title="3. 权限数字计算"></a>3. 权限数字计算</h3><p>r&#x3D;4  w&#x3D;2  x&#x3D;1</p>
-<p>例：</p>
-<ul>
-<li>rwx  &#x3D; 4+2+1 &#x3D; 7</li>
-<li>r-x  &#x3D; 4+1   &#x3D; 5</li>
-<li>rw-  &#x3D; 4+2   &#x3D; 6</li>
-</ul>
-<p>常见权限：</p>
-<ul>
-<li><code>755</code>：u&#x3D;rwx g&#x3D;rx o&#x3D;rx</li>
-<li><code>644</code>：u&#x3D;rw  g&#x3D;r  o&#x3D;r</li>
-</ul>
-<h2 id="8-修改权限与所有者"><a href="#8-修改权限与所有者" class="headerlink" title="8.修改权限与所有者"></a>8.修改权限与所有者</h2><h3 id="8-1-修改权限-chmod"><a href="#8-1-修改权限-chmod" class="headerlink" title="8.1.修改权限 chmod"></a>8.1.修改权限 chmod</h3><h4 id="字符方式"><a href="#字符方式" class="headerlink" title="字符方式"></a>字符方式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> u+rwx file</span><br><span class="line"><span class="built_in">chmod</span> g-w file</span><br><span class="line"><span class="built_in">chmod</span> o=r file</span><br><span class="line"><span class="built_in">chmod</span> a+x file   <span class="comment"># 所有人加执行</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="数字方式（最常用）"><a href="#数字方式（最常用）" class="headerlink" title="数字方式（最常用）"></a>数字方式（最常用）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 755 test.sh</span><br><span class="line"><span class="built_in">chmod</span> 644 a.txt</span><br></pre></td></tr></table></figure>
-
-<h3 id="8-2-修改所有者-chown"><a href="#8-2-修改所有者-chown" class="headerlink" title="8.2.修改所有者 chown"></a>8.2.修改所有者 chown</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> 用户名 文件        <span class="comment"># 改所有者</span></span><br><span class="line"><span class="built_in">chown</span> 用户:组 文件      <span class="comment"># 同时改所有者+所属组</span></span><br><span class="line"><span class="built_in">chown</span> -R 用户 目录      <span class="comment"># 递归修改目录下所有文件</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="3-修改所属组-chgrp"><a href="#3-修改所属组-chgrp" class="headerlink" title="3. 修改所属组 chgrp"></a>3. 修改所属组 chgrp</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chgrp</span> 组名 文件</span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="9-特殊权限-SUID-SGID-SBIT"><a href="#9-特殊权限-SUID-SGID-SBIT" class="headerlink" title="9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT"></a>9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT</h2><h3 id="9-1-SUID-4xxx"><a href="#9-1-SUID-4xxx" class="headerlink" title="9.1.SUID 4xxx"></a>9.1.SUID 4xxx</h3><ul>
-<li>作用：<strong>普通用户执行该文件时，临时拥有文件所有者权限</strong></li>
-<li>仅对<strong>二进制可执行文件</strong>有效</li>
-<li>数字：<code>4755</code></li>
-</ul>
-<h3 id="9-2-SGID-2xxx"><a href="#9-2-SGID-2xxx" class="headerlink" title="9.2.SGID 2xxx"></a>9.2.SGID 2xxx</h3><ul>
-<li>文件：执行时拥有<strong>所属组权限</strong></li>
-<li>目录：目录内新建文件<strong>自动继承目录所属组</strong></li>
-<li>数字：<code>2755</code></li>
-</ul>
-<h3 id="9-3-SBIT-粘滞位-1xxx"><a href="#9-3-SBIT-粘滞位-1xxx" class="headerlink" title="9.3.SBIT 粘滞位 1xxx"></a>9.3.SBIT 粘滞位 1xxx</h3><ul>
-<li>只对<strong>目录</strong>生效，典型：<code>/tmp</code></li>
-<li>作用：任何人可在目录建文件，<strong>只能删自己的文件，不能删别人的</strong></li>
-<li>数字：<code>1777</code></li>
-</ul>
-<hr>
-<h2 id="10-默认权限-umask"><a href="#10-默认权限-umask" class="headerlink" title="10.默认权限 umask"></a>10.默认权限 umask</h2><h3 id="10-1-作用"><a href="#10-1-作用" class="headerlink" title="10.1.作用"></a>10.1.作用</h3><p>控制<strong>新建文件 &#x2F; 目录的默认权限</strong></p>
-<p>查看：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">umask</span></span><br></pre></td></tr></table></figure>
-
-<p>规则：</p>
-<ul>
-<li>目录默认最大 <code>777</code> 减 umask</li>
-<li>文件默认最大 <code>666</code> 减 umask</li>
-</ul>
-<p>示例：umask&#x3D;022</p>
-<ul>
-<li>新建目录：777-022 &#x3D; <strong>755</strong></li>
-<li>新建文件：666-022 &#x3D; <strong>644</strong></li>
-</ul>
-<hr>
-<h2 id="11-sudo-权限（普通用户提权）"><a href="#11-sudo-权限（普通用户提权）" class="headerlink" title="11.sudo 权限（普通用户提权）"></a>11.sudo 权限（普通用户提权）</h2><ol>
-<li>作用：给普通用户<strong>临时执行 root 命令权限</strong>，不用知道 root 密码</li>
-<li>配置文件：<code>/etc/sudoers</code></li>
-<li>编辑配置：</li>
-</ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
-
-<p>添加：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tom  ALL=(ALL)  ALL</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swapon /dev/sdb2</span><br></pre></td></tr></table></figure>
 
 <ol>
-<li>使用：</li>
+<li>永久启用（写入 <code>/etc/fstab</code>）：</li>
 </ol>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">ls</span> /root</span><br></pre></td></tr></table></figure>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/sdb2  swap  swap  defaults  0 0</span><br></pre></td></tr></table></figure>
+
+<h4 id="3）新建-Swap-文件（文件形式，无需分区）"><a href="#3）新建-Swap-文件（文件形式，无需分区）" class="headerlink" title="3）新建 Swap 文件（文件形式，无需分区）"></a>3）新建 Swap 文件（文件形式，无需分区）</h4><p>适合无空闲分区场景：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 1G 空文件</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=/swapfile bs=1M count=1024</span><br><span class="line"><span class="comment"># 格式化为swap</span></span><br><span class="line">mkswap /swapfile</span><br><span class="line"><span class="comment"># 设置权限（安全）</span></span><br><span class="line"><span class="built_in">chmod</span> 0600 /swapfile</span><br><span class="line"><span class="comment"># 启用</span></span><br><span class="line">swapon /swapfile</span><br></pre></td></tr></table></figure>
+
+<h4 id="4）关闭-Swap"><a href="#4）关闭-Swap" class="headerlink" title="4）关闭 Swap"></a>4）关闭 Swap</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">swapoff /dev/sdb2</span><br><span class="line">swapoff /swapfile</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-大容量磁盘：GPT-分区-parted"><a href="#6-大容量磁盘：GPT-分区-parted" class="headerlink" title="6. 大容量磁盘：GPT 分区 &amp; parted"></a>6. 大容量磁盘：GPT 分区 &amp; parted</h3><p>传统 MBR 分区限制：</p>
+<ul>
+<li>最大支持 <strong>2TB</strong> 磁盘</li>
+<li>最多 4 个主分区</li>
+</ul>
+<p><strong>GPT</strong>：突破 2TB，支持 128 个分区，搭配 <code>parted</code> 工具。</p>
+<p>简单用法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">parted /dev/sdb</span><br><span class="line">(parted) mklabel gpt    <span class="comment"># 设置分区表为GPT</span></span><br><span class="line">(parted) mkpart         <span class="comment"># 交互式新建分区</span></span><br><span class="line">(parted) quit</span><br></pre></td></tr></table></figure>
 
 
       
@@ -419,7 +510,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/3/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/5/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -487,7 +578,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -500,7 +591,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

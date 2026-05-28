@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Good timing!">
+  <meta name="description" content="一、程序、进程、线程区别 程序 program 放在硬盘里的静态文件，没运行就是程序。 比如 &#x2F;bin&#x2F;ls、&#x2F;usr&#x2F;bin&#x2F;bash  进程 process 程序被运行起来，在内存中工作，就是进程。 系统每运行一个程序，就会产生一个 PID 进程号。  线程 thread 进程里的子任务，一个进程可以多个线程同时工作。   总结：程序 &#x3D; 文件，进程 &#x3D; 运行中的程序  二">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux之程序管理">
 <meta property="og:url" content="http://example.com/2025/06/28/linux%E4%B9%8B%E7%A8%8B%E5%BA%8F%E7%AE%A1%E7%90%86/index.html">
 <meta property="og:site_name" content="Lucius">
-<meta property="og:description" content="Good timing!">
+<meta property="og:description" content="一、程序、进程、线程区别 程序 program 放在硬盘里的静态文件，没运行就是程序。 比如 &#x2F;bin&#x2F;ls、&#x2F;usr&#x2F;bin&#x2F;bash  进程 process 程序被运行起来，在内存中工作，就是进程。 系统每运行一个程序，就会产生一个 PID 进程号。  线程 thread 进程里的子任务，一个进程可以多个线程同时工作。   总结：程序 &#x3D; 文件，进程 &#x3D; 运行中的程序  二">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-28T12:41:23.000Z">
-<meta property="article:modified_time" content="2026-05-25T15:14:29.260Z">
+<meta property="article:modified_time" content="2026-05-28T15:43:32.349Z">
 <meta property="article:author" content="Lucius">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary">
@@ -192,7 +192,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-25 23:14:29" itemprop="dateModified" datetime="2026-05-25T23:14:29+08:00">2026-05-25</time>
+                <time title="修改时间：2026-05-28 23:43:32" itemprop="dateModified" datetime="2026-05-28T23:43:32+08:00">2026-05-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -222,7 +222,190 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <h2 id="一、程序、进程、线程区别"><a href="#一、程序、进程、线程区别" class="headerlink" title="一、程序、进程、线程区别"></a>一、程序、进程、线程区别</h2><ol>
+<li><p><strong>程序 program</strong></p>
+<p>放在硬盘里的<strong>静态文件</strong>，没运行就是程序。</p>
+<p>比如 <code>/bin/ls</code>、<code>/usr/bin/bash</code></p>
+</li>
+<li><p><strong>进程 process</strong></p>
+<p>程序<strong>被运行起来</strong>，在内存中工作，就是进程。</p>
+<p>系统每运行一个程序，就会产生一个 <strong>PID 进程号</strong>。</p>
+</li>
+<li><p><strong>线程 thread</strong></p>
+<p>进程里的<strong>子任务</strong>，一个进程可以多个线程同时工作。</p>
+</li>
+</ol>
+<p>总结：<strong>程序 &#x3D; 文件，进程 &#x3D; 运行中的程序</strong></p>
+<hr>
+<h2 id="二、进程-PID-与-PPID"><a href="#二、进程-PID-与-PPID" class="headerlink" title="二、进程 PID 与 PPID"></a>二、进程 PID 与 PPID</h2><p><strong>PID</strong>：进程编号，系统唯一</p>
+<p><strong>PPID</strong>：父进程 ID，谁启动了它</p>
+<p>所有进程源头：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">systemd</span><br></pre></td></tr></table></figure>
+
+<p>（PID&#x3D;1）所有进程都是 systemd 衍生出来的</p>
+<p>查看自己所在 shell PID</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> $$</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="三、查看进程命令"><a href="#三、查看进程命令" class="headerlink" title="三、查看进程命令"></a>三、查看进程命令</h2><h3 id="1-ps-静态查看（快照）"><a href="#1-ps-静态查看（快照）" class="headerlink" title="1. ps 静态查看（快照）"></a>1. ps 静态查看（快照）</h3><h4 id="常用组合"><a href="#常用组合" class="headerlink" title="常用组合"></a>常用组合</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ps aux</span><br><span class="line">ps -l</span><br><span class="line">ps axjf</span><br></pre></td></tr></table></figure>
+
+<p>字段含义（重点）</p>
+<ul>
+<li><code>USER</code>：进程所属用户</li>
+<li><code>PID</code>：进程号</li>
+<li><code>%CPU</code>：CPU 占用</li>
+<li><code>%MEM</code>：内存占用</li>
+<li><code>VSZ</code>：虚拟内存</li>
+<li><code>RSS</code>：实际物理内存</li>
+<li><code>TTY</code>：终端</li>
+<li><code>STAT</code>：进程状态</li>
+<li><code>START</code>：启动时间</li>
+<li><code>COMMAND</code>：命令</li>
+</ul>
+<h4 id="进程状态-STAT"><a href="#进程状态-STAT" class="headerlink" title="进程状态 STAT"></a>进程状态 STAT</h4><ul>
+<li><code>R</code>：正在运行</li>
+<li><code>S</code>：休眠、等待唤醒</li>
+<li><code>D</code>：不可被唤醒（磁盘 IO）</li>
+<li><code>T</code>：暂停、后台停止</li>
+<li><code>Z</code>：<strong>僵尸进程</strong>（程序结束，父进程没收尸）</li>
+<li><code>+</code>：前台进程</li>
+</ul>
+<h3 id="2-top-动态实时查看（重点）"><a href="#2-top-动态实时查看（重点）" class="headerlink" title="2. top 动态实时查看（重点）"></a>2. top 动态实时查看（重点）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">top</span><br></pre></td></tr></table></figure>
+
+<p>每 3 秒刷新一次，相当于任务管理器</p>
+<p>常用按键</p>
+<ul>
+<li><code>1</code>：显示所有 CPU 核心</li>
+<li><code>M</code>：按内存排序</li>
+<li><code>P</code>：按 CPU 排序</li>
+<li><code>q</code>：退出</li>
+</ul>
+<h3 id="3-pstree-进程树"><a href="#3-pstree-进程树" class="headerlink" title="3. pstree 进程树"></a>3. pstree 进程树</h3><p>看父子进程关系</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pstree</span><br><span class="line">pstree -p</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-pgrep-只查进程名"><a href="#4-pgrep-只查进程名" class="headerlink" title="4. pgrep 只查进程名"></a>4. pgrep 只查进程名</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pgrep nginx</span><br><span class="line">pgrep sshd</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-查找命令对应的进程文件"><a href="#5-查找命令对应的进程文件" class="headerlink" title="5. 查找命令对应的进程文件"></a>5. 查找命令对应的进程文件</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">which</span> 命令</span><br><span class="line">whereis 命令</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="四、前台进程-后台进程"><a href="#四、前台进程-后台进程" class="headerlink" title="四、前台进程 &amp; 后台进程"></a>四、前台进程 &amp; 后台进程</h2><h3 id="1-前台-foreground"><a href="#1-前台-foreground" class="headerlink" title="1. 前台 foreground"></a>1. 前台 foreground</h3><p>直接在终端运行，<strong>占据屏幕</strong>，不能输其他命令</p>
+<p>比如 <code>ping baidu.com</code></p>
+<h3 id="2-后台-background"><a href="#2-后台-background" class="headerlink" title="2. 后台 background"></a>2. 后台 background</h3><p>程序运行在后台，不占用终端，可以继续操作</p>
+<h3 id="3-前后台切换快捷键"><a href="#3-前后台切换快捷键" class="headerlink" title="3. 前后台切换快捷键"></a>3. 前后台切换快捷键</h3><ul>
+<li><code>Ctrl + z</code>：<strong>前台进程放入后台暂停</strong></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&amp;</span><br></pre></td></tr></table></figure>
+
+<p>ping命令直接后台运行</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ping baidu.com &amp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-后台任务管理"><a href="#4-后台任务管理" class="headerlink" title="4. 后台任务管理"></a>4. 后台任务管理</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">jobs        # 查看后台任务</span><br><span class="line">bg 编号     # 后台暂停 → 继续后台运行</span><br><span class="line">fg 编号     # 后台进程切回前台</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、进程信号（kill-命令）"><a href="#五、进程信号（kill-命令）" class="headerlink" title="五、进程信号（kill 命令）"></a>五、进程信号（kill 命令）</h2><p>作用：<strong>控制进程、关闭、重启、强制杀死</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -l   <span class="comment"># 查看所有信号</span></span><br></pre></td></tr></table></figure>
+
+<p>最常用信号</p>
+<table>
+<thead>
+<tr>
+<th align="center">信号</th>
+<th align="center">数字</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">SIGHUP</td>
+<td align="center">1</td>
+<td align="center">重新加载配置、重启进程</td>
+</tr>
+<tr>
+<td align="center">SIGINT</td>
+<td align="center">2</td>
+<td align="center">键盘 <code>Ctrl+c</code> 中断</td>
+</tr>
+<tr>
+<td align="center">SIGQUIT</td>
+<td align="center">3</td>
+<td align="center">退出</td>
+</tr>
+<tr>
+<td align="center">SIGKILL</td>
+<td align="center">9</td>
+<td align="center"><strong>强制杀死，必死无疑</strong></td>
+</tr>
+<tr>
+<td align="center">SIGTERM</td>
+<td align="center">15</td>
+<td align="center">正常终止（默认）</td>
+</tr>
+<tr>
+<td align="center">SIGSTOP</td>
+<td align="center">19</td>
+<td align="center">暂停进程</td>
+</tr>
+</tbody></table>
+<p>使用方式</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">kill</span> -15 PID      <span class="comment"># 正常关闭</span></span><br><span class="line"><span class="built_in">kill</span> -9 PID       <span class="comment"># 强制杀死</span></span><br><span class="line">killall -9 进程名 <span class="comment"># 按名字杀所有进程</span></span><br><span class="line">pkill 进程名</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="六、系统资源查看"><a href="#六、系统资源查看" class="headerlink" title="六、系统资源查看"></a>六、系统资源查看</h2><h3 id="1-内存"><a href="#1-内存" class="headerlink" title="1. 内存"></a>1. 内存</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">free -h</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>total 总内存</li>
+<li>used 已用</li>
+<li>free 空闲</li>
+<li>buff&#x2F;cache 缓存</li>
+<li>available 可用内存</li>
+</ul>
+<h3 id="2-CPU"><a href="#2-CPU" class="headerlink" title="2. CPU"></a>2. CPU</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> /proc/cpuinfo</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-开机启动信息"><a href="#3-开机启动信息" class="headerlink" title="3. 开机启动信息"></a>3. 开机启动信息</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dmesg</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-已打开文件-lsof"><a href="#4-已打开文件-lsof" class="headerlink" title="4. 已打开文件 lsof"></a>4. 已打开文件 lsof</h3><p>查看哪个进程打开了哪个文件</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lsof</span><br><span class="line">lsof -p PID</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="七、进程优先级（nice-renice）"><a href="#七、进程优先级（nice-renice）" class="headerlink" title="七、进程优先级（nice &#x2F;renice）"></a>七、进程优先级（nice &#x2F;renice）</h2><p>Linux 进程不是一起抢 CPU，<strong>有优先级</strong></p>
+<p>数字越小，<strong>优先级越高</strong></p>
+<p>范围：<strong>-20 ~ 19</strong></p>
+<ul>
+<li>-20 最高</li>
+<li>19 最低</li>
+<li>默认 0</li>
+</ul>
+<ol>
+<li>新建进程指定优先级</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">nice</span> -n 5 命令</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>修改正在运行进程优先级</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">renice -5 PID</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="八、系统服务管理（systemd）"><a href="#八、系统服务管理（systemd）" class="headerlink" title="八、系统服务管理（systemd）"></a>八、系统服务管理（systemd）</h2><p>CentOS7&#x2F;8&#x2F;9 全部使用 <strong>systemd</strong></p>
+<p>代替以前的 service &#x2F;chkconfig</p>
+<h3 id="1-核心命令"><a href="#1-核心命令" class="headerlink" title="1. 核心命令"></a>1. 核心命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">systemctl start 服务名      <span class="comment"># 启动</span></span><br><span class="line">systemctl stop 服务名       <span class="comment"># 停止</span></span><br><span class="line">systemctl restart 服务名    <span class="comment"># 重启</span></span><br><span class="line">systemctl reload 服务名     <span class="comment"># 重新加载配置</span></span><br><span class="line">systemctl status 服务名     <span class="comment"># 查看状态</span></span><br><span class="line"></span><br><span class="line">systemctl <span class="built_in">enable</span> 服务名     <span class="comment"># 开机自启</span></span><br><span class="line">systemctl <span class="built_in">disable</span> 服务名    <span class="comment"># 取消自启</span></span><br><span class="line">systemctl is-active 服务名  <span class="comment"># 是否运行</span></span><br><span class="line">systemctl is-enabled 服务名 <span class="comment"># 是否开机启动</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-服务类型"><a href="#2-服务类型" class="headerlink" title="2. 服务类型"></a>2. 服务类型</h3><ul>
+<li><strong>常驻服务 daemon</strong>：一直运行，比如 sshd、crond、nginx</li>
+<li><strong>一次性服务</strong>：执行完就退出</li>
+</ul>
+<h3 id="3-开机启动顺序"><a href="#3-开机启动顺序" class="headerlink" title="3. 开机启动顺序"></a>3. 开机启动顺序</h3><p>内核 → systemd (PID1) → 启动各种服务 → 登录界面</p>
+<hr>
+<h2 id="九、僵尸进程-与-孤儿进程"><a href="#九、僵尸进程-与-孤儿进程" class="headerlink" title="九、僵尸进程 与 孤儿进程"></a>九、僵尸进程 与 孤儿进程</h2><ol>
+<li><p><strong>僵尸进程 Z</strong></p>
+<p>子进程结束，<strong>父进程没回收</strong>，一直占 PID</p>
+<p>危害：PID 号被占满，系统无法新建进程</p>
+</li>
+<li><p><strong>孤儿进程</strong></p>
+<p>父进程意外挂了，子进程没人管</p>
+<p>会被 systemd (PID1) 收养</p>
+</li>
+</ol>
+
     </div>
 
     
@@ -243,7 +426,10 @@
     <a href="/2025/06/27/linux%E4%B9%8B%E5%B7%A5%E4%BD%9C%E8%B0%83%E5%BA%A6/" rel="prev" title="linux之工作调度">
       <i class="fa fa-chevron-left"></i> linux之工作调度
     </a></div>
-      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2026/05/28/go-zero%E4%BD%BF%E7%94%A8/" rel="next" title="go-zero使用">
+      go-zero使用 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
@@ -302,6 +488,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E7%A8%8B%E5%BA%8F%E3%80%81%E8%BF%9B%E7%A8%8B%E3%80%81%E7%BA%BF%E7%A8%8B%E5%8C%BA%E5%88%AB"><span class="nav-number">1.</span> <span class="nav-text">一、程序、进程、线程区别</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E8%BF%9B%E7%A8%8B-PID-%E4%B8%8E-PPID"><span class="nav-number">2.</span> <span class="nav-text">二、进程 PID 与 PPID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81%E6%9F%A5%E7%9C%8B%E8%BF%9B%E7%A8%8B%E5%91%BD%E4%BB%A4"><span class="nav-number">3.</span> <span class="nav-text">三、查看进程命令</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-ps-%E9%9D%99%E6%80%81%E6%9F%A5%E7%9C%8B%EF%BC%88%E5%BF%AB%E7%85%A7%EF%BC%89"><span class="nav-number">3.1.</span> <span class="nav-text">1. ps 静态查看（快照）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E7%BB%84%E5%90%88"><span class="nav-number">3.1.1.</span> <span class="nav-text">常用组合</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%BF%9B%E7%A8%8B%E7%8A%B6%E6%80%81-STAT"><span class="nav-number">3.1.2.</span> <span class="nav-text">进程状态 STAT</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-top-%E5%8A%A8%E6%80%81%E5%AE%9E%E6%97%B6%E6%9F%A5%E7%9C%8B%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%89"><span class="nav-number">3.2.</span> <span class="nav-text">2. top 动态实时查看（重点）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-pstree-%E8%BF%9B%E7%A8%8B%E6%A0%91"><span class="nav-number">3.3.</span> <span class="nav-text">3. pstree 进程树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-pgrep-%E5%8F%AA%E6%9F%A5%E8%BF%9B%E7%A8%8B%E5%90%8D"><span class="nav-number">3.4.</span> <span class="nav-text">4. pgrep 只查进程名</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E6%9F%A5%E6%89%BE%E5%91%BD%E4%BB%A4%E5%AF%B9%E5%BA%94%E7%9A%84%E8%BF%9B%E7%A8%8B%E6%96%87%E4%BB%B6"><span class="nav-number">3.5.</span> <span class="nav-text">5. 查找命令对应的进程文件</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%89%8D%E5%8F%B0%E8%BF%9B%E7%A8%8B-%E5%90%8E%E5%8F%B0%E8%BF%9B%E7%A8%8B"><span class="nav-number">4.</span> <span class="nav-text">四、前台进程 &amp; 后台进程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%89%8D%E5%8F%B0-foreground"><span class="nav-number">4.1.</span> <span class="nav-text">1. 前台 foreground</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E5%90%8E%E5%8F%B0-background"><span class="nav-number">4.2.</span> <span class="nav-text">2. 后台 background</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%89%8D%E5%90%8E%E5%8F%B0%E5%88%87%E6%8D%A2%E5%BF%AB%E6%8D%B7%E9%94%AE"><span class="nav-number">4.3.</span> <span class="nav-text">3. 前后台切换快捷键</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%90%8E%E5%8F%B0%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">4.4.</span> <span class="nav-text">4. 后台任务管理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81%E8%BF%9B%E7%A8%8B%E4%BF%A1%E5%8F%B7%EF%BC%88kill-%E5%91%BD%E4%BB%A4%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">五、进程信号（kill 命令）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AD%E3%80%81%E7%B3%BB%E7%BB%9F%E8%B5%84%E6%BA%90%E6%9F%A5%E7%9C%8B"><span class="nav-number">6.</span> <span class="nav-text">六、系统资源查看</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E5%86%85%E5%AD%98"><span class="nav-number">6.1.</span> <span class="nav-text">1. 内存</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-CPU"><span class="nav-number">6.2.</span> <span class="nav-text">2. CPU</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E4%BF%A1%E6%81%AF"><span class="nav-number">6.3.</span> <span class="nav-text">3. 开机启动信息</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%B7%B2%E6%89%93%E5%BC%80%E6%96%87%E4%BB%B6-lsof"><span class="nav-number">6.4.</span> <span class="nav-text">4. 已打开文件 lsof</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%83%E3%80%81%E8%BF%9B%E7%A8%8B%E4%BC%98%E5%85%88%E7%BA%A7%EF%BC%88nice-renice%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">七、进程优先级（nice &#x2F;renice）</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%AB%E3%80%81%E7%B3%BB%E7%BB%9F%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88systemd%EF%BC%89"><span class="nav-number">8.</span> <span class="nav-text">八、系统服务管理（systemd）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A0%B8%E5%BF%83%E5%91%BD%E4%BB%A4"><span class="nav-number">8.1.</span> <span class="nav-text">1. 核心命令</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9C%8D%E5%8A%A1%E7%B1%BB%E5%9E%8B"><span class="nav-number">8.2.</span> <span class="nav-text">2. 服务类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%BC%80%E6%9C%BA%E5%90%AF%E5%8A%A8%E9%A1%BA%E5%BA%8F"><span class="nav-number">8.3.</span> <span class="nav-text">3. 开机启动顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B9%9D%E3%80%81%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B-%E4%B8%8E-%E5%AD%A4%E5%84%BF%E8%BF%9B%E7%A8%8B"><span class="nav-number">9.</span> <span class="nav-text">九、僵尸进程 与 孤儿进程</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -317,7 +504,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -330,7 +517,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

@@ -20,15 +20,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Good timing!">
+  <meta name="description" content="Linux 工作调度核心分两类：一次性任务（at）、周期性任务（cron），还有系统级临时任务 anacron，是运维自动化、定时备份、日志切割的核心工具。  一、一次性任务：at 命令（atd 服务）1. 核心概念 作用：指定未来某一时间点执行一次命令 &#x2F; 脚本，执行后自动删除任务。 依赖：atd 后台服务必须运行，否则任务无法触发。 典型场景：临时重启、延迟执行脚本、非重复定时操作。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="linux之工作调度">
 <meta property="og:url" content="http://example.com/2025/06/27/linux%E4%B9%8B%E5%B7%A5%E4%BD%9C%E8%B0%83%E5%BA%A6/index.html">
 <meta property="og:site_name" content="Lucius">
-<meta property="og:description" content="Good timing!">
+<meta property="og:description" content="Linux 工作调度核心分两类：一次性任务（at）、周期性任务（cron），还有系统级临时任务 anacron，是运维自动化、定时备份、日志切割的核心工具。  一、一次性任务：at 命令（atd 服务）1. 核心概念 作用：指定未来某一时间点执行一次命令 &#x2F; 脚本，执行后自动删除任务。 依赖：atd 后台服务必须运行，否则任务无法触发。 典型场景：临时重启、延迟执行脚本、非重复定时操作。">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2025-06-27T13:37:11.000Z">
-<meta property="article:modified_time" content="2026-05-25T15:13:48.237Z">
+<meta property="article:modified_time" content="2026-05-28T15:59:38.215Z">
 <meta property="article:author" content="Lucius">
 <meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary">
@@ -192,7 +192,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-25 23:13:48" itemprop="dateModified" datetime="2026-05-25T23:13:48+08:00">2026-05-25</time>
+                <time title="修改时间：2026-05-28 23:59:38" itemprop="dateModified" datetime="2026-05-28T23:59:38+08:00">2026-05-28</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -222,7 +222,132 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>Linux 工作调度核心分两类：<strong>一次性任务（at）</strong>、<strong>周期性任务（cron）</strong>，还有系统级临时任务 <code>anacron</code>，是运维自动化、定时备份、日志切割的核心工具。</p>
+<hr>
+<h2 id="一、一次性任务：at-命令（atd-服务）"><a href="#一、一次性任务：at-命令（atd-服务）" class="headerlink" title="一、一次性任务：at 命令（atd 服务）"></a>一、一次性任务：at 命令（atd 服务）</h2><h3 id="1-核心概念"><a href="#1-核心概念" class="headerlink" title="1. 核心概念"></a>1. 核心概念</h3><ul>
+<li><strong>作用</strong>：指定<strong>未来某一时间点</strong>执行<strong>一次</strong>命令 &#x2F; 脚本，执行后自动删除任务。</li>
+<li><strong>依赖</strong>：<code>atd</code> 后台服务必须运行，否则任务无法触发。</li>
+<li><strong>典型场景</strong>：临时重启、延迟执行脚本、非重复定时操作。</li>
+</ul>
+<h3 id="2-服务管理（CentOS-RHEL）"><a href="#2-服务管理（CentOS-RHEL）" class="headerlink" title="2. 服务管理（CentOS&#x2F;RHEL）"></a>2. 服务管理（CentOS&#x2F;RHEL）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 安装（最小化系统默认未装）</span></span><br><span class="line">yum install -y at</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启动&amp;开机自启</span></span><br><span class="line">systemctl start atd</span><br><span class="line">systemctl <span class="built_in">enable</span> atd</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看状态（active 正常）</span></span><br><span class="line">systemctl status atd</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-基本语法与时间格式"><a href="#3-基本语法与时间格式" class="headerlink" title="3. 基本语法与时间格式"></a>3. 基本语法与时间格式</h3><h4 id="语法"><a href="#语法" class="headerlink" title="语法"></a>语法</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">at [选项] 时间</span><br><span class="line"><span class="comment"># 交互输入命令 → Ctrl+D 提交</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="常用时间格式（灵活）"><a href="#常用时间格式（灵活）" class="headerlink" title="常用时间格式（灵活）"></a>常用时间格式（灵活）</h4><ul>
+<li>绝对时间：<code>HH:MM</code>（如 14:30）、<code>YYYY-MM-DD HH:MM</code></li>
+<li>相对时间：<code>now + 5 minutes</code>、<code>now + 2 hours</code>、<code>now + 1 day</code></li>
+<li>特殊时间：<code>midnight</code>（午夜）、<code>noon</code>（中午）、<code>teatime</code>（16:00）</li>
+</ul>
+<h3 id="4-实操示例"><a href="#4-实操示例" class="headerlink" title="4. 实操示例"></a>4. 实操示例</h3><h4 id="示例-1：5-分钟后执行命令"><a href="#示例-1：5-分钟后执行命令" class="headerlink" title="示例 1：5 分钟后执行命令"></a>示例 1：5 分钟后执行命令</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">at now + 5 minutes</span><br><span class="line"><span class="comment"># 输入任务</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;5分钟时间到&quot;</span> &gt;&gt; /tmp/at_test.log</span><br><span class="line"><span class="built_in">date</span> &gt;&gt; /tmp/at_test.log</span><br><span class="line"><span class="comment"># Ctrl+D 保存提交</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="示例-2：2025-06-01-02-00-执行脚本"><a href="#示例-2：2025-06-01-02-00-执行脚本" class="headerlink" title="示例 2：2025-06-01 02:00 执行脚本"></a>示例 2：2025-06-01 02:00 执行脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">at 02:00 2025-06-01</span><br><span class="line">/path/to/backup.sh</span><br><span class="line"><span class="comment"># Ctrl+D</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="示例-3：从文件读取任务（适合复杂脚本）"><a href="#示例-3：从文件读取任务（适合复杂脚本）" class="headerlink" title="示例 3：从文件读取任务（适合复杂脚本）"></a>示例 3：从文件读取任务（适合复杂脚本）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑任务文件</span></span><br><span class="line">vim /tmp/at_job.txt</span><br><span class="line"><span class="comment"># 写入</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;备份开始&quot;</span></span><br><span class="line">tar -zcf /data/backup_$(<span class="built_in">date</span> +%Y%m%d).tar.gz /home</span><br><span class="line"></span><br><span class="line"><span class="comment"># 提交任务</span></span><br><span class="line">at now + 1 hour -f /tmp/at_job.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="5-任务管理（查看-删除）"><a href="#5-任务管理（查看-删除）" class="headerlink" title="5. 任务管理（查看 &#x2F; 删除）"></a>5. 任务管理（查看 &#x2F; 删除）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看所有at任务（等价 at -l）</span></span><br><span class="line">atq</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看任务详情（任务ID从atq获取）</span></span><br><span class="line">at -c 任务ID</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除任务</span></span><br><span class="line">atrm 任务ID</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-权限控制（允许-拒绝用户）"><a href="#6-权限控制（允许-拒绝用户）" class="headerlink" title="6. 权限控制（允许 &#x2F; 拒绝用户）"></a>6. 权限控制（允许 &#x2F; 拒绝用户）</h3><ul>
+<li><code>/etc/at.allow</code>：白名单，仅文件内用户可使用 at（优先级高）</li>
+<li><code>/etc/at.deny</code>：黑名单，禁止文件内用户使用 at（默认所有用户可用）</li>
+<li>规则：有 allow 则仅 allow 用户可用；无 allow 则看 deny；都无则全部可用</li>
+</ul>
+<hr>
+<h2 id="二、周期性任务：cron-命令（crond-服务）"><a href="#二、周期性任务：cron-命令（crond-服务）" class="headerlink" title="二、周期性任务：cron 命令（crond 服务）"></a>二、周期性任务：cron 命令（crond 服务）</h2><h3 id="1-核心概念-1"><a href="#1-核心概念-1" class="headerlink" title="1. 核心概念"></a>1. 核心概念</h3><ul>
+<li><strong>作用</strong>：<strong>周期性重复执行</strong>命令 &#x2F; 脚本（分钟、小时、天、周、月），运维最常用。</li>
+<li><strong>依赖</strong>：<code>crond</code> 服务（系统默认开机自启）。</li>
+<li><strong>典型场景</strong>：每日备份、日志切割、定时清理缓存、监控告警。</li>
+</ul>
+<h3 id="2-服务管理"><a href="#2-服务管理" class="headerlink" title="2. 服务管理"></a>2. 服务管理</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 状态（默认running）</span></span><br><span class="line">systemctl status crond</span><br><span class="line"></span><br><span class="line"><span class="comment"># 启停/自启</span></span><br><span class="line">systemctl start/stop/restart crond</span><br><span class="line">systemctl <span class="built_in">enable</span> crond</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-核心配置文件"><a href="#3-核心配置文件" class="headerlink" title="3. 核心配置文件"></a>3. 核心配置文件</h3><h4 id="1）用户级任务（个人定时）"><a href="#1）用户级任务（个人定时）" class="headerlink" title="1）用户级任务（个人定时）"></a>1）用户级任务（个人定时）</h4><ul>
+<li>路径：<code>/var/spool/cron/用户名</code>（自动生成）</li>
+<li>命令：<code>crontab -e</code> 编辑，无需手动改文件</li>
+</ul>
+<h4 id="2）系统级任务（全局定时，root）"><a href="#2）系统级任务（全局定时，root）" class="headerlink" title="2）系统级任务（全局定时，root）"></a>2）系统级任务（全局定时，root）</h4><ul>
+<li><code>/etc/crontab</code>：主配置，可指定执行用户</li>
+<li><code>/etc/cron.d/</code>：自定义任务文件（如系统更新、日志）</li>
+<li><code>/etc/cron.hourly/</code>：每小时执行脚本</li>
+<li><code>/etc/cron.daily/</code>：每日执行（日志切割默认放这）</li>
+<li><code>/etc/cron.weekly/</code>：每周执行</li>
+<li><code>/etc/cron.monthly/</code>：每月执行</li>
+</ul>
+<h3 id="4-crontab-语法（重点：5-个时间字段）"><a href="#4-crontab-语法（重点：5-个时间字段）" class="headerlink" title="4. crontab 语法（重点：5 个时间字段）"></a>4. crontab 语法（重点：5 个时间字段）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 格式：分 时 日 月 周  命令/脚本</span></span><br><span class="line"><span class="comment"># 范围：</span></span><br><span class="line">分钟：0-59</span><br><span class="line">小时：0-23</span><br><span class="line">日期：1-31</span><br><span class="line">月份：1-12</span><br><span class="line">星期：0-7（0和7=周日，1=周一）</span><br></pre></td></tr></table></figure>
+
+<h4 id="特殊符号（核心）"><a href="#特殊符号（核心）" class="headerlink" title="特殊符号（核心）"></a>特殊符号（核心）</h4><ul>
+<li><code>*</code>：任意（每），如 <code>* * * * *</code> 每分钟执行</li>
+<li><code>,</code>：多个值，如 <code>0,30 * * * *</code> 每小时 0 分、30 分执行</li>
+<li><code>-</code>：范围，如 <code>9-18 * * * *</code> 9 点到 18 点每小时执行</li>
+<li><code>*/n</code>：间隔，如 <code>*/10 * * * *</code> 每 10 分钟执行</li>
+</ul>
+<h3 id="5-实操示例（高频场景）"><a href="#5-实操示例（高频场景）" class="headerlink" title="5. 实操示例（高频场景）"></a>5. 实操示例（高频场景）</h3><h4 id="示例-1：每天凌晨-2-点-30-分执行备份脚本"><a href="#示例-1：每天凌晨-2-点-30-分执行备份脚本" class="headerlink" title="示例 1：每天凌晨 2 点 30 分执行备份脚本"></a>示例 1：每天凌晨 2 点 30 分执行备份脚本</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">crontab -e</span><br><span class="line"><span class="comment"># 写入</span></span><br><span class="line">30 2 * * * /data/backup.sh &gt;&gt; /data/backup.log 2&gt;&amp;1</span><br><span class="line"><span class="comment"># 保存退出（crond自动加载）</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="示例-2：每周一、三、五-18-00-清理-tmp"><a href="#示例-2：每周一、三、五-18-00-清理-tmp" class="headerlink" title="示例 2：每周一、三、五 18:00 清理 &#x2F;tmp"></a>示例 2：每周一、三、五 18:00 清理 &#x2F;tmp</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 18 * * 1,3,5 <span class="built_in">rm</span> -rf /tmp/*</span><br></pre></td></tr></table></figure>
+
+<h4 id="示例-3：每-10-分钟同步系统时间"><a href="#示例-3：每-10-分钟同步系统时间" class="headerlink" title="示例 3：每 10 分钟同步系统时间"></a>示例 3：每 10 分钟同步系统时间</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">*/10 * * * * /usr/sbin/ntpdate time.nist.gov &gt;&gt; /tmp/ntp.log 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<h4 id="示例-4：每月-1-日-0-点-打包-var-log"><a href="#示例-4：每月-1-日-0-点-打包-var-log" class="headerlink" title="示例 4：每月 1 日 0 点 打包 &#x2F;var&#x2F;log"></a>示例 4：每月 1 日 0 点 打包 &#x2F;var&#x2F;log</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">0 0 1 * * tar -zcf /data/log_$(<span class="built_in">date</span> +%Y%m).tar.gz /var/log</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-任务管理（查看-编辑-删除）"><a href="#6-任务管理（查看-编辑-删除）" class="headerlink" title="6. 任务管理（查看 &#x2F; 编辑 &#x2F; 删除）"></a>6. 任务管理（查看 &#x2F; 编辑 &#x2F; 删除）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 编辑当前用户任务</span></span><br><span class="line">crontab -e</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看当前用户任务</span></span><br><span class="line">crontab -l</span><br><span class="line"></span><br><span class="line"><span class="comment"># 删除当前用户所有任务（谨慎！）</span></span><br><span class="line">crontab -r</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看指定用户任务（root）</span></span><br><span class="line">crontab -l -u 用户名</span><br></pre></td></tr></table></figure>
+
+<h3 id="7-权限控制"><a href="#7-权限控制" class="headerlink" title="7. 权限控制"></a>7. 权限控制</h3><ul>
+<li><code>/etc/cron.allow</code>：白名单</li>
+<li><code>/etc/cron.deny</code>：黑名单（默认所有用户可用）</li>
+</ul>
+<hr>
+<h2 id="三、anacron：开机补执行错过的-cron-任务"><a href="#三、anacron：开机补执行错过的-cron-任务" class="headerlink" title="三、anacron：开机补执行错过的 cron 任务"></a>三、anacron：开机补执行错过的 cron 任务</h2><h3 id="1-作用"><a href="#1-作用" class="headerlink" title="1. 作用"></a>1. 作用</h3><ul>
+<li>cron 依赖系统<strong>持续运行</strong>，关机则错过任务；</li>
+<li>anacron 是<strong>开机补执行</strong>工具，专门处理<strong>关机期间错过的 cron 任务</strong>（适合笔记本、桌面服务器）。</li>
+</ul>
+<h3 id="2-配置文件"><a href="#2-配置文件" class="headerlink" title="2. 配置文件"></a>2. 配置文件</h3><ul>
+<li><code>/etc/anacrontab</code>：配置周期（天）、延迟、任务</li>
+<li>示例：</li>
+</ul>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">1       5       cron.daily      run-parts /etc/cron.daily</span><br><span class="line"># 1天周期、开机延迟5分钟、执行cron.daily脚本</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-执行逻辑"><a href="#3-执行逻辑" class="headerlink" title="3. 执行逻辑"></a>3. 执行逻辑</h3><p>开机 → 检查错过的 daily&#x2F;weekly&#x2F;monthly 任务 → 延迟指定时间后执行 → 避免重复执行。</p>
+<hr>
+<h2 id="四、工作调度常见问题与排错"><a href="#四、工作调度常见问题与排错" class="headerlink" title="四、工作调度常见问题与排错"></a>四、工作调度常见问题与排错</h2><h3 id="1-任务不执行？先查-4-点"><a href="#1-任务不执行？先查-4-点" class="headerlink" title="1. 任务不执行？先查 4 点"></a>1. 任务不执行？先查 4 点</h3><ol>
+<li><strong>服务是否运行</strong>：<code>systemctl status crond/atd</code></li>
+<li><strong>路径问题</strong>：cron 无环境变量，<strong>命令用绝对路径</strong>（如 <code>/usr/bin/rm</code>）</li>
+<li><strong>权限问题</strong>：脚本有执行权限（<code>chmod +x 脚本</code>）</li>
+<li><strong>日志排错</strong>：cron 日志默认 <code>/var/log/cron</code>，at 日志 <code>/var/log/at</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 查看cron执行日志</span></span><br><span class="line"><span class="built_in">tail</span> -f /var/log/cron</span><br></pre></td></tr></table></figure>
+
+<h3 id="2-环境变量问题"><a href="#2-环境变量问题" class="headerlink" title="2. 环境变量问题"></a>2. 环境变量问题</h3><p>cron 仅加载少量环境变量，脚本中建议<strong>手动定义 PATH</strong>：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 脚本开头加</span></span><br><span class="line"><span class="built_in">export</span> PATH=/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin</span><br></pre></td></tr></table></figure>
+
+<hr>
+<h2 id="五、at-与-cron-核心区别（总结）"><a href="#五、at-与-cron-核心区别（总结）" class="headerlink" title="五、at 与 cron 核心区别（总结）"></a>五、at 与 cron 核心区别（总结）</h2><table>
+<thead>
+<tr>
+<th align="center">特性</th>
+<th align="center">at（一次性）</th>
+<th align="center">cron（周期性）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">执行次数</td>
+<td align="center">仅 1 次</td>
+<td align="center">重复执行</td>
+</tr>
+<tr>
+<td align="center">依赖服务</td>
+<td align="center">atd</td>
+<td align="center">crond</td>
+</tr>
+<tr>
+<td align="center">适用场景</td>
+<td align="center">临时、单次任务</td>
+<td align="center">长期、重复任务</td>
+</tr>
+<tr>
+<td align="center">时间精度</td>
+<td align="center">精确到分钟</td>
+<td align="center">精确到分钟</td>
+</tr>
+</tbody></table>
+
     </div>
 
     
@@ -305,6 +430,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E3%80%81%E4%B8%80%E6%AC%A1%E6%80%A7%E4%BB%BB%E5%8A%A1%EF%BC%9Aat-%E5%91%BD%E4%BB%A4%EF%BC%88atd-%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="nav-number">1.</span> <span class="nav-text">一、一次性任务：at 命令（atd 服务）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">1. 核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88CentOS-RHEL%EF%BC%89"><span class="nav-number">1.2.</span> <span class="nav-text">2. 服务管理（CentOS&#x2F;RHEL）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E5%9F%BA%E6%9C%AC%E8%AF%AD%E6%B3%95%E4%B8%8E%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F"><span class="nav-number">1.3.</span> <span class="nav-text">3. 基本语法与时间格式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%AF%AD%E6%B3%95"><span class="nav-number">1.3.1.</span> <span class="nav-text">语法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E6%97%B6%E9%97%B4%E6%A0%BC%E5%BC%8F%EF%BC%88%E7%81%B5%E6%B4%BB%EF%BC%89"><span class="nav-number">1.3.2.</span> <span class="nav-text">常用时间格式（灵活）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-%E5%AE%9E%E6%93%8D%E7%A4%BA%E4%BE%8B"><span class="nav-number">1.4.</span> <span class="nav-text">4. 实操示例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A5-%E5%88%86%E9%92%9F%E5%90%8E%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4"><span class="nav-number">1.4.1.</span> <span class="nav-text">示例 1：5 分钟后执行命令</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9A2025-06-01-02-00-%E6%89%A7%E8%A1%8C%E8%84%9A%E6%9C%AC"><span class="nav-number">1.4.2.</span> <span class="nav-text">示例 2：2025-06-01 02:00 执行脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3%EF%BC%9A%E4%BB%8E%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96%E4%BB%BB%E5%8A%A1%EF%BC%88%E9%80%82%E5%90%88%E5%A4%8D%E6%9D%82%E8%84%9A%E6%9C%AC%EF%BC%89"><span class="nav-number">1.4.3.</span> <span class="nav-text">示例 3：从文件读取任务（适合复杂脚本）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88%E6%9F%A5%E7%9C%8B-%E5%88%A0%E9%99%A4%EF%BC%89"><span class="nav-number">1.5.</span> <span class="nav-text">5. 任务管理（查看 &#x2F; 删除）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6%EF%BC%88%E5%85%81%E8%AE%B8-%E6%8B%92%E7%BB%9D%E7%94%A8%E6%88%B7%EF%BC%89"><span class="nav-number">1.6.</span> <span class="nav-text">6. 权限控制（允许 &#x2F; 拒绝用户）</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%8C%E3%80%81%E5%91%A8%E6%9C%9F%E6%80%A7%E4%BB%BB%E5%8A%A1%EF%BC%9Acron-%E5%91%BD%E4%BB%A4%EF%BC%88crond-%E6%9C%8D%E5%8A%A1%EF%BC%89"><span class="nav-number">2.</span> <span class="nav-text">二、周期性任务：cron 命令（crond 服务）</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E6%A0%B8%E5%BF%83%E6%A6%82%E5%BF%B5-1"><span class="nav-number">2.1.</span> <span class="nav-text">1. 核心概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E6%9C%8D%E5%8A%A1%E7%AE%A1%E7%90%86"><span class="nav-number">2.2.</span> <span class="nav-text">2. 服务管理</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%A0%B8%E5%BF%83%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">2.3.</span> <span class="nav-text">3. 核心配置文件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#1%EF%BC%89%E7%94%A8%E6%88%B7%E7%BA%A7%E4%BB%BB%E5%8A%A1%EF%BC%88%E4%B8%AA%E4%BA%BA%E5%AE%9A%E6%97%B6%EF%BC%89"><span class="nav-number">2.3.1.</span> <span class="nav-text">1）用户级任务（个人定时）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2%EF%BC%89%E7%B3%BB%E7%BB%9F%E7%BA%A7%E4%BB%BB%E5%8A%A1%EF%BC%88%E5%85%A8%E5%B1%80%E5%AE%9A%E6%97%B6%EF%BC%8Croot%EF%BC%89"><span class="nav-number">2.3.2.</span> <span class="nav-text">2）系统级任务（全局定时，root）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-crontab-%E8%AF%AD%E6%B3%95%EF%BC%88%E9%87%8D%E7%82%B9%EF%BC%9A5-%E4%B8%AA%E6%97%B6%E9%97%B4%E5%AD%97%E6%AE%B5%EF%BC%89"><span class="nav-number">2.4.</span> <span class="nav-text">4. crontab 语法（重点：5 个时间字段）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%89%B9%E6%AE%8A%E7%AC%A6%E5%8F%B7%EF%BC%88%E6%A0%B8%E5%BF%83%EF%BC%89"><span class="nav-number">2.4.1.</span> <span class="nav-text">特殊符号（核心）</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#5-%E5%AE%9E%E6%93%8D%E7%A4%BA%E4%BE%8B%EF%BC%88%E9%AB%98%E9%A2%91%E5%9C%BA%E6%99%AF%EF%BC%89"><span class="nav-number">2.5.</span> <span class="nav-text">5. 实操示例（高频场景）</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-1%EF%BC%9A%E6%AF%8F%E5%A4%A9%E5%87%8C%E6%99%A8-2-%E7%82%B9-30-%E5%88%86%E6%89%A7%E8%A1%8C%E5%A4%87%E4%BB%BD%E8%84%9A%E6%9C%AC"><span class="nav-number">2.5.1.</span> <span class="nav-text">示例 1：每天凌晨 2 点 30 分执行备份脚本</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-2%EF%BC%9A%E6%AF%8F%E5%91%A8%E4%B8%80%E3%80%81%E4%B8%89%E3%80%81%E4%BA%94-18-00-%E6%B8%85%E7%90%86-tmp"><span class="nav-number">2.5.2.</span> <span class="nav-text">示例 2：每周一、三、五 18:00 清理 &#x2F;tmp</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-3%EF%BC%9A%E6%AF%8F-10-%E5%88%86%E9%92%9F%E5%90%8C%E6%AD%A5%E7%B3%BB%E7%BB%9F%E6%97%B6%E9%97%B4"><span class="nav-number">2.5.3.</span> <span class="nav-text">示例 3：每 10 分钟同步系统时间</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E7%A4%BA%E4%BE%8B-4%EF%BC%9A%E6%AF%8F%E6%9C%88-1-%E6%97%A5-0-%E7%82%B9-%E6%89%93%E5%8C%85-var-log"><span class="nav-number">2.5.4.</span> <span class="nav-text">示例 4：每月 1 日 0 点 打包 &#x2F;var&#x2F;log</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#6-%E4%BB%BB%E5%8A%A1%E7%AE%A1%E7%90%86%EF%BC%88%E6%9F%A5%E7%9C%8B-%E7%BC%96%E8%BE%91-%E5%88%A0%E9%99%A4%EF%BC%89"><span class="nav-number">2.6.</span> <span class="nav-text">6. 任务管理（查看 &#x2F; 编辑 &#x2F; 删除）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#7-%E6%9D%83%E9%99%90%E6%8E%A7%E5%88%B6"><span class="nav-number">2.7.</span> <span class="nav-text">7. 权限控制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E3%80%81anacron%EF%BC%9A%E5%BC%80%E6%9C%BA%E8%A1%A5%E6%89%A7%E8%A1%8C%E9%94%99%E8%BF%87%E7%9A%84-cron-%E4%BB%BB%E5%8A%A1"><span class="nav-number">3.</span> <span class="nav-text">三、anacron：开机补执行错过的 cron 任务</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BD%9C%E7%94%A8"><span class="nav-number">3.1.</span> <span class="nav-text">1. 作用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6"><span class="nav-number">3.2.</span> <span class="nav-text">2. 配置文件</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-%E6%89%A7%E8%A1%8C%E9%80%BB%E8%BE%91"><span class="nav-number">3.3.</span> <span class="nav-text">3. 执行逻辑</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E3%80%81%E5%B7%A5%E4%BD%9C%E8%B0%83%E5%BA%A6%E5%B8%B8%E8%A7%81%E9%97%AE%E9%A2%98%E4%B8%8E%E6%8E%92%E9%94%99"><span class="nav-number">4.</span> <span class="nav-text">四、工作调度常见问题与排错</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-%E4%BB%BB%E5%8A%A1%E4%B8%8D%E6%89%A7%E8%A1%8C%EF%BC%9F%E5%85%88%E6%9F%A5-4-%E7%82%B9"><span class="nav-number">4.1.</span> <span class="nav-text">1. 任务不执行？先查 4 点</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F%E9%97%AE%E9%A2%98"><span class="nav-number">4.2.</span> <span class="nav-text">2. 环境变量问题</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BA%94%E3%80%81at-%E4%B8%8E-cron-%E6%A0%B8%E5%BF%83%E5%8C%BA%E5%88%AB%EF%BC%88%E6%80%BB%E7%BB%93%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">五、at 与 cron 核心区别（总结）</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -320,7 +446,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -333,7 +459,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

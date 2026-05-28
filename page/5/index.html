@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/10/linux%E4%B9%8Bshell/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/10/linux%E4%B9%8Bshell/" class="post-title-link" itemprop="url">linux之shell脚本</a>
+            <a href="/2025/05/14/linux%E8%B4%A6%E5%8F%B7%E7%AE%A1%E7%90%86%E4%B8%8E%E6%9D%83%E9%99%90/" class="post-title-link" itemprop="url">linux账号管理与权限</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-10 20:26:23" itemprop="dateCreated datePublished" datetime="2025-05-10T20:26:23+08:00">2025-05-10</time>
+              <time title="创建时间：2025-05-14 20:44:44" itemprop="dateCreated datePublished" datetime="2025-05-14T20:44:44+08:00">2025-05-14</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 20:49:42" itemprop="dateModified" datetime="2026-05-13T20:49:42+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-13 21:13:11" itemprop="dateModified" datetime="2026-05-13T21:13:11+08:00">2026-05-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,170 +212,194 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-什么是ShellScript"><a href="#1-什么是ShellScript" class="headerlink" title="1.什么是ShellScript"></a>1.什么是ShellScript</h2><p><strong>Shell 脚本</strong>：把一堆 Linux 命令、变量、判断、循环按顺序写到文本文件里，<strong>批量自动执行</strong>。</p>
-<p>作用：</p>
-<p>1.重复工作自动化</p>
-<p>2.开机自启、定时任务</p>
-<p>3.运维批量处理、日志分析、备份</p>
-<p>执行脚本就是<strong>逐条执行里面的命令</strong>。</p>
-<h2 id="2-Shell-脚本规范格式"><a href="#2-Shell-脚本规范格式" class="headerlink" title="2.Shell 脚本规范格式"></a>2.Shell 脚本规范格式</h2><h3 id="2-1-脚本开头第一行必写"><a href="#2-1-脚本开头第一行必写" class="headerlink" title="2.1. 脚本开头第一行必写"></a>2.1. 脚本开头第一行必写</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br></pre></td></tr></table></figure>
-
-<p>含义：<strong>指定用 bash 解释执行</strong>，必须写在首行。</p>
-<h3 id="2-2-注释"><a href="#2-2-注释" class="headerlink" title="2.2. 注释"></a>2.2. 注释</h3><p><code>#</code> 开头都是注释，程序不执行。</p>
-<h3 id="2-3-简单模板-hello-sh"><a href="#2-3-简单模板-hello-sh" class="headerlink" title="2.3. 简单模板 hello.sh"></a>2.3. 简单模板 hello.sh</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="comment"># 我的第一个shell脚本</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;Hello Shell Script&quot;</span></span><br></pre></td></tr></table></figure>
-
-<hr>
-<h2 id="3-脚本三种执行方式"><a href="#3-脚本三种执行方式" class="headerlink" title="3.脚本三种执行方式"></a>3.脚本三种执行方式</h2><h3 id="方式-1：给权限后直接运行（最常用）"><a href="#方式-1：给权限后直接运行（最常用）" class="headerlink" title="方式 1：给权限后直接运行（最常用）"></a>方式 1：给权限后直接运行（最常用）</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> +x hello.sh</span><br><span class="line">./hello.sh</span><br></pre></td></tr></table></figure>
-
-<h3 id="方式-2：直接用-bash-解释器执行"><a href="#方式-2：直接用-bash-解释器执行" class="headerlink" title="方式 2：直接用 bash 解释器执行"></a>方式 2：直接用 bash 解释器执行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bash hello.sh</span><br><span class="line"><span class="comment"># 不用加执行权限</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="方式-3：source-执行"><a href="#方式-3：source-执行" class="headerlink" title="方式 3：source 执行"></a>方式 3：source 执行</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> hello.sh</span><br><span class="line"><span class="comment"># 或</span></span><br><span class="line">. hello.sh</span><br></pre></td></tr></table></figure>
-
-<p>特点：<strong>在当前终端进程执行</strong>，脚本里变量会影响当前终端。</p>
-<hr>
-<h2 id="4-脚本中的变量"><a href="#4-脚本中的变量" class="headerlink" title="4.脚本中的变量"></a>4.脚本中的变量</h2><h3 id="1-自定义变量"><a href="#1-自定义变量" class="headerlink" title="1. 自定义变量"></a>1. 自定义变量</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name=<span class="string">&quot;Linux操作&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$name</span></span><br></pre></td></tr></table></figure>
-
-<p>规则：<strong>等号两边不能有空格</strong></p>
-<h3 id="2-位置参数变量（重点）"><a href="#2-位置参数变量（重点）" class="headerlink" title="2. 位置参数变量（重点）"></a>2. 位置参数变量（重点）</h3><p>执行脚本时后面跟的参数，自动接收：</p>
-<table>
+          <h2 id="1-linux用户和组"><a href="#1-linux用户和组" class="headerlink" title="1.linux用户和组"></a>1.linux用户和组</h2><h3 id="1-1-账号分类"><a href="#1-1-账号分类" class="headerlink" title="1.1.账号分类"></a>1.1.账号分类</h3><p><strong>超级管理员</strong>：<code>root</code>，UID&#x3D;0，最高权限</p>
+<p><strong>系统用户</strong>：UID 1~999，系统进程、服务专用，<strong>不能登录</strong></p>
+<p><strong>普通用户</strong>：UID 1000 起，日常登录使用</p>
+<h3 id="1-2-核心配置文件"><a href="#1-2-核心配置文件" class="headerlink" title="1.2.核心配置文件"></a>1.2.核心配置文件</h3><table>
 <thead>
 <tr>
-<th align="center">变量</th>
-<th align="center">含义</th>
+<th align="center">文件</th>
+<th align="center">作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><code>$0</code></td>
-<td align="center">脚本本身名字</td>
+<td align="center"><code>/etc/passwd</code></td>
+<td align="center">用户账号基本信息（所有人可读）</td>
 </tr>
 <tr>
-<td align="center"><code>$1 $2 ...</code></td>
-<td align="center">第 1、第 2、第 3 个参数</td>
+<td align="center"><code>/etc/shadow</code></td>
+<td align="center"><strong>密码、有效期</strong>（仅 root 可读）</td>
 </tr>
 <tr>
-<td align="center"><code>$#</code></td>
-<td align="center">参数总个数</td>
+<td align="center"><code>/etc/group</code></td>
+<td align="center">用户组配置</td>
 </tr>
 <tr>
-<td align="center"><code>$@</code></td>
-<td align="center">所有参数整体</td>
-</tr>
-<tr>
-<td align="center"><code>$*</code></td>
-<td align="center">所有参数整体</td>
+<td align="center"><code>/etc/gshadow</code></td>
+<td align="center">组密码、组管理员</td>
 </tr>
 </tbody></table>
-<p>示例: param.sh</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;脚本名：<span class="variable">$0</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;第一个参数：<span class="variable">$1</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;第二个参数：<span class="variable">$2</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;参数个数：<span class="variable">$#</span>&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;所有参数：<span class="variable">$@</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<h2 id="2-etc-passwd-字段详解"><a href="#2-etc-passwd-字段详解" class="headerlink" title="2.&#x2F;etc&#x2F;passwd 字段详解"></a>2.&#x2F;etc&#x2F;passwd 字段详解</h2><p>每行一个用户，<strong>冒号分隔 7 段</strong></p>
+<p>格式：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">账号:密码占位x:UID:GID:说明:家目录:登录Shell</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./param.sh a b c</span><br></pre></td></tr></table></figure>
+<ol>
+<li>账号名</li>
+<li>密码占位符 <code>x</code>（真正密码在 shadow）</li>
+<li>UID 用户 ID</li>
+<li>GID 初始组 ID</li>
+<li>用户注释信息</li>
+<li>家目录：<code>/home/用户名</code></li>
+<li>登录 Shell：<code>/bin/bash</code> 可登录，<code>/sbin/nologin</code> 不可登录</li>
+</ol>
+<h2 id="3-etc-shadow-字段详解"><a href="#3-etc-shadow-字段详解" class="headerlink" title="3.&#x2F;etc&#x2F;shadow 字段详解"></a>3.&#x2F;etc&#x2F;shadow 字段详解</h2><p>存放<strong>加密密码、过期规则</strong>，普通用户无权限看</p>
+<ol>
+<li>账号名</li>
+<li>加密密码（!! 表示无密码、不能登录）</li>
+<li>密码最后修改日期</li>
+<li>密码最短使用天数</li>
+<li>密码最长有效期</li>
+<li>过期前警告天数</li>
+<li>过期后宽限天数</li>
+<li>账号失效日期</li>
+<li>保留字段</li>
+</ol>
+<h2 id="4-用户组概念"><a href="#4-用户组概念" class="headerlink" title="4.用户组概念"></a>4.用户组概念</h2><p>1.初始组（主组）</p>
+<p>​	用户创建时默认所属组，GID 对应 &#x2F;etc&#x2F;passwd</p>
+<p>2.附加组（附属组）</p>
+<p>​	额外加入的组，可拥有多个组权限</p>
+<p>一条用户同时属于：<strong>1 个主组 + 多个附加组</strong></p>
+<p>查看当前用户所属组：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">id</span></span><br><span class="line"><span class="built_in">groups</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="5-账号管理常用命令"><a href="#5-账号管理常用命令" class="headerlink" title="5.账号管理常用命令"></a>5.账号管理常用命令</h2><h3 id="1-添加用户-useradd"><a href="#1-添加用户-useradd" class="headerlink" title="1.添加用户 useradd"></a>1.添加用户 useradd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">useradd 用户名</span><br></pre></td></tr></table></figure>
+
+<p>默认自动：</p>
+<p>​	创建家目录 <code>/home/用户名</code></p>
+<p>​	创建同名初始组	</p>
+<p>​	Shell 设为 <code>/bin/bash</code></p>
+<p>常用参数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">useradd -u 1100 tom      <span class="comment"># 指定UID</span></span><br><span class="line">useradd -g 组名 tom       <span class="comment"># 指定初始组</span></span><br><span class="line">useradd -G 组名 tom       <span class="comment"># 指定附加组</span></span><br><span class="line">useradd -s /sbin/nologin tom  <span class="comment"># 不可登录用户</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-设置密码-passwd"><a href="#2-设置密码-passwd" class="headerlink" title="2.设置密码 passwd"></a>2.设置密码 passwd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">passwd 用户名       <span class="comment"># root可给任何人改密码</span></span><br><span class="line">passwd              <span class="comment"># 普通用户改自己密码</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-修改用户属性-usermod"><a href="#3-修改用户属性-usermod" class="headerlink" title="3.修改用户属性 usermod"></a>3.修改用户属性 usermod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">usermod -u 1200 tom     <span class="comment"># 修改UID</span></span><br><span class="line">usermod -g 组名 tom     <span class="comment"># 修改主组</span></span><br><span class="line">usermod -aG 组名 tom    <span class="comment"># 追加附加组（重点常用）</span></span><br><span class="line">usermod -L tom          <span class="comment"># 锁定账号</span></span><br><span class="line">usermod -U tom          <span class="comment"># 解锁账号</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="4-删除用户-userdel"><a href="#4-删除用户-userdel" class="headerlink" title="4.删除用户 userdel"></a>4.删除用户 userdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">userdel 用户名          <span class="comment"># 只删账号，保留家目录</span></span><br><span class="line">userdel -r 用户名       <span class="comment"># 删账号 + 删掉家目录、邮件</span></span><br></pre></td></tr></table></figure>
 
 <hr>
-<h2 id="5-数值运算"><a href="#5-数值运算" class="headerlink" title="5.数值运算 $(())"></a>5.数值运算 $(())</h2><p>Shell 默认不支持直接加减，用 <strong>$(( ))</strong></p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a=10</span><br><span class="line">b=20</span><br><span class="line"><span class="built_in">sum</span>=$((a + b))</span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$sum</span></span><br></pre></td></tr></table></figure>
+<h2 id="6-用户组管理命令"><a href="#6-用户组管理命令" class="headerlink" title="6.用户组管理命令"></a>6.用户组管理命令</h2><h3 id="6-1-创建组-groupadd"><a href="#6-1-创建组-groupadd" class="headerlink" title="6.1.创建组 groupadd"></a>6.1.创建组 groupadd</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">groupadd 组名</span><br><span class="line">groupadd -g 2000 组名   <span class="comment"># 指定GID</span></span><br></pre></td></tr></table></figure>
 
-<p>支持：<code>+ - * / %</code></p>
+<h3 id="6-2-修改组-groupmod"><a href="#6-2-修改组-groupmod" class="headerlink" title="6.2.修改组 groupmod"></a>6.2.修改组 groupmod</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupmod -n 新组名 旧组名</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-3-删除组-groupdel"><a href="#6-3-删除组-groupdel" class="headerlink" title="6.3.删除组 groupdel"></a>6.3.删除组 groupdel</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">groupdel 组名</span><br></pre></td></tr></table></figure>
+
 <hr>
-<h2 id="6-条件判断-if-语句（必考）"><a href="#6-条件判断-if-语句（必考）" class="headerlink" title="6.条件判断 if 语句（必考）"></a>6.条件判断 if 语句（必考）</h2><h3 id="6-1-基础语法"><a href="#6-1-基础语法" class="headerlink" title="6.1. 基础语法"></a>6.1. 基础语法</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> [ 条件 ]; <span class="keyword">then</span></span><br><span class="line">  满足条件执行</span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="6-2-常用判断条件"><a href="#6-2-常用判断条件" class="headerlink" title="6.2. 常用判断条件"></a>6.2. 常用判断条件</h3><h4 id="6-2-1-文件判断"><a href="#6-2-1-文件判断" class="headerlink" title="6.2.1.文件判断"></a>6.2.1.文件判断</h4><table>
+<h2 id="7-Linux文件权限底层详解"><a href="#7-Linux文件权限底层详解" class="headerlink" title="7.Linux文件权限底层详解"></a>7.Linux文件权限底层详解</h2><h3 id="7-1-权限身份"><a href="#7-1-权限身份" class="headerlink" title="7.1.权限身份"></a>7.1.权限身份</h3><p>文件对三种身份设权限：</p>
+<p><strong>所有者 u</strong>：文件拥有者</p>
+<p><strong>所属组 g</strong>：同组用户</p>
+<p><strong>其他人 o</strong>：非所有者、非同组</p>
+<h3 id="7-2-三种权限"><a href="#7-2-三种权限" class="headerlink" title="7.2.三种权限"></a>7.2.三种权限</h3><table>
 <thead>
 <tr>
-<th align="center">判断</th>
-<th align="center">含义</th>
+<th align="center">权限</th>
+<th align="center">字符</th>
+<th align="center">数字</th>
+<th align="center">对文件作用</th>
+<th align="center">对目录作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center"><code>-f 文件名</code></td>
-<td align="center">是否为普通文件</td>
+<td align="center">读</td>
+<td align="center">r</td>
+<td align="center">4</td>
+<td align="center">查看内容</td>
+<td align="center">列出目录列表</td>
 </tr>
 <tr>
-<td align="center"><code>-d 目录</code></td>
-<td align="center">是否为目录</td>
+<td align="center">写</td>
+<td align="center">w</td>
+<td align="center">2</td>
+<td align="center">修改内容</td>
+<td align="center">增删改名文件</td>
 </tr>
 <tr>
-<td align="center"><code>-e 文件</code></td>
-<td align="center">文件是否存在</td>
-</tr>
-<tr>
-<td align="center"><code>-r 文件</code></td>
-<td align="center">是否可读</td>
-</tr>
-<tr>
-<td align="center"><code>-w 文件</code></td>
-<td align="center">是否可写</td>
+<td align="center">执行</td>
+<td align="center">x</td>
+<td align="center">1</td>
+<td align="center">程序可运行</td>
+<td align="center">可进入目录、切换 cd</td>
 </tr>
 </tbody></table>
-<p>示例：判断文件是否存在</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="keyword">if</span> [ -e test.txt ];<span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;文件存在&quot;</span></span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;文件不存在&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="6-2-2-字符串判断"><a href="#6-2-2-字符串判断" class="headerlink" title="6.2.2.字符串判断"></a>6.2.2.字符串判断</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[ <span class="string">&quot;<span class="variable">$name</span>&quot;</span> == <span class="string">&quot;linux&quot;</span> ]   <span class="comment"># 相等</span></span><br><span class="line">[ <span class="string">&quot;<span class="variable">$name</span>&quot;</span> != <span class="string">&quot;bash&quot;</span> ]   <span class="comment"># 不等</span></span><br></pre></td></tr></table></figure>
-
-<h4 id="6-2-3-整数比较"><a href="#6-2-3-整数比较" class="headerlink" title="6.2.3.整数比较"></a>6.2.3.整数比较</h4><table>
-<thead>
-<tr>
-<th align="center">符号</th>
-<th align="center">含义</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center"><code>-eq</code></td>
-<td align="center">等于</td>
-</tr>
-<tr>
-<td align="center"><code>-ne</code></td>
-<td align="center">不等于</td>
-</tr>
-<tr>
-<td align="center"><code>-gt</code></td>
-<td align="center">大于</td>
-</tr>
-<tr>
-<td align="center"><code>-lt</code></td>
-<td align="center">小于</td>
-</tr>
-<tr>
-<td align="center"><code>-ge</code></td>
-<td align="center">大于等于</td>
-</tr>
-<tr>
-<td align="center"><code>-le</code></td>
-<td align="center">小于等于</td>
-</tr>
-</tbody></table>
-<p>示例:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">a=18</span><br><span class="line"><span class="keyword">if</span> [ <span class="variable">$a</span> -ge 18 ];<span class="keyword">then</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;成年&quot;</span></span><br><span class="line"><span class="keyword">fi</span></span><br></pre></td></tr></table></figure>
-
 <blockquote>
-<p>注意：<code>[ ]</code> <strong>两边必须有空格</strong></p>
+<p>目录<strong>必须要有 x 权限</strong>才能 cd 进入</p>
 </blockquote>
+<h3 id="3-权限数字计算"><a href="#3-权限数字计算" class="headerlink" title="3. 权限数字计算"></a>3. 权限数字计算</h3><p>r&#x3D;4  w&#x3D;2  x&#x3D;1</p>
+<p>例：</p>
+<ul>
+<li>rwx  &#x3D; 4+2+1 &#x3D; 7</li>
+<li>r-x  &#x3D; 4+1   &#x3D; 5</li>
+<li>rw-  &#x3D; 4+2   &#x3D; 6</li>
+</ul>
+<p>常见权限：</p>
+<ul>
+<li><code>755</code>：u&#x3D;rwx g&#x3D;rx o&#x3D;rx</li>
+<li><code>644</code>：u&#x3D;rw  g&#x3D;r  o&#x3D;r</li>
+</ul>
+<h2 id="8-修改权限与所有者"><a href="#8-修改权限与所有者" class="headerlink" title="8.修改权限与所有者"></a>8.修改权限与所有者</h2><h3 id="8-1-修改权限-chmod"><a href="#8-1-修改权限-chmod" class="headerlink" title="8.1.修改权限 chmod"></a>8.1.修改权限 chmod</h3><h4 id="字符方式"><a href="#字符方式" class="headerlink" title="字符方式"></a>字符方式</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> u+rwx file</span><br><span class="line"><span class="built_in">chmod</span> g-w file</span><br><span class="line"><span class="built_in">chmod</span> o=r file</span><br><span class="line"><span class="built_in">chmod</span> a+x file   <span class="comment"># 所有人加执行</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="数字方式（最常用）"><a href="#数字方式（最常用）" class="headerlink" title="数字方式（最常用）"></a>数字方式（最常用）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> 755 test.sh</span><br><span class="line"><span class="built_in">chmod</span> 644 a.txt</span><br></pre></td></tr></table></figure>
+
+<h3 id="8-2-修改所有者-chown"><a href="#8-2-修改所有者-chown" class="headerlink" title="8.2.修改所有者 chown"></a>8.2.修改所有者 chown</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> 用户名 文件        <span class="comment"># 改所有者</span></span><br><span class="line"><span class="built_in">chown</span> 用户:组 文件      <span class="comment"># 同时改所有者+所属组</span></span><br><span class="line"><span class="built_in">chown</span> -R 用户 目录      <span class="comment"># 递归修改目录下所有文件</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="3-修改所属组-chgrp"><a href="#3-修改所属组-chgrp" class="headerlink" title="3. 修改所属组 chgrp"></a>3. 修改所属组 chgrp</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chgrp</span> 组名 文件</span><br></pre></td></tr></table></figure>
+
 <hr>
-<h2 id="7-循环语句for-while"><a href="#7-循环语句for-while" class="headerlink" title="7.循环语句for&#x2F;while"></a>7.循环语句for&#x2F;while</h2><h3 id="1-for-循环"><a href="#1-for-循环" class="headerlink" title="1. for 循环"></a>1. for 循环</h3><p>写法 1：固定列表</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> 1 2 3 4 5</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;数字：<span class="variable">$i</span>&quot;</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-<p>写法 2：遍历目录文件</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">for</span> file <span class="keyword">in</span> *.sh</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="variable">$file</span></span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="2-while-循环"><a href="#2-while-循环" class="headerlink" title="2. while 循环"></a>2. while 循环</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">i=1</span><br><span class="line"><span class="keyword">while</span> [ <span class="variable">$i</span> -le 5 ]</span><br><span class="line"><span class="keyword">do</span></span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;循环 <span class="variable">$i</span>&quot;</span></span><br><span class="line">  i=$((i+<span class="number">1</span>))</span><br><span class="line"><span class="keyword">done</span></span><br></pre></td></tr></table></figure>
-
+<h2 id="9-特殊权限-SUID-SGID-SBIT"><a href="#9-特殊权限-SUID-SGID-SBIT" class="headerlink" title="9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT"></a>9.特殊权限 SUID&#x2F;SGID&#x2F;SBIT</h2><h3 id="9-1-SUID-4xxx"><a href="#9-1-SUID-4xxx" class="headerlink" title="9.1.SUID 4xxx"></a>9.1.SUID 4xxx</h3><ul>
+<li>作用：<strong>普通用户执行该文件时，临时拥有文件所有者权限</strong></li>
+<li>仅对<strong>二进制可执行文件</strong>有效</li>
+<li>数字：<code>4755</code></li>
+</ul>
+<h3 id="9-2-SGID-2xxx"><a href="#9-2-SGID-2xxx" class="headerlink" title="9.2.SGID 2xxx"></a>9.2.SGID 2xxx</h3><ul>
+<li>文件：执行时拥有<strong>所属组权限</strong></li>
+<li>目录：目录内新建文件<strong>自动继承目录所属组</strong></li>
+<li>数字：<code>2755</code></li>
+</ul>
+<h3 id="9-3-SBIT-粘滞位-1xxx"><a href="#9-3-SBIT-粘滞位-1xxx" class="headerlink" title="9.3.SBIT 粘滞位 1xxx"></a>9.3.SBIT 粘滞位 1xxx</h3><ul>
+<li>只对<strong>目录</strong>生效，典型：<code>/tmp</code></li>
+<li>作用：任何人可在目录建文件，<strong>只能删自己的文件，不能删别人的</strong></li>
+<li>数字：<code>1777</code></li>
+</ul>
 <hr>
-<h2 id="8-case-多分支判断"><a href="#8-case-多分支判断" class="headerlink" title="8.case 多分支判断"></a>8.case 多分支判断</h2><p>适合菜单选择、命令匹配</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> <span class="variable">$1</span> <span class="keyword">in</span></span><br><span class="line">  start)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;启动服务&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">  stop)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;停止服务&quot;</span></span><br><span class="line">    ;;</span><br><span class="line">  *)</span><br><span class="line">    <span class="built_in">echo</span> <span class="string">&quot;未知参数&quot;</span></span><br><span class="line">    ;;</span><br><span class="line"><span class="keyword">esac</span></span><br></pre></td></tr></table></figure>
+<h2 id="10-默认权限-umask"><a href="#10-默认权限-umask" class="headerlink" title="10.默认权限 umask"></a>10.默认权限 umask</h2><h3 id="10-1-作用"><a href="#10-1-作用" class="headerlink" title="10.1.作用"></a>10.1.作用</h3><p>控制<strong>新建文件 &#x2F; 目录的默认权限</strong></p>
+<p>查看：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">umask</span></span><br></pre></td></tr></table></figure>
 
-<p>用法：<code>./case.sh start</code></p>
+<p>规则：</p>
+<ul>
+<li>目录默认最大 <code>777</code> 减 umask</li>
+<li>文件默认最大 <code>666</code> 减 umask</li>
+</ul>
+<p>示例：umask&#x3D;022</p>
+<ul>
+<li>新建目录：777-022 &#x3D; <strong>755</strong></li>
+<li>新建文件：666-022 &#x3D; <strong>644</strong></li>
+</ul>
 <hr>
-<h2 id="9-函数-function"><a href="#9-函数-function" class="headerlink" title="9.函数 function"></a>9.函数 function</h2><p>把重复代码封装成函数</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/bash</span></span><br><span class="line"><span class="function"><span class="title">fun</span></span>() &#123;</span><br><span class="line">  <span class="built_in">echo</span> <span class="string">&quot;这是自定义函数&quot;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 调用</span></span><br><span class="line">fun</span><br></pre></td></tr></table></figure>
+<h2 id="11-sudo-权限（普通用户提权）"><a href="#11-sudo-权限（普通用户提权）" class="headerlink" title="11.sudo 权限（普通用户提权）"></a>11.sudo 权限（普通用户提权）</h2><ol>
+<li>作用：给普通用户<strong>临时执行 root 命令权限</strong>，不用知道 root 密码</li>
+<li>配置文件：<code>/etc/sudoers</code></li>
+<li>编辑配置：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">visudo</span><br></pre></td></tr></table></figure>
 
-<p>带参数函数：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">add</span></span>()&#123;</span><br><span class="line">  <span class="built_in">echo</span> $(( <span class="variable">$1</span> + <span class="variable">$2</span> ))</span><br><span class="line">&#125;</span><br><span class="line">add 10 20</span><br></pre></td></tr></table></figure>
+<p>添加：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tom  ALL=(ALL)  ALL</span><br></pre></td></tr></table></figure>
 
-<hr>
-<h2 id="10-脚本调试"><a href="#10-脚本调试" class="headerlink" title="10.脚本调试"></a>10.脚本调试</h2><p>看执行过程</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -x 脚本名.sh</span><br></pre></td></tr></table></figure>
-
-<p>检查语法不运行</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash -n 脚本名.sh</span><br></pre></td></tr></table></figure>
+<ol>
+<li>使用：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> <span class="built_in">ls</span> /root</span><br></pre></td></tr></table></figure>
 
 
       
@@ -395,7 +419,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/12/">12</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -463,7 +487,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-count">13</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -476,7 +500,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">9</span>
+        <span class="site-state-item-count">10</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
