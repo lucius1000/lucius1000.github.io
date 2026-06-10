@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="mysql字符集和比较规则1.字符集和比较规则1.1.字符集介绍因为计算机只能存储二进制数据，那人类能够看懂的文字符号是怎么存到计算机的呢？ 解决方式：字符与二进制数据建立映射关系 有两个概念需要了解下编码和解码 1.将字符映射成二进制数据的过程叫做编码 2.将二进制数据映射成字符的过程叫做解码 所以用来描述某个字符范围的编码规则称为字符集 例如经典的ASCII字符集： 123字符    二进制A">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mysql字符集与排序规则">
+<meta property="og:url" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/index.html">
+<meta property="og:site_name" content="Lucius">
+<meta property="og:description" content="mysql字符集和比较规则1.字符集和比较规则1.1.字符集介绍因为计算机只能存储二进制数据，那人类能够看懂的文字符号是怎么存到计算机的呢？ 解决方式：字符与二进制数据建立映射关系 有两个概念需要了解下编码和解码 1.将字符映射成二进制数据的过程叫做编码 2.将二进制数据映射成字符的过程叫做解码 所以用来描述某个字符范围的编码规则称为字符集 例如经典的ASCII字符集： 123字符    二进制A">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E9%9B%86.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB1.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB2.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB1.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB2.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5.png">
+<meta property="og:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E5%9B%BE.png">
+<meta property="article:published_time" content="2024-09-17T10:56:38.000Z">
+<meta property="article:modified_time" content="2026-06-09T13:32:17.396Z">
+<meta property="article:author" content="Lucius">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E9%9B%86.png">
+
+<link rel="canonical" href="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>mysql字符集与排序规则 | Lucius</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lucius</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">hahaha😄</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/blackcat.png">
+      <meta itemprop="name" content="Lucius">
+      <meta itemprop="description" content="Good timing!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lucius">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          mysql字符集与排序规则
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-09-17 18:56:38" itemprop="dateCreated datePublished" datetime="2024-09-17T18:56:38+08:00">2024-09-17</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-06-09 21:32:17" itemprop="dateModified" datetime="2026-06-09T21:32:17+08:00">2026-06-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/computer/" itemprop="url" rel="index"><span itemprop="name">computer</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="mysql字符集和比较规则"><a href="#mysql字符集和比较规则" class="headerlink" title="mysql字符集和比较规则"></a>mysql字符集和比较规则</h1><h2 id="1-字符集和比较规则"><a href="#1-字符集和比较规则" class="headerlink" title="1.字符集和比较规则"></a>1.字符集和比较规则</h2><h3 id="1-1-字符集介绍"><a href="#1-1-字符集介绍" class="headerlink" title="1.1.字符集介绍"></a>1.1.字符集介绍</h3><p>因为计算机只能存储二进制数据，那人类能够看懂的文字符号是怎么存到计算机的呢？</p>
+<p>解决方式：<strong>字符与二进制数据建立映射关系</strong></p>
+<p>有两个概念需要了解下<strong>编码</strong>和<strong>解码</strong></p>
+<p>1.<strong>将字符映射成二进制数据的过程叫做编码</strong></p>
+<p>2.<strong>将二进制数据映射成字符的过程叫做解码</strong></p>
+<p>所以用来描述某个字符范围的编码规则称为<strong>字符集</strong></p>
+<p>例如经典的ASCII字符集：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">字符    二进制</span><br><span class="line">A&lt;----&gt;01000001</span><br><span class="line">a&lt;----&gt;01100001</span><br></pre></td></tr></table></figure>
+
+<p>世界太大了，不同的人制定了不同的字符集，有ASCII字符集、ISO 8859-1字符集、GBK字符集、utf8字符集。我们写代码过程中经常能遇到utf8格式的字符。</p>
+<h3 id="1-2-比较规则介绍"><a href="#1-2-比较规则介绍" class="headerlink" title="1.2.比较规则介绍"></a>1.2.比较规则介绍</h3><p>如何比较两个字符的大小呢？</p>
+<p>最容易想到的就是直接比较二进制大小，把字符转成二进制让计算机去比。但是对于复杂的现实生活，c和C的二进制不相等，但是表达的含义是相等的，只是区分了大小写，不能说它们不一样啊！这时候，就需要定义<strong>比较规则</strong>了。这里的规则是把它们全转成大写或者小写再比较。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.<span class="built_in">println</span>(strings.ToLower(<span class="type">string</span>(<span class="string">&#x27;c&#x27;</span>)) == strings.ToLower(<span class="type">string</span>(<span class="string">&#x27;C&#x27;</span>)))</span><br></pre></td></tr></table></figure>
+
+<p>不同的字符集有不同的比较规则，<strong>同一种字符集也有不同的比较规则</strong></p>
+<h2 id="2-mysql中支持的字符集和排序规则"><a href="#2-mysql中支持的字符集和排序规则" class="headerlink" title="2.mysql中支持的字符集和排序规则"></a>2.mysql中支持的字符集和排序规则</h2><p>在项目开发的过程中，我们经常需要建库或者建表，也肯定见到过utf8和utf8mb4。</p>
+<p>使用utf8字符集表示一个字符需要占用1-4个字节存储，实际上我们经常用的字符仅占用1-3个字节存储。</p>
+<p>为了提高mysql系统的存储和性能，mysql的作者定义了两个概念：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">utf8mb3: 占用1-3字节</span><br><span class="line">utf8mb4: 占用1-4字节</span><br></pre></td></tr></table></figure>
+
+<p>注意：<strong>在mysql中，utf8是utf8mb3的别名</strong></p>
+<h3 id="2-1-字符集查看"><a href="#2-1-字符集查看" class="headerlink" title="2.1.字符集查看"></a>2.1.字符集查看</h3><p>我是使用的mysql版本是8.0.27</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> charset;</span><br></pre></td></tr></table></figure>
+
+<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E9%9B%86.png" class="" title="截图描述">
+
+<p>这里可以看到这个版本的mysql有41种字符集。</p>
+<h3 id="2-2-比较规则的查看"><a href="#2-2-比较规则的查看" class="headerlink" title="2.2.比较规则的查看"></a>2.2.比较规则的查看</h3><p>查看utf8字符集下的比较规则</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">collation</span> <span class="keyword">like</span> <span class="string">&#x27;utf8%&#x27;</span>;</span><br></pre></td></tr></table></figure>
+
+<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99.png" class="" title="截图描述">
+
+<p>这些比较规则都是以utf8_开头的，utf8_german2_ci是德语比较规则，utf8_roman_ci是罗马比较规则。像utf8_general_ci就是通用比较规则，_ci结尾表示不区分大小写。如果是cs结尾表示区分大小写，as结尾区分重音，ai结尾不区分重音。</p>
+<p>当我们看到utf8_general_ci的Default列出现Yes，这说明对于utf8字符集的比较规则默认是utf8_general_ci</p>
+<h2 id="3-字符集和比较规则应用"><a href="#3-字符集和比较规则应用" class="headerlink" title="3.字符集和比较规则应用"></a>3.字符集和比较规则应用</h2><h3 id="3-1-mysql有4个级别的字符集和比较规则"><a href="#3-1-mysql有4个级别的字符集和比较规则" class="headerlink" title="3.1.mysql有4个级别的字符集和比较规则"></a>3.1.mysql有4个级别的字符集和比较规则</h3><h4 id="3-1-1-服务器级别"><a href="#3-1-1-服务器级别" class="headerlink" title="3.1.1.服务器级别"></a>3.1.1.服务器级别</h4><p>**注意:**这里的服务器是指mysql自身服务</p>
+<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB1.png" class="" title="截图描述">
+
+<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB2.png" class="" title="截图描述">
+
+<p>可以在mysql的配置文件中修改然后启动。</p>
+<h4 id="3-1-2-数据库级别"><a href="#3-1-2-数据库级别" class="headerlink" title="3.1.2.数据库级别"></a>3.1.2.数据库级别</h4><img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB1.png" class="" title="截图描述">
+
+<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB2.png" class="" title="截图描述">
+
+<h4 id="3-1-3-表级别和列级别"><a href="#3-1-3-表级别和列级别" class="headerlink" title="3.1.3.表级别和列级别"></a>3.1.3.表级别和列级别</h4><p>比如下面这条建表语句<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5.png" class="" title="截图描述"></p>
+<p>注意：以上的级别中如果没有主动选择字符集和排序规则，将会默认选择上一级的字符集和排序规则，服务器&gt;数据库&gt;表&gt;列。</p>
+<h3 id="3-2-字符集转换"><a href="#3-2-字符集转换" class="headerlink" title="3.2.字符集转换"></a>3.2.字符集转换</h3><p>在计算机中，如果一个字符串编码和解码使用的字符集不同，会产生奇奇怪怪的字符。</p>
+<p>有时候在电脑中能看到这种字符：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原文:适才相戏耳</span><br><span class="line">乱码:适財楿戱洱</span><br><span class="line"></span><br><span class="line">这就是编码解码选择的字符集不同造成的结果</span><br></pre></td></tr></table></figure>
+
+<p>这时候就出现了<strong>字符集转换</strong>的概念：把某个字符按照自身的字符集解码成二进制，再使用另外一套字符集把二进制编码成字符。</p>
+<h4 id="3-2-1-mysql中字符集的转换"><a href="#3-2-1-mysql中字符集的转换" class="headerlink" title="3.2.1.mysql中字符集的转换"></a>3.2.1.mysql中字符集的转换</h4><img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E5%9B%BE.png" class="" title="截图描述">
+
+<p>注意：<br>1.客户端采用的字符集和 character_set_client 不一样的话，就会导致服务器无法理解和处理请求。</p>
+<p>2.客户端采用的字符集和 character_set_results 不一样的话，这就可能会出现客户端无法解码结果集。</p>
+<p>修改字符集sql语句：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> character_set_client <span class="operator">=</span> 字符集名;</span><br><span class="line"><span class="keyword">SET</span> character_set_connection <span class="operator">=</span> 字符集名;</span><br><span class="line"><span class="keyword">SET</span> character_set_results <span class="operator">=</span> 字符集名;</span><br></pre></td></tr></table></figure>
+
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/mysql/" rel="tag"># mysql</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2024/10/12/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" rel="next" title="mysql存储引擎">
+      mysql存储引擎 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99"><span class="nav-number">1.</span> <span class="nav-text">mysql字符集和比较规则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99"><span class="nav-number">1.1.</span> <span class="nav-text">1.字符集和比较规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-1-%E5%AD%97%E7%AC%A6%E9%9B%86%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.1.</span> <span class="nav-text">1.1.字符集介绍</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-2-%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99%E4%BB%8B%E7%BB%8D"><span class="nav-number">1.1.2.</span> <span class="nav-text">1.2.比较规则介绍</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-mysql%E4%B8%AD%E6%94%AF%E6%8C%81%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99"><span class="nav-number">1.2.</span> <span class="nav-text">2.mysql中支持的字符集和排序规则</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#2-1-%E5%AD%97%E7%AC%A6%E9%9B%86%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.2.1.</span> <span class="nav-text">2.1.字符集查看</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-2-%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99%E7%9A%84%E6%9F%A5%E7%9C%8B"><span class="nav-number">1.2.2.</span> <span class="nav-text">2.2.比较规则的查看</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99%E5%BA%94%E7%94%A8"><span class="nav-number">1.3.</span> <span class="nav-text">3.字符集和比较规则应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-mysql%E6%9C%894%E4%B8%AA%E7%BA%A7%E5%88%AB%E7%9A%84%E5%AD%97%E7%AC%A6%E9%9B%86%E5%92%8C%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99"><span class="nav-number">1.3.1.</span> <span class="nav-text">3.1.mysql有4个级别的字符集和比较规则</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-1-%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">3.1.1.服务器级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-2-%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">3.1.2.数据库级别</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-1-3-%E8%A1%A8%E7%BA%A7%E5%88%AB%E5%92%8C%E5%88%97%E7%BA%A7%E5%88%AB"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">3.1.3.表级别和列级别</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-%E5%AD%97%E7%AC%A6%E9%9B%86%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.3.2.</span> <span class="nav-text">3.2.字符集转换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1-mysql%E4%B8%AD%E5%AD%97%E7%AC%A6%E9%9B%86%E7%9A%84%E8%BD%AC%E6%8D%A2"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">3.2.1.mysql中字符集的转换</span></a></li></ol></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lucius"
+      src="/images/blackcat.png">
+  <p class="site-author-name" itemprop="name">Lucius</p>
+  <div class="site-description" itemprop="description">Good timing!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jeffrey8080" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jeffrey8080" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2025 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lucius</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

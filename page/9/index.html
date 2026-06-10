@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/02/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/05/08/linux%E4%B9%8Bbash/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -172,7 +172,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/05/02/linux%E4%B9%8Bvim%E7%BC%96%E8%BE%91%E5%99%A8/" class="post-title-link" itemprop="url">linux之vim编辑器</a>
+            <a href="/2025/05/08/linux%E4%B9%8Bbash/" class="post-title-link" itemprop="url">linux之bash</a>
         </h2>
 
         <div class="post-meta">
@@ -182,14 +182,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-05-02 23:52:40" itemprop="dateCreated datePublished" datetime="2025-05-02T23:52:40+08:00">2025-05-02</time>
+              <time title="创建时间：2025-05-08 23:52:40" itemprop="dateCreated datePublished" datetime="2025-05-08T23:52:40+08:00">2025-05-08</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-13 20:49:24" itemprop="dateModified" datetime="2026-05-13T20:49:24+08:00">2026-05-13</time>
+                <time title="修改时间：2026-05-13 20:49:59" itemprop="dateModified" datetime="2026-05-13T20:49:59+08:00">2026-05-13</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -212,339 +212,150 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-vi和vim区别"><a href="#1-vi和vim区别" class="headerlink" title="1.vi和vim区别"></a>1.vi和vim区别</h2><p>vi是Unix和linux系统自带，经典文本编辑器，功能基础。</p>
-<p>vim是vi的增强版，语法高亮、代码折叠、自动缩进等功能。</p>
-<h2 id="2-三种工作模式"><a href="#2-三种工作模式" class="headerlink" title="2.三种工作模式"></a>2.三种工作模式</h2><p>执行命令，进入vim模式</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim filename</span><br></pre></td></tr></table></figure>
+          <h2 id="1-shell与bash基础"><a href="#1-shell与bash基础" class="headerlink" title="1.shell与bash基础"></a>1.shell与bash基础</h2><p><strong>shell</strong>:用户与linux内核沟通的<strong>命令解释器</strong></p>
+<p>内核负责硬件管理，shell负责接收用户命令、翻译给内核执行</p>
+<p>linux默认shell几乎都是bash</p>
+<p><strong>bash可以干什么？</strong>:</p>
+<p><strong>1.命令历史记录</strong>：上下键翻历史命令</p>
+<p><strong>2.命令与文件补全</strong>：<code>Tab</code> 键补全</p>
+<p><strong>3.命令别名</strong>：<code>alias</code> 自定义简化命令</p>
+<p><strong>4.工作控制</strong>：前台、后台任务管理</p>
+<p><strong>5.脚本编程</strong>：Shell 脚本自动化运维</p>
+<p><strong>6.通配符、管道、重定向</strong> 强大组合能力</p>
+<h3 id="1-2-命令历史"><a href="#1-2-命令历史" class="headerlink" title="1.2.命令历史"></a>1.2.命令历史</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">history</span>          <span class="comment"># 查看所有历史命令</span></span><br><span class="line"><span class="built_in">history</span> n        <span class="comment"># 显示最近 n 条</span></span><br><span class="line">!n               <span class="comment"># 执行历史第 n 条命令</span></span><br><span class="line">!!               <span class="comment"># 执行上一条命令</span></span><br><span class="line">!字符串          <span class="comment"># 最近一条以该字符串开头的命令</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="2-1-一般命令模式"><a href="#2-1-一般命令模式" class="headerlink" title="2.1.一般命令模式"></a>2.1.一般命令模式</h3><h4 id="1-光标移动"><a href="#1-光标移动" class="headerlink" title="1. 光标移动"></a>1. 光标移动</h4><table>
+<h3 id="1-3-命令别名"><a href="#1-3-命令别名" class="headerlink" title="1.3.命令别名"></a>1.3.命令别名</h3><p>自定义别名：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">alias</span> ll=<span class="string">&#x27;ls -lha&#x27;</span></span><br><span class="line"><span class="built_in">alias</span> <span class="built_in">rm</span>=<span class="string">&#x27;rm -i&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>永久别名：</p>
+<p>别名写入配置文件~&#x2F;.bashrc，然后生效</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
+
+<p>取消别名:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">unalias</span> ll</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-4-环境变量"><a href="#1-4-环境变量" class="headerlink" title="1.4.环境变量"></a>1.4.环境变量</h3><p>变量查看:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">env</span>      <span class="comment"># 所有环境变量</span></span><br><span class="line"><span class="built_in">set</span>      <span class="comment"># 环境变量+自定义变量</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$PATH</span>   <span class="comment"># 打印单个变量</span></span><br></pre></td></tr></table></figure>
+
+<p>常用系统变量:</p>
+<p><code>PATH</code>：命令查找路径</p>
+<p><code>HOME</code>：用户家目录</p>
+<p><code>SHELL</code>：当前 Shell</p>
+<p><code>USER</code>：当前用户名</p>
+<p><code>LANG</code>：语系编码</p>
+<p>自定义变量:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">name=<span class="string">&quot;linux操作&quot;</span></span><br><span class="line"><span class="built_in">echo</span> <span class="variable">$name</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="1-5-管道符、重定向"><a href="#1-5-管道符、重定向" class="headerlink" title="1.5.管道符、重定向"></a>1.5.管道符、重定向</h3><h4 id="输出重定向"><a href="#输出重定向" class="headerlink" title="输出重定向"></a>输出重定向</h4><table>
 <thead>
 <tr>
-<th align="center">命令</th>
+<th align="center">符号</th>
 <th align="center">作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">h</td>
-<td align="center">光标左移一个字符</td>
+<td align="center"><code>&gt;</code></td>
+<td align="center">覆盖写入文件</td>
 </tr>
 <tr>
-<td align="center">j</td>
-<td align="center">光标下移一行</td>
+<td align="center"><code>&gt;&gt;</code></td>
+<td align="center">追加写入文件</td>
 </tr>
 <tr>
-<td align="center">k</td>
-<td align="center">光标上移一行</td>
+<td align="center"><code>2&gt;</code></td>
+<td align="center">错误信息重定向</td>
 </tr>
 <tr>
-<td align="center">l</td>
-<td align="center">光标右移一个字符</td>
-</tr>
-<tr>
-<td align="center">0</td>
-<td align="center">跳到本行行首</td>
-</tr>
-<tr>
-<td align="center">$</td>
-<td align="center">跳到本行行尾</td>
-</tr>
-<tr>
-<td align="center">gg</td>
-<td align="center">跳到文档第一行</td>
-</tr>
-<tr>
-<td align="center">G</td>
-<td align="center">跳到文档最后一行</td>
-</tr>
-<tr>
-<td align="center">nG</td>
-<td align="center">跳到第 n 行，如 <code>10G</code> 跳第 10 行</td>
-</tr>
-<tr>
-<td align="center">Ctrl + f</td>
-<td align="center">向下翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + b</td>
-<td align="center">向上翻一页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + d</td>
-<td align="center">向下翻半页</td>
-</tr>
-<tr>
-<td align="center">Ctrl + u</td>
-<td align="center">向上翻半页</td>
+<td align="center"><code>&amp;&gt;</code></td>
+<td align="center">正确 + 错误全部重定向</td>
 </tr>
 </tbody></table>
-<h4 id="2-删除操作"><a href="#2-删除操作" class="headerlink" title="2. 删除操作"></a>2. 删除操作</h4><table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将 ls 结果写入 list.txt，覆盖原有内容</span></span><br><span class="line"><span class="built_in">ls</span> -l &gt; list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看文件</span></span><br><span class="line"><span class="built_in">cat</span> list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 把正确输出写入文件，追加在文件末尾，不覆盖</span></span><br><span class="line"><span class="built_in">ls</span> /home &gt;&gt; list.txt</span><br><span class="line"><span class="built_in">ls</span> /etc &gt;&gt; list.txt</span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误信息写入 err.log，屏幕看不到报错</span></span><br><span class="line">abcdef 2&gt; err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看错误日志</span></span><br><span class="line"><span class="built_in">cat</span> err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 错误信息追加到文件，不覆盖。</span></span><br><span class="line">abc 2&gt;&gt; err.log</span><br><span class="line">def 2&gt;&gt; err.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不管对错，所有信息都写入 all.log</span></span><br><span class="line"><span class="built_in">ls</span> /home /不存在目录 &amp;&gt; all.log</span><br><span class="line"></span><br><span class="line"><span class="comment"># 不管正确还是错误都追加到文件里，常用</span></span><br><span class="line">命令 &gt;&gt; 日志文件 2&gt;&amp;1</span><br></pre></td></tr></table></figure>
+
+<h4 id="输入重定向"><a href="#输入重定向" class="headerlink" title="输入重定向 &lt;"></a>输入重定向 <code>&lt;</code></h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 等价于 cat test.txt</span></span><br><span class="line"><span class="built_in">cat</span> &lt; test.txt</span><br><span class="line"><span class="comment"># 把 list.txt 内容作为 wc 的输入，统计行数</span></span><br><span class="line"><span class="built_in">wc</span> -l &lt; list.txt</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="comment"># 在终端里直接写多行内容作为命令输入，写到标记为止。</span></span><br><span class="line"><span class="comment"># EOF 是自定义结束符，前后一致即可</span></span><br><span class="line"><span class="comment"># 中间所有文字都会写入 myfile.txt</span></span><br><span class="line"><span class="built_in">cat</span> &lt;&lt; <span class="string">EOF &gt; myfile.txt</span></span><br><span class="line"><span class="string">这是第一行内容</span></span><br><span class="line"><span class="string">这是第二行</span></span><br><span class="line"><span class="string">Linux 重定向操作</span></span><br><span class="line"><span class="string">EOF</span></span><br></pre></td></tr></table></figure>
+
+<h4 id="管道符"><a href="#管道符" class="headerlink" title="管道符 |"></a>管道符 <code>|</code></h4><p>把前一个命令<strong>输出</strong>当作后一个命令<strong>输入</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -l | grep txt</span><br><span class="line">ps aux | grep nginx</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-6-通配符与特殊符号"><a href="#1-6-通配符与特殊符号" class="headerlink" title="1.6.通配符与特殊符号"></a>1.6.通配符与特殊符号</h3><p>通配符</p>
+<table>
 <thead>
 <tr>
-<th align="center">命令</th>
+<th align="center">符号</th>
+<th align="center">含义</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>*</code></td>
+<td align="center">匹配任意多个字符</td>
+</tr>
+<tr>
+<td align="center"><code>?</code></td>
+<td align="center">匹配<strong>单个</strong>字符</td>
+</tr>
+<tr>
+<td align="center"><code>[]</code></td>
+<td align="center">匹配括号内任意一个</td>
+</tr>
+<tr>
+<td align="center"><code>[0-9]</code></td>
+<td align="center">匹配数字</td>
+</tr>
+<tr>
+<td align="center"><code>[a-z]</code></td>
+<td align="center">匹配小写字母</td>
+</tr>
+</tbody></table>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ls *.txt</span><br><span class="line">ls file?</span><br><span class="line">ls [abc]*</span><br></pre></td></tr></table></figure>
+
+<p>常用特殊符号</p>
+<table>
+<thead>
+<tr>
+<th align="center">符号</th>
 <th align="center">作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td align="center">x</td>
-<td align="center">删除光标所在<strong>后一个</strong>字符</td>
+<td align="center"><code>#</code></td>
+<td align="center">注释</td>
 </tr>
 <tr>
-<td align="center">X</td>
-<td align="center">删除光标所在<strong>前一个</strong>字符</td>
+<td align="center"><code>\</code></td>
+<td align="center">转义符</td>
 </tr>
 <tr>
-<td align="center">dd</td>
-<td align="center">删除光标所在整行</td>
+<td align="center"><code>;</code></td>
+<td align="center">一行执行多个命令</td>
 </tr>
 <tr>
-<td align="center">ndd</td>
-<td align="center">删除光标开始往下 n 行，如 <code>5dd</code></td>
+<td align="center"><code>&amp;</code></td>
+<td align="center">后台运行程序</td>
 </tr>
 <tr>
-<td align="center">d$</td>
-<td align="center">删除光标到行尾</td>
-</tr>
-<tr>
-<td align="center">d0</td>
-<td align="center">删除光标到行首</td>
+<td align="center">&#96;&#96;&#96; &#96;</td>
+<td align="center">命令替换（反引号）</td>
 </tr>
 </tbody></table>
-<h4 id="3-复制与粘贴"><a href="#3-复制与粘贴" class="headerlink" title="3. 复制与粘贴"></a>3. 复制与粘贴</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">yy</td>
-<td align="center">复制光标所在整行</td>
-</tr>
-<tr>
-<td align="center">nyy</td>
-<td align="center">复制往下 n 行，如 <code>3yy</code></td>
-</tr>
-<tr>
-<td align="center">p</td>
-<td align="center">粘贴到光标<strong>下一行</strong></td>
-</tr>
-<tr>
-<td align="center">P</td>
-<td align="center">粘贴到光标<strong>上一行</strong></td>
-</tr>
-</tbody></table>
-<h4 id="4-撤销与重做"><a href="#4-撤销与重做" class="headerlink" title="4. 撤销与重做"></a>4. 撤销与重做</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">u</td>
-<td align="center">撤销上一步操作</td>
-</tr>
-<tr>
-<td align="center">Ctrl + r</td>
-<td align="center">重做（恢复撤销）</td>
-</tr>
-</tbody></table>
-<h4 id="5-区块选择（可视化模式）"><a href="#5-区块选择（可视化模式）" class="headerlink" title="5. 区块选择（可视化模式）"></a>5. 区块选择（可视化模式）</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">v</td>
-<td align="center">字符区块选择，按光标范围选字符</td>
-</tr>
-<tr>
-<td align="center">V</td>
-<td align="center">整行区块选择，按行选中</td>
-</tr>
-<tr>
-<td align="center">Ctrl + v</td>
-<td align="center">矩形区块选择（列选择）</td>
-</tr>
-<tr>
-<td align="center">选中后 y</td>
-<td align="center">复制选中区块</td>
-</tr>
-<tr>
-<td align="center">选中后 d</td>
-<td align="center">删除选中区块</td>
-</tr>
-</tbody></table>
-<h3 id="2-2-编辑模式"><a href="#2-2-编辑模式" class="headerlink" title="2.2.编辑模式"></a>2.2.编辑模式</h3><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">进入编辑位置</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">i</td>
-<td align="center">光标<strong>前面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">I</td>
-<td align="center">本行<strong>行首</strong>插入</td>
-</tr>
-<tr>
-<td align="center">a</td>
-<td align="center">光标<strong>后面</strong>插入</td>
-</tr>
-<tr>
-<td align="center">A</td>
-<td align="center">本行<strong>行尾</strong>插入</td>
-</tr>
-<tr>
-<td align="center">o</td>
-<td align="center">光标<strong>下一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">O</td>
-<td align="center">光标<strong>上一行</strong>新开空行插入</td>
-</tr>
-<tr>
-<td align="center">r</td>
-<td align="center">只<strong>替换一个字符</strong>，自动回到命令模式</td>
-</tr>
-<tr>
-<td align="center">R</td>
-<td align="center">持续替换模式，按 ESC 退出</td>
-</tr>
-</tbody></table>
-<h3 id="2-3-底线命令模式（-开头）"><a href="#2-3-底线命令模式（-开头）" class="headerlink" title="2.3.底线命令模式（: 开头）"></a>2.3.底线命令模式（: 开头）</h3><h4 id="1-保存与退出"><a href="#1-保存与退出" class="headerlink" title="1. 保存与退出"></a>1. 保存与退出</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:q</td>
-<td align="center">正常退出（无修改可退）</td>
-</tr>
-<tr>
-<td align="center">:q!</td>
-<td align="center">强制退出，<strong>放弃所有修改</strong></td>
-</tr>
-<tr>
-<td align="center">:w</td>
-<td align="center">保存文件</td>
-</tr>
-<tr>
-<td align="center">:w!</td>
-<td align="center">强制保存（只读文件）</td>
-</tr>
-<tr>
-<td align="center">:wq</td>
-<td align="center">保存并退出</td>
-</tr>
-<tr>
-<td align="center">:x</td>
-<td align="center">保存并退出，同 <code>:wq</code></td>
-</tr>
-<tr>
-<td align="center">:w 文件名</td>
-<td align="center">另存为新文件</td>
-</tr>
-</tbody></table>
-<h4 id="2-行号与设置"><a href="#2-行号与设置" class="headerlink" title="2. 行号与设置"></a>2. 行号与设置</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:set nu</td>
-<td align="center">显示行号</td>
-</tr>
-<tr>
-<td align="center">:set nonu</td>
-<td align="center">取消行号</td>
-</tr>
-<tr>
-<td align="center">:set hlsearch</td>
-<td align="center">搜索高亮</td>
-</tr>
-<tr>
-<td align="center">:set nohlsearch</td>
-<td align="center">取消搜索高亮</td>
-</tr>
-</tbody></table>
-<h4 id="3-查找与替换"><a href="#3-查找与替换" class="headerlink" title="3. 查找与替换"></a>3. 查找与替换</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">&#x2F; 关键词</td>
-<td align="center">向下搜索关键词，n 下一个，N 上一个</td>
-</tr>
-<tr>
-<td align="center">? 关键词</td>
-<td align="center">向上搜索关键词</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new</td>
-<td align="center">当前行第一个 old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center">当前行<strong>所有</strong>old 替换为 new</td>
-</tr>
-<tr>
-<td align="center">:%s&#x2F;old&#x2F;new&#x2F;g</td>
-<td align="center"><strong>全文</strong>所有 old 替换为 new</td>
-</tr>
-</tbody></table>
-<h4 id="4-多文件-分屏"><a href="#4-多文件-分屏" class="headerlink" title="4. 多文件 &#x2F; 分屏"></a>4. 多文件 &#x2F; 分屏</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">切换到下一个文件</td>
-</tr>
-<tr>
-<td align="center">:N</td>
-<td align="center">切换到上一个文件</td>
-</tr>
-<tr>
-<td align="center">:files</td>
-<td align="center">查看所有打开的文件</td>
-</tr>
-<tr>
-<td align="center">:sp</td>
-<td align="center">水平分屏（上下）</td>
-</tr>
-<tr>
-<td align="center">:vsp</td>
-<td align="center">垂直分屏（左右）</td>
-</tr>
-</tbody></table>
-<h4 id="5-跳转行"><a href="#5-跳转行" class="headerlink" title="5. 跳转行"></a>5. 跳转行</h4><table>
-<thead>
-<tr>
-<th align="center">命令</th>
-<th align="center">作用</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">:n</td>
-<td align="center">直接跳到第 n 行，如 <code>:20</code></td>
-</tr>
-</tbody></table>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">date</span>; <span class="built_in">ls</span> -l     <span class="comment"># 依次执行两条命令</span></span><br><span class="line">ping baidu.com &amp;</span><br><span class="line"><span class="built_in">echo</span> `<span class="built_in">date</span>`</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-7-工作管理（前台-后台）"><a href="#1-7-工作管理（前台-后台）" class="headerlink" title="1.7.工作管理（前台 &#x2F; 后台）"></a>1.7.工作管理（前台 &#x2F; 后台）</h3><p>相关命令</p>
+<ul>
+<li><code>Ctrl + z</code>：把当前程序<strong>放到后台暂停</strong></li>
+<li><code>jobs</code>：查看后台任务</li>
+<li><code>bg %n</code>：后台暂停任务<strong>继续后台运行</strong></li>
+<li><code>fg %n</code>：后台任务调到<strong>前台</strong></li>
+</ul>
+<h3 id="1-8-后台运行程序"><a href="#1-8-后台运行程序" class="headerlink" title="1.8.后台运行程序"></a>1.8.后台运行程序</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序 &amp;</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-9-Bash-配置文件"><a href="#1-9-Bash-配置文件" class="headerlink" title="1.9.Bash 配置文件"></a>1.9.Bash 配置文件</h3><p>系统级（所有用户）</p>
+<p>&#x2F;etc&#x2F;profile</p>
+<p>&#x2F;etc&#x2F;bashrc</p>
+<p>用户级（当前用户）</p>
+<p>~&#x2F;.bash_profile</p>
+<p>~&#x2F;.bashrc</p>
+<p>修改配置后生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">source</span> ~/.bashrc</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -563,7 +374,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/8/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/8/">8</a><span class="page-number current">9</span><a class="page-number" href="/page/10/">10</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/10/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -631,7 +442,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">13</span>
+          <span class="site-state-item-count">14</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -644,7 +455,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">10</span>
+        <span class="site-state-item-count">11</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

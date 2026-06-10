@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 8.1.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="1.1.RAG基本概念​	RAG通常指(Retrieval Augmented Generation)，即检索增强生成。这是一种结合了信息检索与语言生成技术的方法，在自然语言处理领域有广泛应用。 1.2.为什么需要RAG？​	目前市面上有很多通用大模型，能回答生活中的很多问题，但是对于一些有行业深度的内容回答不了。 比如我问大模型：“你了解我们公司的某某产品吗？”。 那怎么解决呢，把公司某个产品使">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RAG是什么?">
+<meta property="og:url" content="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/index.html">
+<meta property="og:site_name" content="Lucius">
+<meta property="og:description" content="1.1.RAG基本概念​	RAG通常指(Retrieval Augmented Generation)，即检索增强生成。这是一种结合了信息检索与语言生成技术的方法，在自然语言处理领域有广泛应用。 1.2.为什么需要RAG？​	目前市面上有很多通用大模型，能回答生活中的很多问题，但是对于一些有行业深度的内容回答不了。 比如我问大模型：“你了解我们公司的某某产品吗？”。 那怎么解决呢，把公司某个产品使">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E7%B4%A2%E5%BC%95%E9%98%B6%E6%AE%B5.png">
+<meta property="og:image" content="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E6%A3%80%E7%B4%A2%E9%98%B6%E6%AE%B5.png">
+<meta property="article:published_time" content="2025-09-09T11:50:27.000Z">
+<meta property="article:modified_time" content="2026-06-10T07:01:58.227Z">
+<meta property="article:author" content="Lucius">
+<meta property="article:tag" content="RAG">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E7%B4%A2%E5%BC%95%E9%98%B6%E6%AE%B5.png">
+
+<link rel="canonical" href="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>RAG是什么? | Lucius</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Lucius</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">hahaha😄</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/blackcat.png">
+      <meta itemprop="name" content="Lucius">
+      <meta itemprop="description" content="Good timing!">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lucius">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RAG是什么?
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-09-09 19:50:27" itemprop="dateCreated datePublished" datetime="2025-09-09T19:50:27+08:00">2025-09-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2026-06-10 15:01:58" itemprop="dateModified" datetime="2026-06-10T15:01:58+08:00">2026-06-10</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/computer/" itemprop="url" rel="index"><span itemprop="name">computer</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="1-1-RAG基本概念"><a href="#1-1-RAG基本概念" class="headerlink" title="1.1.RAG基本概念"></a>1.1.RAG基本概念</h2><p>​	<strong>RAG</strong>通常指(Retrieval Augmented Generation)，即检索增强生成。这是一种结合了信息检索与语言生成技术的方法，在自然语言处理领域有广泛应用。</p>
+<h2 id="1-2-为什么需要RAG？"><a href="#1-2-为什么需要RAG？" class="headerlink" title="1.2.为什么需要RAG？"></a>1.2.为什么需要RAG？</h2><p>​	目前市面上有很多通用大模型，能回答生活中的很多问题，但是对于一些有行业深度的内容回答不了。</p>
+<p>比如我问大模型：“你了解我们公司的某某产品吗？”。</p>
+<p>那怎么解决呢，把公司某个产品使用手册上传给大模型不就好了吗？</p>
+<p>但会产生以下<strong>问题</strong>:</p>
+<p>1.模型上下文长度不够，无法读取所有内容。</p>
+<p>2.模型推理成本高，耗费资源。</p>
+<p>3.模型推理慢</p>
+<p>这么看来直接把文档发给模型是行不通的，所以我们只需要把问题在文档中对应的相关内容发给模型就解决了。</p>
+<p>此时，RAG技术登场了！</p>
+<h2 id="1-3-RAG基本流程"><a href="#1-3-RAG基本流程" class="headerlink" title="1.3.RAG基本流程"></a>1.3.RAG基本流程</h2><p>分为俩阶段，索引阶段和检索阶段。</p>
+<p>索引阶段：</p>
+<img src="/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E7%B4%A2%E5%BC%95%E9%98%B6%E6%AE%B5.png" class="" title="截图描述">
+
+<p>步骤： </p>
+<p>1.<strong>数据清洗和分块</strong>：对企业文档、PDF文档、数据库内容、HTML页面等原始数据进行处理。先去除噪声、HTML标签和多余空格，完成数据清洗；再将清洗后的文档划分为有意义的文本块，为后续处理做准备。</p>
+<p>2.<strong>向量化处理</strong>：使用embedding（嵌入）模型，将步骤1得到的每一个文本块，转换为对应的向量表示，把文本语义信息转化为计算机可处理的数值向量。 </p>
+<p>3.<strong>存入向量数据库</strong>：将步骤2生成的文本块向量，和原始文本块内容一一对应，一起存入向量数据库，完成知识库的构建，为后续检索做准备。</p>
+<p>检索阶段：</p>
+<img src="/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E6%A3%80%E7%B4%A2%E9%98%B6%E6%AE%B5.png" class="" title="截图描述">
+
+<p>1.<strong>查询内容向量化</strong>：接收用户查询后，使用和知识库构建阶段相同的Embedding模型，将用户的问题文本转换为向量表示。 </p>
+<p>2.<strong>相似度计算</strong>：用余弦相似度、欧几里得距离或皮尔逊相关系数等方法，计算用户查询向量与向量数据库中所有文本块向量的相似度。 </p>
+<p>3.<strong>检索相关文本块</strong>：根据计算出的相似度，从向量数据库中返回Top-k个最相关的文本块。 </p>
+<p>4.<strong>提示词增强</strong>：编写提示词，将用户的原始查询问题和检索到的Top-k个相似文本块整合在一起，形成包含上下文信息的增强提示词。 </p>
+<p>5.<strong>调用大模型</strong>：把整理好的增强提示词发送给大语言模型。 </p>
+<p>6.<strong>生成最终答案</strong>：大语言模型结合提示词中的用户问题与检索到的上下文信息，生成并返回最终的回答。 </p>
+<h2 id="1-4-RAG与传统搜索引擎的区别"><a href="#1-4-RAG与传统搜索引擎的区别" class="headerlink" title="1.4.RAG与传统搜索引擎的区别"></a>1.4.RAG与传统搜索引擎的区别</h2><h3 id="1-4-1-传统搜索引擎步骤"><a href="#1-4-1-传统搜索引擎步骤" class="headerlink" title="1.4.1.传统搜索引擎步骤"></a>1.4.1.传统搜索引擎步骤</h3><p>传统搜索引擎分为俩步骤<strong>离线数据准备</strong>和<strong>在线检索响应</strong>。</p>
+<p>一、<strong>离线阶段</strong></p>
+<p>1.<strong>网页抓取（爬行）</strong></p>
+<p>搜索引擎的爬虫程序，从种子<strong>URL</strong>出发，按照规则遍历互联网，发现并下载网页内容，同时遵循 robots.txt 协议、处理<strong>URL</strong>去重和抓取优先级调度。</p>
+<p>2.<strong>网页预处理</strong></p>
+<p>对抓取的网页进行清洗与解析：去除 HTML 标签、提取正文文本、进行中文分词、过滤停用词（如 “的”“了”），并提取标题、关键词、链接结构等关键信息。</p>
+<p>3.<strong>构建倒排索引</strong></p>
+<p>将预处理后的关键词与对应网页建立映射关系，生成倒排索引（记录每个关键词出现在哪些网页、位置及权重），并存储在大规模数据库中，实现**“词→文档”**的快速定位。</p>
+<p>二、<strong>在线阶段</strong></p>
+<p><strong>用户查询处理</strong></p>
+<p>接收用户的搜索请求，对查询词进行分词、纠错、意图识别等处理，将用户问题转化为可匹配的关键词组合。</p>
+<p><strong>索引匹配与召回</strong></p>
+<p>根据处理后的关键词，查询倒排索引，快速召回所有包含这些关键词的候选网页，形成初步结果集。</p>
+<p><strong>结果排序（Rank）</strong></p>
+<p>结合网页权重（如 PageRank）、关键词匹配度、页面质量、用户行为数据等多维度算法，对候选网页进行打分排序，确定结果的展示顺序。</p>
+<p><strong>结果生成与展示</strong></p>
+<p>为排序后的网页生成标题、摘要、缩略图等信息，并按规则分页展示给用户，同时支持广告混排、个性化推荐等附加功能。</p>
+<h3 id="1-4-2-区别"><a href="#1-4-2-区别" class="headerlink" title="1.4.2.区别"></a>1.4.2.区别</h3><table>
+<thead>
+<tr>
+<th>对比维度</th>
+<th>传统搜索引擎</th>
+<th>RAG 检索</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>核心技术原理</strong></td>
+<td>基于<strong>关键词 &#x2F; 倒排索引</strong>的字面匹配（如 BM25、TF-IDF），依赖词频、位置等统计信息；对同义词、多义词、语境理解弱，存在 “语义鸿沟”。</td>
+<td>基于<strong>向量语义匹配</strong>，用 Embedding 模型将文本转为向量，通过相似度计算找到语义相关内容；能理解深层语义、上下文关联，即使不包含相同关键词，也能识别相关内容。</td>
+</tr>
+<tr>
+<td><strong>目标与输出形式</strong></td>
+<td>核心目标是帮用户 <strong>“找到信息”</strong>，输出是**网页链接、文档列表 + 摘要 **，用户需要自己点开链接、阅读并整合信息，自己判断答案。</td>
+<td>核心目标是帮用户 <strong>“得到答案”</strong>，先检索再由大模型整合信息，直接输出**连贯、定制化的自然语言回答 **，用户无需再自己处理信息。</td>
+</tr>
+<tr>
+<td><strong>处理流程与交互方式</strong></td>
+<td>是 “单次检索 + 排序” 的单向流程，不支持对话式交互，无法根据上下文理解用户的多轮提问。</td>
+<td>是 “检索→增强提示词→大模型生成” 的闭环流程，天然支持对话式交互，能结合上下文理解用户意图，生成更贴合的回答。</td>
+</tr>
+<tr>
+<td><strong>适用场景</strong></td>
+<td>适合公开、海量互联网信息的快速导航，比如查新闻、找资料、搜公开数据。</td>
+<td>更适合企业内部知识库、私有文档、专业领域知识的问答，比如内部手册、产品文档、病历等，能保证答案的准确性和时效性，也更容易控制信息来源。</td>
+</tr>
+</tbody></table>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RAG/" rel="tag"># RAG</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/06/28/linux%E4%B9%8B%E7%A8%8B%E5%BA%8F%E7%AE%A1%E7%90%86/" rel="prev" title="linux之程序管理">
+      <i class="fa fa-chevron-left"></i> linux之程序管理
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-1-RAG%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.</span> <span class="nav-text">1.1.RAG基本概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-2-%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81RAG%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">1.2.为什么需要RAG？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-3-RAG%E5%9F%BA%E6%9C%AC%E6%B5%81%E7%A8%8B"><span class="nav-number">3.</span> <span class="nav-text">1.3.RAG基本流程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#1-4-RAG%E4%B8%8E%E4%BC%A0%E7%BB%9F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="nav-number">4.</span> <span class="nav-text">1.4.RAG与传统搜索引擎的区别</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-1-%E4%BC%A0%E7%BB%9F%E6%90%9C%E7%B4%A2%E5%BC%95%E6%93%8E%E6%AD%A5%E9%AA%A4"><span class="nav-number">4.1.</span> <span class="nav-text">1.4.1.传统搜索引擎步骤</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#1-4-2-%E5%8C%BA%E5%88%AB"><span class="nav-number">4.2.</span> <span class="nav-text">1.4.2.区别</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Lucius"
+      src="/images/blackcat.png">
+  <p class="site-author-name" itemprop="name">Lucius</p>
+  <div class="site-description" itemprop="description">Good timing!</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/jeffrey8080" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;jeffrey8080" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2025 – 
+  <span itemprop="copyrightYear">2026</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Lucius</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
