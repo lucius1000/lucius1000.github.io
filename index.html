@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2026/07/04/%E5%A6%82%E4%BD%95%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AAip%E5%92%8C%E7%AB%AF%E5%8F%A3%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%A4%9A%E4%B8%AA%E7%BD%91%E7%AB%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -174,7 +174,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/" class="post-title-link" itemprop="url">RAG是什么?</a>
+            <a href="/2026/07/04/%E5%A6%82%E4%BD%95%E5%9C%A8%E5%90%8C%E4%B8%80%E4%B8%AAip%E5%92%8C%E7%AB%AF%E5%8F%A3%E4%B8%8A%E9%83%A8%E7%BD%B2%E5%A4%9A%E4%B8%AA%E7%BD%91%E7%AB%99/" class="post-title-link" itemprop="url">如何在同一个ip和端口上部署多个网站</a>
         </h2>
 
         <div class="post-meta">
@@ -184,14 +184,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-09-09 19:50:27" itemprop="dateCreated datePublished" datetime="2025-09-09T19:50:27+08:00">2025-09-09</time>
+              <time title="创建时间：2026-07-04 22:48:06" itemprop="dateCreated datePublished" datetime="2026-07-04T22:48:06+08:00">2026-07-04</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-06-10 15:01:58" itemprop="dateModified" datetime="2026-06-10T15:01:58+08:00">2026-06-10</time>
+                <time title="修改时间：2026-07-05 22:42:01" itemprop="dateModified" datetime="2026-07-05T22:42:01+08:00">2026-07-05</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,79 +214,218 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="1-1-RAG基本概念"><a href="#1-1-RAG基本概念" class="headerlink" title="1.1.RAG基本概念"></a>1.1.RAG基本概念</h2><p>​	<strong>RAG</strong>通常指(Retrieval Augmented Generation)，即检索增强生成。这是一种结合了信息检索与语言生成技术的方法，在自然语言处理领域有广泛应用。</p>
-<h2 id="1-2-为什么需要RAG？"><a href="#1-2-为什么需要RAG？" class="headerlink" title="1.2.为什么需要RAG？"></a>1.2.为什么需要RAG？</h2><p>​	目前市面上有很多通用大模型，能回答生活中的很多问题，但是对于一些有行业深度的内容回答不了。</p>
-<p>比如我问大模型：“你了解我们公司的某某产品吗？”。</p>
-<p>那怎么解决呢，把公司某个产品使用手册上传给大模型不就好了吗？</p>
-<p>但会产生以下<strong>问题</strong>:</p>
-<p>1.模型上下文长度不够，无法读取所有内容。</p>
-<p>2.模型推理成本高，耗费资源。</p>
-<p>3.模型推理慢</p>
-<p>这么看来直接把文档发给模型是行不通的，所以我们只需要把问题在文档中对应的相关内容发给模型就解决了。</p>
-<p>此时，RAG技术登场了！</p>
-<h2 id="1-3-RAG基本流程"><a href="#1-3-RAG基本流程" class="headerlink" title="1.3.RAG基本流程"></a>1.3.RAG基本流程</h2><p>分为俩阶段，索引阶段和检索阶段。</p>
-<p>索引阶段：</p>
-<img src="/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E7%B4%A2%E5%BC%95%E9%98%B6%E6%AE%B5.png" class="" title="截图描述">
-
-<p>步骤： </p>
-<p>1.<strong>数据清洗和分块</strong>：对企业文档、PDF文档、数据库内容、HTML页面等原始数据进行处理。先去除噪声、HTML标签和多余空格，完成数据清洗；再将清洗后的文档划分为有意义的文本块，为后续处理做准备。</p>
-<p>2.<strong>向量化处理</strong>：使用embedding（嵌入）模型，将步骤1得到的每一个文本块，转换为对应的向量表示，把文本语义信息转化为计算机可处理的数值向量。 </p>
-<p>3.<strong>存入向量数据库</strong>：将步骤2生成的文本块向量，和原始文本块内容一一对应，一起存入向量数据库，完成知识库的构建，为后续检索做准备。</p>
-<p>检索阶段：</p>
-<img src="/2025/09/09/RAG%E6%98%AF%E4%BB%80%E4%B9%88/%E6%A3%80%E7%B4%A2%E9%98%B6%E6%AE%B5.png" class="" title="截图描述">
-
-<p>1.<strong>查询内容向量化</strong>：接收用户查询后，使用和知识库构建阶段相同的Embedding模型，将用户的问题文本转换为向量表示。 </p>
-<p>2.<strong>相似度计算</strong>：用余弦相似度、欧几里得距离或皮尔逊相关系数等方法，计算用户查询向量与向量数据库中所有文本块向量的相似度。 </p>
-<p>3.<strong>检索相关文本块</strong>：根据计算出的相似度，从向量数据库中返回Top-k个最相关的文本块。 </p>
-<p>4.<strong>提示词增强</strong>：编写提示词，将用户的原始查询问题和检索到的Top-k个相似文本块整合在一起，形成包含上下文信息的增强提示词。 </p>
-<p>5.<strong>调用大模型</strong>：把整理好的增强提示词发送给大语言模型。 </p>
-<p>6.<strong>生成最终答案</strong>：大语言模型结合提示词中的用户问题与检索到的上下文信息，生成并返回最终的回答。 </p>
-<h2 id="1-4-RAG与传统搜索引擎的区别"><a href="#1-4-RAG与传统搜索引擎的区别" class="headerlink" title="1.4.RAG与传统搜索引擎的区别"></a>1.4.RAG与传统搜索引擎的区别</h2><h3 id="1-4-1-传统搜索引擎步骤"><a href="#1-4-1-传统搜索引擎步骤" class="headerlink" title="1.4.1.传统搜索引擎步骤"></a>1.4.1.传统搜索引擎步骤</h3><p>传统搜索引擎分为俩步骤<strong>离线数据准备</strong>和<strong>在线检索响应</strong>。</p>
-<p>一、<strong>离线阶段</strong></p>
-<p>1.<strong>网页抓取（爬行）</strong></p>
-<p>搜索引擎的爬虫程序，从种子<strong>URL</strong>出发，按照规则遍历互联网，发现并下载网页内容，同时遵循 robots.txt 协议、处理<strong>URL</strong>去重和抓取优先级调度。</p>
-<p>2.<strong>网页预处理</strong></p>
-<p>对抓取的网页进行清洗与解析：去除 HTML 标签、提取正文文本、进行中文分词、过滤停用词（如 “的”“了”），并提取标题、关键词、链接结构等关键信息。</p>
-<p>3.<strong>构建倒排索引</strong></p>
-<p>将预处理后的关键词与对应网页建立映射关系，生成倒排索引（记录每个关键词出现在哪些网页、位置及权重），并存储在大规模数据库中，实现**“词→文档”**的快速定位。</p>
-<p>二、<strong>在线阶段</strong></p>
-<p><strong>用户查询处理</strong></p>
-<p>接收用户的搜索请求，对查询词进行分词、纠错、意图识别等处理，将用户问题转化为可匹配的关键词组合。</p>
-<p><strong>索引匹配与召回</strong></p>
-<p>根据处理后的关键词，查询倒排索引，快速召回所有包含这些关键词的候选网页，形成初步结果集。</p>
-<p><strong>结果排序（Rank）</strong></p>
-<p>结合网页权重（如 PageRank）、关键词匹配度、页面质量、用户行为数据等多维度算法，对候选网页进行打分排序，确定结果的展示顺序。</p>
-<p><strong>结果生成与展示</strong></p>
-<p>为排序后的网页生成标题、摘要、缩略图等信息，并按规则分页展示给用户，同时支持广告混排、个性化推荐等附加功能。</p>
-<h3 id="1-4-2-区别"><a href="#1-4-2-区别" class="headerlink" title="1.4.2.区别"></a>1.4.2.区别</h3><table>
+          <h2 id="1-以http的方式部署"><a href="#1-以http的方式部署" class="headerlink" title="1.以http的方式部署"></a>1.以http的方式部署</h2><h3 id="1-1-请求头"><a href="#1-1-请求头" class="headerlink" title="1.1.请求头"></a>1.1.请求头</h3><p><strong>请求头（Request Header）<strong>位于 HTTP 请求第一行之后、空行之前，是</strong>元数据</strong>，描述本次请求、客户端、资源、权限等信息。<strong>所有请求方法（GET&#x2F;POST&#x2F;PUT 等）都能携带</strong>，数据量很小。</p>
+<p><strong>客户端标识类</strong></p>
+<table>
 <thead>
 <tr>
-<th>对比维度</th>
-<th>传统搜索引擎</th>
-<th>RAG 检索</th>
+<th>Header 字段</th>
+<th>作用</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>核心技术原理</strong></td>
-<td>基于<strong>关键词 &#x2F; 倒排索引</strong>的字面匹配（如 BM25、TF-IDF），依赖词频、位置等统计信息；对同义词、多义词、语境理解弱，存在 “语义鸿沟”。</td>
-<td>基于<strong>向量语义匹配</strong>，用 Embedding 模型将文本转为向量，通过相似度计算找到语义相关内容；能理解深层语义、上下文关联，即使不包含相同关键词，也能识别相关内容。</td>
+<td>User-Agent</td>
+<td>告诉服务器客户端类型：浏览器、手机、爬虫、小程序，服务器可做适配（返回移动端页面 &#x2F; 拦截爬虫）</td>
 </tr>
 <tr>
-<td><strong>目标与输出形式</strong></td>
-<td>核心目标是帮用户 <strong>“找到信息”</strong>，输出是**网页链接、文档列表 + 摘要 **，用户需要自己点开链接、阅读并整合信息，自己判断答案。</td>
-<td>核心目标是帮用户 <strong>“得到答案”</strong>，先检索再由大模型整合信息，直接输出**连贯、定制化的自然语言回答 **，用户无需再自己处理信息。</td>
+<td>Accept</td>
+<td>客户端能接收的响应数据格式，例：<code>application/json,text/html</code>，服务器优先返回匹配格式</td>
 </tr>
 <tr>
-<td><strong>处理流程与交互方式</strong></td>
-<td>是 “单次检索 + 排序” 的单向流程，不支持对话式交互，无法根据上下文理解用户的多轮提问。</td>
-<td>是 “检索→增强提示词→大模型生成” 的闭环流程，天然支持对话式交互，能结合上下文理解用户意图，生成更贴合的回答。</td>
+<td>Accept-Encoding</td>
+<td>支持的压缩格式（gzip&#x2F;deflate&#x2F;br），服务端压缩返回，减少流量</td>
 </tr>
 <tr>
-<td><strong>适用场景</strong></td>
-<td>适合公开、海量互联网信息的快速导航，比如查新闻、找资料、搜公开数据。</td>
-<td>更适合企业内部知识库、私有文档、专业领域知识的问答，比如内部手册、产品文档、病历等，能保证答案的准确性和时效性，也更容易控制信息来源。</td>
+<td>Accept-Language</td>
+<td>客户端偏好语言 <code>zh-CN,zh;q=0.9</code>，网站根据这个返回中文 &#x2F; 英文页面</td>
 </tr>
 </tbody></table>
+<p><strong>链接与跨域类</strong></p>
+<table>
+<thead>
+<tr>
+<th>Header 字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Host</td>
+<td>指定目标服务器域名 + 端口，一台服务器绑定多域名时靠它区分站点</td>
+</tr>
+<tr>
+<td>Origin</td>
+<td>跨域请求时携带，标识请求来源页面域名，服务端 CORS 根据它判断是否允许跨域</td>
+</tr>
+<tr>
+<td>Referer</td>
+<td>上一页页面地址，用于统计来源、防盗链；可被前端篡改</td>
+</tr>
+<tr>
+<td>Connection</td>
+<td><code>keep-alive</code>：复用 TCP 连接，多次请求不用重复握手；<code>close</code> 请求完断开</td>
+</tr>
+</tbody></table>
+<p><strong>缓存控制（前端性能）</strong></p>
+<table>
+<thead>
+<tr>
+<th>Header 字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Cache-Control</td>
+<td>控制缓存策略：<code>no-cache</code> 强制校验缓存、<code>max-age=3600</code> 缓存 1 小时</td>
+</tr>
+<tr>
+<td>If-Modified-Since</td>
+<td>带上上次资源修改时间，服务端对比：未修改返回 304，不返回资源本体，节省带宽</td>
+</tr>
+<tr>
+<td>If-None-Match</td>
+<td>携带资源 ETag 标识，资源无变化返回 304</td>
+</tr>
+</tbody></table>
+<p><strong>身份鉴权</strong></p>
+<table>
+<thead>
+<tr>
+<th>Header 字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Authorization</td>
+<td>身份凭证，两种常用：Basic 账号密码、Bearer Token（JWT 登录令牌）</td>
+</tr>
+<tr>
+<td>Cookie</td>
+<td>服务器之前下发的 Cookie，自动携带；存储会话 ID、登录状态、用户偏好</td>
+</tr>
+<tr>
+<td>X-CSRF-Token</td>
+<td>防跨站请求伪造，POST &#x2F; 修改接口必填校验</td>
+</tr>
+</tbody></table>
+<p><strong>请求实体描述</strong></p>
+<table>
+<thead>
+<tr>
+<th>Header 字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Content-Type</td>
+<td><strong>指定请求体的数据格式</strong>，服务端靠它解析 body：1. <code>application/x-www-form-urlencoded</code>：普通表单2. <code>application/json</code>：JSON 接口主流3. <code>multipart/form-data</code>：上传文件4. <code>text/plain</code>：纯文本</td>
+</tr>
+<tr>
+<td>Content-Length</td>
+<td>请求体字节长度，服务端判断何时接收完毕</td>
+</tr>
+<tr>
+<td>Content-Encoding</td>
+<td>请求体本身做了压缩（极少用，一般是响应压缩）</td>
+</tr>
+</tbody></table>
+<p><strong>自定义请求头</strong></p>
+<table>
+<thead>
+<tr>
+<th>Header 字段</th>
+<th>作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>X-Request-Id</td>
+<td>全链路追踪 ID，排查日志</td>
+</tr>
+<tr>
+<td>X-Token</td>
+<td>部分自定义登录令牌（标准推荐用 Authorization）</td>
+</tr>
+<tr>
+<td>X-Platform</td>
+<td>标识客户端平台（ios&#x2F;android&#x2F;web）</td>
+</tr>
+</tbody></table>
+<h3 id="1-2-请求体"><a href="#1-2-请求体" class="headerlink" title="1.2.请求体"></a>1.2.请求体</h3><p><strong>请求体（Request Body）<strong>空行之后的实体数据，仅</strong>POST&#x2F;PUT&#x2F;PATCH 等带数据的方法</strong>才有；GET 请求规范上不能带请求体，浏览器、nginx、很多服务会忽略 GET body。用来传输业务真实数据（表单、JSON、文件二进制）。</p>
+<p><strong>application&#x2F;x-www-form-urlencoded 表单格式</strong></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">username=zhangsan&amp;password=123456</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字段：业务表单键值对，用于简单登录、提交表单</li>
+<li>限制：不支持复杂嵌套、无法传文件</li>
+</ul>
+<p><strong>application&#x2F;json（前后端分离最常用）</strong></p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span></span><br><span class="line">  <span class="attr">&quot;name&quot;</span><span class="punctuation">:</span> <span class="string">&quot;张三&quot;</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;age&quot;</span><span class="punctuation">:</span> <span class="number">20</span><span class="punctuation">,</span></span><br><span class="line">  <span class="attr">&quot;address&quot;</span><span class="punctuation">:</span> <span class="punctuation">&#123;</span><span class="attr">&quot;city&quot;</span><span class="punctuation">:</span> <span class="string">&quot;北京&quot;</span><span class="punctuation">&#125;</span></span><br><span class="line"><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>字段：JSON 对象，支持嵌套数组、对象，适合复杂接口</li>
+<li>所有字段都是业务参数，后端直接解析成实体类</li>
+</ul>
+<p><strong>multipart&#x2F;form-data 文件上传</strong></p>
+<p>分隔符分割普通文本字段 + 文件二进制流</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">------boundary</span><br><span class="line">Content-Disposition: form-data; name=&quot;username&quot;</span><br><span class="line">张三</span><br><span class="line">------boundary</span><br><span class="line">Content-Disposition: form-data; name=&quot;avatar&quot;; filename=&quot;a.jpg&quot;</span><br><span class="line">二进制图片数据</span><br></pre></td></tr></table></figure>
+
+<h3 id="1-3-部署"><a href="#1-3-部署" class="headerlink" title="1.3.部署"></a>1.3.部署</h3><p>**原理：**HTTP1.1 协议规定浏览器请求时会携带 <strong>HOST</strong> 请求头，Web 服务器（Nginx&#x2F;Apache&#x2F;IIS）通过读取这个 Host 字段，在同一个 IP、同一个端口（80&#x2F;443）区分不同网站，行业称为基于域名的虚拟主机（名称型虚拟主机）。</p>
+<p><strong>流程</strong>：</p>
+<p>目前需要部署两个网站，a.com b.com </p>
+<p>1.假设服务器ip为 111.222.333.444</p>
+<p>2.设置DNS，将两个域名指向服务器ip</p>
+<p>3.使用nginx部署</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 站点1 a.com</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> a.com ;</span><br><span class="line">    <span class="attribute">root</span> /www/a;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 站点2 b.com</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> b.com ;</span><br><span class="line">    <span class="attribute">root</span> /www/b;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 访问裸IP时默认拦截</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span> default_server;</span><br><span class="line">    <span class="attribute">server_name</span> _;</span><br><span class="line">    <span class="attribute">return</span> <span class="number">403</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Nginx 两个虚拟主机全部监听 <strong>80端口</strong>，同一个 IP，靠 HTTP 请求里的 Host 请求头分流。</p>
+<p>两个<strong>server</strong>块都监听 80 端口，没有端口冲突，区分逻辑完全依赖 <strong>server_name</strong> 匹配客户端发送的 <strong>HOST</strong> 请求头。</p>
+<p>注意：老旧 HTTP1.0 客户端不携带 Host，Nginx 会匹配第一个加载的 <strong>server块</strong>，导致访问错乱，所以推荐配置<strong>default_server</strong>兜底拦截。</p>
+<h2 id="2-以https的方式部署"><a href="#2-以https的方式部署" class="headerlink" title="2.以https的方式部署"></a>2.以https的方式部署</h2><h3 id="2-1-介绍"><a href="#2-1-介绍" class="headerlink" title="2.1.介绍"></a>2.1.介绍</h3><p><strong>HTTPS就是HTTP+TLS加密</strong></p>
+<p>https的默认端口是443，底层 TCP 先建立 TLS 加密通道，再传输原本的 HTTP 请求头、请求体。HTTP 原有所有请求头、请求体规则完全不变，字段作用一模一样；HTTPS 只是把整个报文加密，内容结构没改。</p>
+<p><strong>SNI（服务器名称指示）</strong>：客户端在 SSL 握手阶段就携带要访问的域名，Nginx 提前知道域名，选择对应证书；握手完成后再用 HTTP Host 头二次匹配站点目录</p>
+<p>现代浏览器、Nginx 默认开启 SNI，所以能单 IP:443 跑多个 HTTPS 网站。</p>
+<p><strong>客户端携带SNI过程</strong></p>
+<p>1.DNS 解析 <code>b.com</code> → 服务器公网 IP；</p>
+<p>2.客户端发起 TCP 三次握手，建立和 <code>IP:443</code> 的 TCP 管道；</p>
+<p>3.TCP 通了之后，立刻发送 TLS Client Hello 握手包。</p>
+<p>Client Hello 包含：TLS 版本、加密套件列表、随机数、扩展段 extensions，</p>
+<p><strong>SNI</strong>就是其中一个扩展。</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">TLS Client Hello</span><br><span class="line">  Extensions:</span><br><span class="line">    extension_type: server_name (0x0000)</span><br><span class="line">      Server Name Indication extension</span><br><span class="line">        Name type: host_name (0)</span><br><span class="line">        Server name: b.com</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意:</strong></p>
+<p>1.主流浏览器访问网站时，默认<strong>强制开启 SNI，自动携带域名</strong>，无需任何配置。</p>
+<p>2.curl命令默认携带SNI。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">curl https://a.com</span><br></pre></td></tr></table></figure>
+
+<p>3.python、golang、java发起请求默认携带SNI。</p>
+<h3 id="2-2-部署"><a href="#2-2-部署" class="headerlink" title="2.2.部署"></a>2.2.部署</h3><p><strong>方案 A：两套独立证书（推荐，域名分离）</strong></p>
+<p>a 证书：a.crt&#x2F;a.key 适配 a.com</p>
+<p>b 证书：b.crt&#x2F;b.key 适配 b.com</p>
+<p>存放路径 &#x2F;etc&#x2F;nginx&#x2F;ssl&#x2F;</p>
+<p><strong>方案 B：一张多域名通配证书（省事）</strong></p>
+<p>申请 SAN 证书，同时包含 a.com、b.com ，所有 server 共用一套证书</p>
+<p><strong>A Nginx 完整配置（独立证书 + SNI）</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 站点 a.com HTTPS</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">listen</span> [::]:<span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment"># SNI匹配域名 + HTTP Host匹配域名</span></span><br><span class="line">    <span class="attribute">server_name</span> a.com ;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># a域名专属证书</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/a.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/a.key;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># SSL通用优化配置（所有https站点可共用）</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">root</span> /www/a;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 站点 b.com HTTPS</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">listen</span> [::]:<span class="number">443</span> ssl;</span><br><span class="line">    <span class="attribute">server_name</span> b.com ;</span><br><span class="line"></span><br><span class="line">    <span class="comment"># b域名专属证书</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/b.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/b.key;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1.<span class="number">2</span> TLSv1.<span class="number">3</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256;</span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line"></span><br><span class="line">    <span class="attribute">root</span> /www/b;</span><br><span class="line">    <span class="attribute">index</span> index.html;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment"># 兜底默认443，防止未知域名访问</span></span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl default_server;</span><br><span class="line">    <span class="attribute">server_name</span> _;</span><br><span class="line">    <span class="comment"># 兜底随便放一张证书即可，不会正常访问</span></span><br><span class="line">    <span class="attribute">ssl_certificate</span> /etc/nginx/ssl/a.crt;</span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/a.key;</span><br><span class="line">    <span class="attribute">return</span> <span class="number">403</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><strong>B Nginx只用一张多域名 SAN 证书</strong></p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">ssl_certificate</span> /etc/nginx/ssl/all.crt;</span><br><span class="line"><span class="attribute">ssl_certificate_key</span> /etc/nginx/ssl/all.key;</span><br></pre></td></tr></table></figure>
+
+<p>握手时无论 SNI 是 a 还是 b，证书都能匹配，后续依旧靠 Host 区分网站目录。</p>
+<h3 id="2-3-访问流程"><a href="#2-3-访问流程" class="headerlink" title="2.3.访问流程"></a>2.3.访问流程</h3><p><strong>1.DNS + TCP 连接</strong></p>
+<p>  1.浏览器解析 b.com → 服务器公网 IP</p>
+<p>  2.客户端发起 TCP 连接，目标 IP:443 ，建立 TCP 通道</p>
+<p><strong>2.SSL 握手（SNI 发挥作用，决定返回哪张证书）</strong></p>
+<p>  1.客户端发送 <strong>Client Hello</strong>，携带SNI扩展字段：b.com</p>
+<p>  2.Nginx 读取 SNI 里的域名 b.com，遍历所有 listen 443 ssl 的 server 块，匹配字段 server_name b.com </p>
+<p>  3.Nginx 读取该块配置，加载 b.crt&#x2F;b.key 证书，下发给浏览器</p>
+<p>  4.双方完成密钥协商、加密通道建立</p>
+<p>关键：这一步还没有 HTTP 报文，完全靠 SNI 区分域名，选择证书</p>
+<p><strong>3.加密通道内发送 HTTP 请求（Host 头区分站点目录）</strong></p>
+<p>加密通道建立完成后，浏览器发送加密的 HTTP 请求报文：</p>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">GET</span> <span class="string">/</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>b.com</span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>xxx</span><br></pre></td></tr></table></figure>
+
+<p>  1.Nginx 解密报文，提取 Host: b.com</p>
+<p>  2.再次匹配 server_name b.com对应的 server 块</p>
+<p>  3.使用配置里 root &#x2F;www&#x2F;b 目录，读取页面内容加密返回浏览器</p>
 
       
     </div>
@@ -305,7 +444,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -375,7 +514,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -388,7 +527,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

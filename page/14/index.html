@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/10/12/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -174,7 +174,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/" class="post-title-link" itemprop="url">mysql字符集与排序规则</a>
+            <a href="/2024/10/12/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/" class="post-title-link" itemprop="url">mysql存储引擎</a>
         </h2>
 
         <div class="post-meta">
@@ -184,14 +184,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2024-09-17 18:56:38" itemprop="dateCreated datePublished" datetime="2024-09-17T18:56:38+08:00">2024-09-17</time>
+              <time title="创建时间：2024-10-12 22:44:26" itemprop="dateCreated datePublished" datetime="2024-10-12T22:44:26+08:00">2024-10-12</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-06-09 21:32:17" itemprop="dateModified" datetime="2026-06-09T21:32:17+08:00">2026-06-09</time>
+                <time title="修改时间：2026-06-09 21:32:49" itemprop="dateModified" datetime="2026-06-09T21:32:49+08:00">2026-06-09</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,64 +214,55 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="mysql字符集和比较规则"><a href="#mysql字符集和比较规则" class="headerlink" title="mysql字符集和比较规则"></a>mysql字符集和比较规则</h1><h2 id="1-字符集和比较规则"><a href="#1-字符集和比较规则" class="headerlink" title="1.字符集和比较规则"></a>1.字符集和比较规则</h2><h3 id="1-1-字符集介绍"><a href="#1-1-字符集介绍" class="headerlink" title="1.1.字符集介绍"></a>1.1.字符集介绍</h3><p>因为计算机只能存储二进制数据，那人类能够看懂的文字符号是怎么存到计算机的呢？</p>
-<p>解决方式：<strong>字符与二进制数据建立映射关系</strong></p>
-<p>有两个概念需要了解下<strong>编码</strong>和<strong>解码</strong></p>
-<p>1.<strong>将字符映射成二进制数据的过程叫做编码</strong></p>
-<p>2.<strong>将二进制数据映射成字符的过程叫做解码</strong></p>
-<p>所以用来描述某个字符范围的编码规则称为<strong>字符集</strong></p>
-<p>例如经典的ASCII字符集：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">字符    二进制</span><br><span class="line">A&lt;----&gt;01000001</span><br><span class="line">a&lt;----&gt;01100001</span><br></pre></td></tr></table></figure>
+          <h1 id="mysql存储引擎"><a href="#mysql存储引擎" class="headerlink" title="mysql存储引擎"></a>mysql存储引擎</h1><h2 id="1-InnoDB-介绍"><a href="#1-InnoDB-介绍" class="headerlink" title="1.InnoDB 介绍"></a>1.InnoDB 介绍</h2><p>mysql服务中负责对表中数据的读取和写入是存储引擎干的，服务中有多种存储引擎，比如**InnoDB、MyISAM **等，且数据在不同的存储引擎中存放格式也不同。</p>
+<p>目前我们使用的最多的还是InnoDB。InnoDB是一个将表中的数据存储到磁盘上的存储引擎，所以服务器关机重启也不会造成数据丢失。InnoDB处理数据的过程是发生在内存的，读取的时候把磁盘中的数据加载到内存中，写入的时候把内容刷新到磁盘上。</p>
+<h3 id="1-1-InnoDB页"><a href="#1-1-InnoDB页" class="headerlink" title="1.1.InnoDB页"></a>1.1.InnoDB页</h3><p>相对于内存来说，磁盘的读写速度是很慢的，所以从表里一条一条读取数据是非常慢的。这时候就需要一个好的存储引擎InnoDB。</p>
+<p>InnoDB处理方式：<strong>将数据划分为若干页，以页作为磁盘和内存之间交互的基本单位，InnoDB中页的大小一般为16KB</strong></p>
+<p>也就是说，磁盘和内存之间最低交换内容的大小为16KB。</p>
+<h3 id="1-2-InnoDB行格式"><a href="#1-2-InnoDB行格式" class="headerlink" title="1.2.InnoDB行格式"></a>1.2.InnoDB行格式</h3><p>我们平时看到的数据库表中的数据是一条一条插入的，这些记录在磁盘中的存放格式被称为行格式、记录格式。mysql的作者们设计了4种不同类型的行格式，分别是Compact、Redundant、Dynamic和Compressed行格式。</p>
+<table>
+<thead>
+<tr>
+<th>mysql版本</th>
+<th>默认行格式</th>
+<th>关键参数</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>4.x&#x2F;5.0之前</td>
+<td>REDUNDANT（冗余）</td>
+<td>仅支持Redundant</td>
+</tr>
+<tr>
+<td>5.0~5.1</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.5~5.6</td>
+<td>COMPACT（紧凑）</td>
+<td>innodb_file_format&#x3D;Antelope</td>
+</tr>
+<tr>
+<td>5.7</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_default_row_format&#x3D;DYNAMIC</td>
+</tr>
+<tr>
+<td>8.0+</td>
+<td>DYNAMIC（动态）</td>
+<td>innodb_file_format已废弃</td>
+</tr>
+</tbody></table>
+<p>从COMPACT行格式讲起</p>
+<h4 id="1-2-1-compact行"><a href="#1-2-1-compact行" class="headerlink" title="1.2.1.compact行"></a>1.2.1.compact行</h4><img src="/2024/10/12/mysql%E5%AD%98%E5%82%A8%E5%BC%95%E6%93%8E/compact%E8%A1%8C%E6%A0%BC%E5%BC%8F.png" class="" title="截图描述">
 
-<p>世界太大了，不同的人制定了不同的字符集，有ASCII字符集、ISO 8859-1字符集、GBK字符集、utf8字符集。我们写代码过程中经常能遇到utf8格式的字符。</p>
-<h3 id="1-2-比较规则介绍"><a href="#1-2-比较规则介绍" class="headerlink" title="1.2.比较规则介绍"></a>1.2.比较规则介绍</h3><p>如何比较两个字符的大小呢？</p>
-<p>最容易想到的就是直接比较二进制大小，把字符转成二进制让计算机去比。但是对于复杂的现实生活，c和C的二进制不相等，但是表达的含义是相等的，只是区分了大小写，不能说它们不一样啊！这时候，就需要定义<strong>比较规则</strong>了。这里的规则是把它们全转成大写或者小写再比较。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fmt.<span class="built_in">println</span>(strings.ToLower(<span class="type">string</span>(<span class="string">&#x27;c&#x27;</span>)) == strings.ToLower(<span class="type">string</span>(<span class="string">&#x27;C&#x27;</span>)))</span><br></pre></td></tr></table></figure>
-
-<p>不同的字符集有不同的比较规则，<strong>同一种字符集也有不同的比较规则</strong></p>
-<h2 id="2-mysql中支持的字符集和排序规则"><a href="#2-mysql中支持的字符集和排序规则" class="headerlink" title="2.mysql中支持的字符集和排序规则"></a>2.mysql中支持的字符集和排序规则</h2><p>在项目开发的过程中，我们经常需要建库或者建表，也肯定见到过utf8和utf8mb4。</p>
-<p>使用utf8字符集表示一个字符需要占用1-4个字节存储，实际上我们经常用的字符仅占用1-3个字节存储。</p>
-<p>为了提高mysql系统的存储和性能，mysql的作者定义了两个概念：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">utf8mb3: 占用1-3字节</span><br><span class="line">utf8mb4: 占用1-4字节</span><br></pre></td></tr></table></figure>
-
-<p>注意：<strong>在mysql中，utf8是utf8mb3的别名</strong></p>
-<h3 id="2-1-字符集查看"><a href="#2-1-字符集查看" class="headerlink" title="2.1.字符集查看"></a>2.1.字符集查看</h3><p>我是使用的mysql版本是8.0.27</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> charset;</span><br></pre></td></tr></table></figure>
-
-<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E5%AD%97%E7%AC%A6%E9%9B%86.png" class="" title="截图描述">
-
-<p>这里可以看到这个版本的mysql有41种字符集。</p>
-<h3 id="2-2-比较规则的查看"><a href="#2-2-比较规则的查看" class="headerlink" title="2.2.比较规则的查看"></a>2.2.比较规则的查看</h3><p>查看utf8字符集下的比较规则</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">show</span> <span class="keyword">collation</span> <span class="keyword">like</span> <span class="string">&#x27;utf8%&#x27;</span>;</span><br></pre></td></tr></table></figure>
-
-<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%AF%94%E8%BE%83%E8%A7%84%E5%88%99.png" class="" title="截图描述">
-
-<p>这些比较规则都是以utf8_开头的，utf8_german2_ci是德语比较规则，utf8_roman_ci是罗马比较规则。像utf8_general_ci就是通用比较规则，_ci结尾表示不区分大小写。如果是cs结尾表示区分大小写，as结尾区分重音，ai结尾不区分重音。</p>
-<p>当我们看到utf8_general_ci的Default列出现Yes，这说明对于utf8字符集的比较规则默认是utf8_general_ci</p>
-<h2 id="3-字符集和比较规则应用"><a href="#3-字符集和比较规则应用" class="headerlink" title="3.字符集和比较规则应用"></a>3.字符集和比较规则应用</h2><h3 id="3-1-mysql有4个级别的字符集和比较规则"><a href="#3-1-mysql有4个级别的字符集和比较规则" class="headerlink" title="3.1.mysql有4个级别的字符集和比较规则"></a>3.1.mysql有4个级别的字符集和比较规则</h3><h4 id="3-1-1-服务器级别"><a href="#3-1-1-服务器级别" class="headerlink" title="3.1.1.服务器级别"></a>3.1.1.服务器级别</h4><p>**注意:**这里的服务器是指mysql自身服务</p>
-<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB1.png" class="" title="截图描述">
-
-<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%9C%8D%E5%8A%A1%E5%99%A8%E7%BA%A7%E5%88%AB2.png" class="" title="截图描述">
-
-<p>可以在mysql的配置文件中修改然后启动。</p>
-<h4 id="3-1-2-数据库级别"><a href="#3-1-2-数据库级别" class="headerlink" title="3.1.2.数据库级别"></a>3.1.2.数据库级别</h4><img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB1.png" class="" title="截图描述">
-
-<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93%E7%BA%A7%E5%88%AB2.png" class="" title="截图描述">
-
-<h4 id="3-1-3-表级别和列级别"><a href="#3-1-3-表级别和列级别" class="headerlink" title="3.1.3.表级别和列级别"></a>3.1.3.表级别和列级别</h4><p>比如下面这条建表语句<img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%BB%BA%E8%A1%A8%E8%AF%AD%E5%8F%A5.png" class="" title="截图描述"></p>
-<p>注意：以上的级别中如果没有主动选择字符集和排序规则，将会默认选择上一级的字符集和排序规则，服务器&gt;数据库&gt;表&gt;列。</p>
-<h3 id="3-2-字符集转换"><a href="#3-2-字符集转换" class="headerlink" title="3.2.字符集转换"></a>3.2.字符集转换</h3><p>在计算机中，如果一个字符串编码和解码使用的字符集不同，会产生奇奇怪怪的字符。</p>
-<p>有时候在电脑中能看到这种字符：</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">原文:适才相戏耳</span><br><span class="line">乱码:适財楿戱洱</span><br><span class="line"></span><br><span class="line">这就是编码解码选择的字符集不同造成的结果</span><br></pre></td></tr></table></figure>
-
-<p>这时候就出现了<strong>字符集转换</strong>的概念：把某个字符按照自身的字符集解码成二进制，再使用另外一套字符集把二进制编码成字符。</p>
-<h4 id="3-2-1-mysql中字符集的转换"><a href="#3-2-1-mysql中字符集的转换" class="headerlink" title="3.2.1.mysql中字符集的转换"></a>3.2.1.mysql中字符集的转换</h4><img src="/2024/09/17/mysql%E5%AD%97%E7%AC%A6%E9%9B%86%E4%B8%8E%E6%8E%92%E5%BA%8F%E8%A7%84%E5%88%99/%E5%AE%A2%E6%88%B7%E7%AB%AF%E4%B8%8E%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%B5%81%E7%A8%8B%E5%9B%BE.png" class="" title="截图描述">
-
-<p>注意：<br>1.客户端采用的字符集和 character_set_client 不一样的话，就会导致服务器无法理解和处理请求。</p>
-<p>2.客户端采用的字符集和 character_set_results 不一样的话，这就可能会出现客户端无法解码结果集。</p>
-<p>修改字符集sql语句：</p>
-<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SET</span> character_set_client <span class="operator">=</span> 字符集名;</span><br><span class="line"><span class="keyword">SET</span> character_set_connection <span class="operator">=</span> 字符集名;</span><br><span class="line"><span class="keyword">SET</span> character_set_results <span class="operator">=</span> 字符集名;</span><br></pre></td></tr></table></figure>
-
+<p>一条完整的记录被分为<strong>额外信息</strong>和<strong>真实数据</strong>两大部分</p>
+<h5 id="1-2-1-1-额外信息"><a href="#1-2-1-1-额外信息" class="headerlink" title="1.2.1.1.额外信息"></a>1.2.1.1.额外信息</h5><p>额外信息是服务器为了描述这条记录而不得不额外添加的一些信息，这些额外信息分为3类，分别是<strong>变长字段长度列表</strong> <strong>NULL值列表</strong> 和 <strong>记录头信息</strong>。</p>
+<p><strong>变长字段长度列表</strong>:MySQL支持一些变长的数据类型，比如VARCHAR(M)、VARBINARY(M) 、各种 TEXT 类型，各种BLOB类型，我们也可以把拥有这些数据类型的列称为变长字段 ，变长字段中存储多少字节的数据是不固定的，所以我们在存储真实数据的时候需要顺便把这些数据占用的字节数也存起来，一行内所有变长字段占用的字节大小以逆序的形式放到<strong>变长字段长度列表</strong>。</p>
+<p>…</p>
+<p>时间空闲了，会把后面的内容整理出来</p>
+<p>…</p>
 
       
     </div>
@@ -290,7 +281,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span>
+    <a class="extend prev" rel="prev" href="/page/13/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/13/">13</a><span class="page-number current">14</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/15/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -360,7 +351,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -373,7 +364,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>

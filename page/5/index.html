@@ -158,7 +158,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/03/go-zero%E4%BD%BF%E7%94%A8/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2025/06/25/linux%E4%B9%8B%E7%A3%81%E7%9B%98%E9%85%8D%E9%A2%9D%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/blackcat.png">
@@ -174,7 +174,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2025/06/03/go-zero%E4%BD%BF%E7%94%A8/" class="post-title-link" itemprop="url">go-zero使用</a>
+            <a href="/2025/06/25/linux%E4%B9%8B%E7%A3%81%E7%9B%98%E9%85%8D%E9%A2%9D%E4%B8%8E%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%AE%A1%E7%90%86/" class="post-title-link" itemprop="url">linux之磁盘配额与文件系统管理</a>
         </h2>
 
         <div class="post-meta">
@@ -184,14 +184,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2025-06-03 13:02:29" itemprop="dateCreated datePublished" datetime="2025-06-03T13:02:29+08:00">2025-06-03</time>
+              <time title="创建时间：2025-06-25 23:08:08" itemprop="dateCreated datePublished" datetime="2025-06-25T23:08:08+08:00">2025-06-25</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2026-05-31 23:20:33" itemprop="dateModified" datetime="2026-05-31T23:20:33+08:00">2026-05-31</time>
+                <time title="修改时间：2026-05-25 23:53:44" itemprop="dateModified" datetime="2026-05-25T23:53:44+08:00">2026-05-25</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -214,132 +214,286 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="1-简介"><a href="#1-简介" class="headerlink" title="1.简介"></a>1.简介</h1><p><strong>go-zero 是面向云原生场景的 Go 语言框架，覆盖 API、RPC、微服务治理与基础组件。</strong></p>
-<p>官网地址：<a target="_blank" rel="noopener" href="https://go-zero.dev/zh-cn/">go-zero 文档</a></p>
-<p>试用场景：互联网高并发服务。中后台业务系统。微服务拆分与演进。从单体迁移到分布式架构。</p>
-<p>架构概述、设计原则、项目结构等概念可以直接去官网阅读。</p>
-<h1 id="2-环境安装"><a href="#2-环境安装" class="headerlink" title="2.环境安装"></a>2.环境安装</h1><p>首先新建一个文件夹，我这里命名为goZeroProject。我本地开发工具是vscode，我使用此工具打开。</p>
-<p>打开工具终端在当前项目文件夹下执行以下命令初始化项目，可以看到go.mod文件生成。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go mod init goZeroProject</span><br></pre></td></tr></table></figure>
-
-<p>安装goctl代码生成工具</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go install github.com/zeromicro/go-zero/tools/goctl@latest</span><br></pre></td></tr></table></figure>
-
-<p>使用脚手架生成一个api服务server</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">goctl api new server</span><br></pre></td></tr></table></figure>
-
-<p>拉取依赖</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cd</span> server</span><br><span class="line">go mod tidy</span><br></pre></td></tr></table></figure>
-
-<p>运行启动</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go run server.go -f etc/server-api.yaml</span><br></pre></td></tr></table></figure>
-
-<p>浏览器打开输入地址即可看到响应，一个简单的微服务就这样启动成功了。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http://localhost:8888/from/me</span><br></pre></td></tr></table></figure>
-
-<h1 id="3-Etcd使用"><a href="#3-Etcd使用" class="headerlink" title="3.Etcd使用"></a>3.Etcd使用</h1><p>Etcd是一个<strong>分布式、高可用、强一致性的键值存储系统</strong>，由CoreOS公司开发（后被CNCF托管）。</p>
-<p><strong>核心定位</strong>：</p>
+          <h2 id="一、磁盘配额（Quota）"><a href="#一、磁盘配额（Quota）" class="headerlink" title="一、磁盘配额（Quota）"></a>一、磁盘配额（Quota）</h2><h3 id="1-作用与适用场景"><a href="#1-作用与适用场景" class="headerlink" title="1. 作用与适用场景"></a>1. 作用与适用场景</h3><p>磁盘配额（Quota）：<strong>限制用户 &#x2F; 用户组在分区内可使用的磁盘容量、文件数量</strong>，防止单人占用全部磁盘资源。</p>
 <ul>
-<li>分布式系统的<strong>配置中心、服务注册发现中心、分布式锁中心</strong></li>
-<li>Kubernetes 默认的<strong>唯一持久化存储</strong>（存储集群所有元数据）</li>
+<li>适用：多人共用服务器、FTP、共享目录</li>
+<li>限制维度：<ol>
+<li><strong>容量 (block)</strong>：占用磁盘大小</li>
+<li><strong>文件数 (inode)</strong>：创建文件 &#x2F; 目录总个数</li>
+</ol>
+</li>
+<li>限制级别：<ul>
+<li><strong>软限制 (soft)</strong>：警告阈值，可临时超出，有宽限期</li>
+<li><strong>硬限制 (hard)</strong>：绝对上限，到达后无法再写入 &#x2F; 新建文件</li>
 </ul>
-<p><strong>核心特性</strong>：</p>
-<p>​	<strong>强一致性</strong>：基于 Raft 共识算法，保证多节点数据完全一致</p>
-<p>​	<strong>高可用</strong>：多节点集群，部分节点故障不影响服务</p>
-<p>​	<strong>键值存储</strong>：简单的 <code>key=value</code> 数据模型，支持版本控制、监听</p>
-<p>​	<strong>安全可靠</strong>：支持 TLS 加密、权限认证</p>
-<p>​	<strong>轻量</strong>：资源占用低，部署简单</p>
-<p><strong>具有以下应用场景</strong>：</p>
-<p>​	<strong>服务注册与发现</strong>：微服务注册地址，客户端发现服务</p>
-<p>​	<strong>配置中心</strong>：统一管理分布式服务配置，实时推送更新</p>
-<p>​	<strong>分布式锁</strong>：解决分布式系统并发竞争问题</p>
-<p>​	<strong>集群选主</strong>：通过 Raft 实现主节点选举</p>
-<p>​	<strong>Kubernetes 存储</strong>：存储集群节点、Pod、Service 等所有核心数据</p>
-<h2 id="3-1-概念简述"><a href="#3-1-概念简述" class="headerlink" title="3.1.概念简述"></a>3.1.概念简述</h2><p>1.Raft 算法</p>
-<p>etcd 使用 Raft 实现分布式一致性：</p>
+</li>
+</ul>
+<h3 id="2-linux文件系统"><a href="#2-linux文件系统" class="headerlink" title="2. linux文件系统"></a>2. linux文件系统</h3><p>​	<strong>文件系统是操作系统管理磁盘数据的规则与结构</strong>。</p>
+<h4 id="2-1-文件系统核心特性"><a href="#2-1-文件系统核心特性" class="headerlink" title="2.1. 文件系统核心特性"></a>2.1. 文件系统核心特性</h4><p>1.<strong>一切皆文件</strong>：硬件、目录、进程、套接字、设备都以文件形式访问</p>
+<p>2.<strong>单一根目录</strong>：整个系统只有一个根 <code>/</code>，所有分区、磁盘都<strong>挂载</strong>到根目录下，无 Windows C&#x2F;D 盘符概念</p>
+<p>3.<strong>目录树结构</strong>：树形层级目录，从 <code>/</code> 向下延伸</p>
+<h4 id="2-2-linux目录结构"><a href="#2-2-linux目录结构" class="headerlink" title="2.2. linux目录结构"></a>2.2. linux目录结构</h4><table>
+<thead>
+<tr>
+<th>目录</th>
+<th>作用说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>/</code></td>
+<td>根目录，所有目录起点</td>
+</tr>
+<tr>
+<td><code>/bin</code></td>
+<td>普通用户可执行基础命令（ls、cp、cd 等）</td>
+</tr>
+<tr>
+<td><code>/sbin</code></td>
+<td>系统管理员命令（开机、修复、运维命令，多为 root 使用）</td>
+</tr>
+<tr>
+<td><code>/boot</code></td>
+<td>开机引导文件、内核、grub 引导程序</td>
+</tr>
+<tr>
+<td><code>/dev</code></td>
+<td>设备文件（硬盘、分区、光驱、终端等硬件抽象）</td>
+</tr>
+<tr>
+<td><code>/etc</code></td>
+<td>系统、服务、软件<strong>配置文件</strong>目录</td>
+</tr>
+<tr>
+<td><code>/home</code></td>
+<td>普通用户家目录，<code>/home/用户名</code></td>
+</tr>
+<tr>
+<td><code>/lib /lib64</code></td>
+<td>系统运行依赖的库文件、模块</td>
+</tr>
+<tr>
+<td><code>/media</code></td>
+<td>自动挂载点：U 盘、光盘、移动硬盘</td>
+</tr>
+<tr>
+<td><code>/mnt</code></td>
+<td>临时手动挂载目录（挂载分区、共享目录常用）</td>
+</tr>
+<tr>
+<td><code>/opt</code></td>
+<td>第三方额外软件安装目录</td>
+</tr>
+<tr>
+<td><code>/proc</code></td>
+<td><strong>伪文件系统</strong>，实时存放内核、进程运行信息（不占磁盘空间）</td>
+</tr>
+<tr>
+<td><code>/root</code></td>
+<td>root 管理员家目录</td>
+</tr>
+<tr>
+<td><code>/run</code></td>
+<td>运行时临时数据，进程 PID、套接字，重启清空</td>
+</tr>
+<tr>
+<td><code>/tmp</code></td>
+<td>临时文件目录，所有用户可读写，定期清理</td>
+</tr>
+<tr>
+<td><code>/usr</code></td>
+<td>系统软件、文档、帮助、源码、应用程序（最大目录之一）</td>
+</tr>
+<tr>
+<td><code>/var</code></td>
+<td>动态变化数据：日志、缓存、数据库、邮件</td>
+</tr>
+</tbody></table>
+<h4 id="2-3-文件系统核心组成（Ext-XFS-通用底层结构）"><a href="#2-3-文件系统核心组成（Ext-XFS-通用底层结构）" class="headerlink" title="2.3. 文件系统核心组成（Ext&#x2F;XFS 通用底层结构）"></a>2.3. 文件系统核心组成（Ext&#x2F;XFS 通用底层结构）</h4><p>一块格式化后的分区，被文件系统划分为三大核心部分：</p>
+<p>1.超级块（Super Block）整个文件系统的<strong>总描述信息</strong>。</p>
+<p>记录：文件系统类型、总容量、块大小、空闲块数量、挂载状态、日志信息、UUID</p>
+<p>超级块损坏 → 整个分区无法挂载、数据丢失</p>
+<p>为防损坏，系统会<strong>多处备份超级块</strong></p>
+<p>2.Inode（索引节点）记录<strong>文件元数据</strong>（属性信息），<strong>不存储文件内容</strong>。每一个文件 &#x2F; 目录对应<strong>唯一 inode 编号</strong>。</p>
+<p>Inode 包含信息</p>
 <ul>
-<li><strong>Leader</strong>：主节点，处理所有写请求</li>
-<li><strong>Follower</strong>：从节点，同步数据，被动响应</li>
-<li><strong>Candidate</strong>：候选节点，Leader 故障时参与选举</li>
+<li>文件类型、权限、UID、GID</li>
+<li>文件大小、硬链接数</li>
+<li>三个时间戳：访问时间 (atime)、修改时间 (mtime)、状态改动时间 (ctime)</li>
+<li><strong>数据块指针</strong>：指向真实存放内容的磁盘块</li>
 </ul>
-<p>2.重要术语</p>
+<p>Inode特点:</p>
+<p>​	<strong>同分区内 inode 号唯一</strong>，跨分区可重复</p>
+<p>​	新建文件就占用一个 inode，磁盘满分两种情况：1.空间不足：block 耗尽。2.文件过多：inode 耗尽（小文件大量场景常见）</p>
+<p>​	磁盘配额中 <code>inodes</code> 限制，就是限制文件 &#x2F; 目录总数</p>
+<p>查看Inode</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ls</span> -i        <span class="comment"># 查看文件 inode 号</span></span><br><span class="line"><span class="built_in">df</span> -i        <span class="comment"># 查看分区 inode 使用情况</span></span><br></pre></td></tr></table></figure>
+
+<p>3.Block（数据块）</p>
 <ul>
-<li><strong>Revision</strong>：数据版本号，每次修改自增，支持历史版本查询</li>
-<li><strong>Lease</strong>：租约，给 key 设置过期时间，类似 Redis 的 TTL</li>
-<li><strong>Watch</strong>：监听 key 变化，实时获取变更通知</li>
-<li><strong>Cluster</strong>：etcd 集群，推荐 3&#x2F;5&#x2F;7 奇数节点，容错性最强</li>
+<li>真正<strong>存放文件内容</strong>的磁盘最小单位</li>
+<li>格式化时指定块大小（常见 1K&#x2F;2K&#x2F;4K）</li>
+<li>一个大文件会占用多个 block；极小文件也至少占</li>
 </ul>
-<h2 id="3-2-部署"><a href="#3-2-部署" class="headerlink" title="3.2.部署"></a>3.2.部署</h2><p>我这边就找一台linux服务器使用docker部署一个etcd服务完成项目实践。</p>
-<p><strong>注意</strong>：etcd 生产环境必须集群部署。单节点容易故障，出现宕机、断电、进程崩溃、磁盘损坏，所有读写请求直接失败，依赖 etcd 的服务（如 K8s、微服务）全部异常。单节点无法应对硬件故障、系统升级、运维停机，完全不满足生产持续运行要求。</p>
-<p>我这里使用docker部署，先拉取镜像</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull quay.io/coreos/etcd:v3.5.15</span><br></pre></td></tr></table></figure>
+<h3 id="3-前置条件"><a href="#3-前置条件" class="headerlink" title="3. 前置条件"></a>3. 前置条件</h3><ol>
+<li><p>文件系统必须支持 Quota：<code>ext2/ext3/ext4/xfs</code>（主流都支持）</p>
+</li>
+<li><p>挂载分区时</p>
+<p>开启配额参数</p>
+<ul>
+<li>ext 系列：挂载参数 <code>usrquota,grpquota</code></li>
+<li>xfs 系列：挂载参数 <code>uquota,gquota</code></li>
+</ul>
+</li>
+<li><p>仅对<strong>独立分区</strong>生效，不能针对单一目录</p>
+</li>
+</ol>
+<h3 id="4-分区开启配额（以-ext4-为例）"><a href="#4-分区开启配额（以-ext4-为例）" class="headerlink" title="4. 分区开启配额（以 ext4 为例）"></a>4. 分区开启配额（以 ext4 为例）</h3><h4 id="4-1-临时生效（重启失效）"><a href="#4-1-临时生效（重启失效）" class="headerlink" title="4.1. 临时生效（重启失效）"></a>4.1. 临时生效（重启失效）</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 重新挂载分区并开启用户、组配额</span></span><br><span class="line">mount -o remount,usrquota,grpquota /挂载点</span><br></pre></td></tr></table></figure>
 
-<p>docker启动服务</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">docker run -d \</span><br><span class="line">  --name etcd \</span><br><span class="line">  --restart=always \</span><br><span class="line">  -p 2379:2379 \</span><br><span class="line">  -p 2380:2380 \</span><br><span class="line">  -v /env/middleware/etcd:/etcd-data \</span><br><span class="line">  quay.io/coreos/etcd:v3.5.15 \</span><br><span class="line">  /usr/local/bin/etcd \</span><br><span class="line">  --data-dir=/etcd-data \</span><br><span class="line">  --listen-client-urls http://0.0.0.0:2379 \</span><br><span class="line">  --advertise-client-urls http://127.0.0.1:2379</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-永久生效（修改-etc-fstab）"><a href="#4-2-永久生效（修改-etc-fstab）" class="headerlink" title="4.2. 永久生效（修改 /etc/fstab）"></a>4.2. 永久生效（修改 <code>/etc/fstab</code>）</h4><p>编辑文件：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /etc/fstab</span><br></pre></td></tr></table></figure>
 
-<p>然后验证是否成功启动</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker ps -a | grep etcd</span><br></pre></td></tr></table></figure>
+<p>在对应分区字段添加挂载参数：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/sdb1  /data  ext4  defaults,usrquota,grpquota  0 0</span><br></pre></td></tr></table></figure>
 
-<h1 id="4-demo演示"><a href="#4-demo演示" class="headerlink" title="4.demo演示"></a>4.demo演示</h1><p>我这里使用用户服务和图书服务做简单的演示。</p>
-<h2 id="4-1-创建服务并启动"><a href="#4-1-创建服务并启动" class="headerlink" title="4.1.创建服务并启动"></a>4.1.创建服务并启动</h2><p>1.创建目录user-server和book-server</p>
-<p>2.分别在这两个目录下创建api目录</p>
-<p>3.编写对应的.api文件，如下：</p>
-<p>book.api文件</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br></pre></td><td class="code"><pre><span class="line">info (</span><br><span class="line">	title: &quot;Book Service API&quot;</span><br><span class="line">	desc:  &quot;图书服务：实现图书的 CRUD 操作&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type Book &#123;</span><br><span class="line">	Id          int64  `json:&quot;id&quot;`</span><br><span class="line">	Title       string `json:&quot;title&quot;`</span><br><span class="line">	Author      string `json:&quot;author&quot;`</span><br><span class="line">	Isbn        string `json:&quot;isbn&quot;`</span><br><span class="line">	PublishedAt int64  `json:&quot;publishedAt&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type CreateBookReq &#123;</span><br><span class="line">	Title       string `json:&quot;title&quot;`</span><br><span class="line">	Author      string `json:&quot;author&quot;`</span><br><span class="line">	Isbn        string `json:&quot;isbn&quot;`</span><br><span class="line">	PublishedAt int64  `json:&quot;publishedAt&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type UpdateBookReq &#123;</span><br><span class="line">	Title       string `json:&quot;title&quot;`</span><br><span class="line">	Author      string `json:&quot;author&quot;`</span><br><span class="line">	Isbn        string `json:&quot;isbn&quot;`</span><br><span class="line">	PublishedAt int64  `json:&quot;publishedAt&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type IdReq &#123;</span><br><span class="line">	Id int64 `path:&quot;id&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type ListBooksReq &#123;</span><br><span class="line">	Page     int64 `form:&quot;page&quot;`</span><br><span class="line">	PageSize int64 `form:&quot;pageSize&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type ListBooksResp &#123;</span><br><span class="line">	List  []Book `json:&quot;list&quot;`</span><br><span class="line">	Total int64  `json:&quot;total&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type DeleteResp &#123;</span><br><span class="line">	Success bool `json:&quot;success&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service book-api &#123;</span><br><span class="line">	@handler CreateBook</span><br><span class="line">	post /books (CreateBookReq) returns (Book)</span><br><span class="line"></span><br><span class="line">	@handler GetBook</span><br><span class="line">	get /books/:id returns (Book)</span><br><span class="line"></span><br><span class="line">	@handler UpdateBook</span><br><span class="line">	put /books/:id (UpdateBookReq) returns (Book)</span><br><span class="line"></span><br><span class="line">	@handler DeleteBook</span><br><span class="line">	delete /books/:id returns (DeleteResp)</span><br><span class="line"></span><br><span class="line">	@handler ListBooks</span><br><span class="line">	get /books (ListBooksReq) returns (ListBooksResp)</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>重新挂载生效：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o remount /data</span><br></pre></td></tr></table></figure>
 
-<p>user.api文件</p>
-<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line">info (</span><br><span class="line">	title: &quot;User Service API&quot;</span><br><span class="line">	desc:  &quot;用户服务：实现用户的 CRUD 操作&quot;</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">type User &#123;</span><br><span class="line">	Id        int64  `json:&quot;id&quot;`</span><br><span class="line">	Name      string `json:&quot;name&quot;`</span><br><span class="line">	Email     string `json:&quot;email&quot;`</span><br><span class="line">	CreatedAt int64  `json:&quot;createdAt&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type CreateUserReq &#123;</span><br><span class="line">	Name  string `json:&quot;name&quot;`</span><br><span class="line">	Email string `json:&quot;email&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type UpdateUserReq &#123;</span><br><span class="line">	Name  string `json:&quot;name&quot;`</span><br><span class="line">	Email string `json:&quot;email&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type IdReq &#123;</span><br><span class="line">	Id int64 `path:&quot;id&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type ListUsersReq &#123;</span><br><span class="line">	Page     int64 `form:&quot;page&quot;`</span><br><span class="line">	PageSize int64 `form:&quot;pageSize&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type ListUsersResp &#123;</span><br><span class="line">	List  []User `json:&quot;list&quot;`</span><br><span class="line">	Total int64  `json:&quot;total&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">type DeleteResp &#123;</span><br><span class="line">	Success bool `json:&quot;success&quot;`</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">service user-api &#123;</span><br><span class="line">	@handler CreateUser</span><br><span class="line">	post /users (CreateUserReq) returns (User)</span><br><span class="line"></span><br><span class="line">	@handler GetUser</span><br><span class="line">	get /users/:id returns (User)</span><br><span class="line"></span><br><span class="line">	@handler UpdateUser</span><br><span class="line">	put /users/:id (UpdateUserReq) returns (User)</span><br><span class="line"></span><br><span class="line">	@handler DeleteUser</span><br><span class="line">	delete /users/:id returns (DeleteResp)</span><br><span class="line"></span><br><span class="line">	@handler ListUsers</span><br><span class="line">	get /users (ListUsersReq) returns (ListUsersResp)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="5-ext4-配额完整实操流程"><a href="#5-ext4-配额完整实操流程" class="headerlink" title="5. ext4 配额完整实操流程"></a>5. ext4 配额完整实操流程</h3><h4 id="5-1-生成配额数据库文件"><a href="#5-1-生成配额数据库文件" class="headerlink" title="5.1. 生成配额数据库文件"></a>5.1. 生成配额数据库文件</h4><figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">quotacheck`：扫描分区、创建配额记录文件 `aquota.user`、`aquota.group</span><br></pre></td></tr></table></figure>
 
-<p>4.执行命令，生成服务代码。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">goctl api go -api user-server/api/user.api -<span class="built_in">dir</span> user-server</span><br><span class="line">goctl api go -api book-server/api/book.api -<span class="built_in">dir</span> book-server</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -a 所有分区 -u 用户 -g 组 -m 强制扫描（不挂载只读）</span></span><br><span class="line">quotacheck -augm</span><br></pre></td></tr></table></figure>
 
-<p>5.生成的代码目录结构，用我本地的目录演示</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">D:\GoStudy\go-zero-project&gt;tree .</span><br><span class="line">卷 Data 的文件夹 PATH 列表</span><br><span class="line">卷序列号为 0000005A 78F7:3509</span><br><span class="line">D:\GOSTUDY\GO-ZERO-PROJECT</span><br><span class="line">├─book-server</span><br><span class="line">│  ├─api</span><br><span class="line">│  ├─etc</span><br><span class="line">│  └─internal</span><br><span class="line">│      ├─config</span><br><span class="line">│      ├─handler</span><br><span class="line">│      ├─logic</span><br><span class="line">│      ├─svc</span><br><span class="line">│      └─types</span><br><span class="line">└─user-server</span><br><span class="line">    ├─api</span><br><span class="line">    ├─etc</span><br><span class="line">    └─internal</span><br><span class="line">        ├─config</span><br><span class="line">        ├─handler</span><br><span class="line">        ├─logic</span><br><span class="line">        ├─svc</span><br><span class="line">        └─types</span><br><span class="line"></span><br><span class="line">D:\GoStudy\go-zero-project&gt;      </span><br></pre></td></tr></table></figure>
+<p>执行后在分区根目录生成隐藏配额文件。</p>
+<h4 id="5-2-开启-关闭配额服务"><a href="#5-2-开启-关闭配额服务" class="headerlink" title="5.2. 开启 &#x2F; 关闭配额服务"></a>5.2. 开启 &#x2F; 关闭配额服务</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">quotaon -auvg   <span class="comment"># 开启所有分区配额</span></span><br><span class="line">quotaoff -auvg  <span class="comment"># 关闭所有分区配额</span></span><br></pre></td></tr></table></figure>
 
-<p>6.启动俩个服务，并测试接口响应成功。（本项目为简单演示，不做数据库配置，感兴趣请自行配置）</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go run book.go</span><br><span class="line">go run user.go</span><br></pre></td></tr></table></figure>
+<h4 id="5-3-配置用户配额-edquota"><a href="#5-3-配置用户配额-edquota" class="headerlink" title="5.3. 配置用户配额 edquota"></a>5.3. 配置用户配额 <code>edquota</code></h4><p>编辑单个用户配额：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota 用户名</span><br></pre></td></tr></table></figure>
 
-<h2 id="4-2-配置中心与注册中心"><a href="#4-2-配置中心与注册中心" class="headerlink" title="4.2.配置中心与注册中心"></a>4.2.配置中心与注册中心</h2><p>接下来就要使用到etcd了。</p>
-<h3 id="4-2-1-配置中心"><a href="#4-2-1-配置中心" class="headerlink" title="4.2.1.配置中心"></a>4.2.1.配置中心</h3><p>1.修改刚才创建好两个服务下&#x2F;etc&#x2F;xxxx.yaml文件，修改Etcd地址和端口号。</p>
-<p>book-api.yaml</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Name:</span> <span class="string">book-api</span></span><br><span class="line"><span class="attr">Host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"><span class="attr">Port:</span> <span class="number">9091</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Etcd:</span></span><br><span class="line">  <span class="attr">Hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:2379</span></span><br><span class="line">  <span class="attr">Key:</span> <span class="string">book-api</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>编辑界面字段说明：</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Filesystem       blocks   soft   hard   inodes   soft   hard</span><br><span class="line">/dev/sdb1          0     10240  20480    0      200    500</span><br></pre></td></tr></table></figure>
 
-<p>user-api.yaml</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">Name:</span> <span class="string">user-api</span></span><br><span class="line"><span class="attr">Host:</span> <span class="number">0.0</span><span class="number">.0</span><span class="number">.0</span></span><br><span class="line"><span class="attr">Port:</span> <span class="number">9092</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Etcd:</span></span><br><span class="line">  <span class="attr">Hosts:</span></span><br><span class="line">    <span class="bullet">-</span> <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span><span class="string">:2379</span></span><br><span class="line">  <span class="attr">Key:</span> <span class="string">user-api</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>blocks</code>：已占用磁盘块 (KB)</li>
+<li><code>soft(块)</code>：容量软限制 (10M)</li>
+<li><code>hard(块)</code>：容量硬限制 (20M)</li>
+<li><code>inodes</code>：已创建文件数</li>
+<li><code>soft(节点)</code>：文件数软限制 (200 个)</li>
+<li><code>hard(节点)</code>：文件数硬限制 (500 个)</li>
+</ul>
+<h4 id="5-4-配置组配额"><a href="#5-4-配置组配额" class="headerlink" title="5.4. 配置组配额"></a>5.4. 配置组配额</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -g 组名</span><br></pre></td></tr></table></figure>
 
-<p>2.可以使用命令行的方式添加，也可以找一个开源的webUI配置地址和端口，在页面上添加配置。</p>
-<p>我自己使用的是webUI</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">docker pull tzfun/etcd-workbench:latest</span><br><span class="line">docker run -d --name etcd-workbench --restart=always -p 22378:8002   tzfun/etcd-workbench:latest</span><br></pre></td></tr></table></figure>
+<h4 id="5-5-复制配额规则（批量用户）"><a href="#5-5-复制配额规则（批量用户）" class="headerlink" title="5.5. 复制配额规则（批量用户）"></a>5.5. 复制配额规则（批量用户）</h4><p>把 A 用户规则复制给 B&#x2F;C 用户：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -u 源用户 --duplicate 目标用户1 目标用户2</span><br></pre></td></tr></table></figure>
 
-<p>然后在浏览器输入地址:端口，就可以访问页面了</p>
-<p>3.添加keys，然后保存，然后不用重启服务自动热更新，可以在代码里验证一下。</p>
-<p>book-api</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">book:</span></span><br><span class="line">  <span class="attr">book1:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">hello</span></span><br><span class="line">    <span class="attr">price:</span> <span class="number">23.3</span></span><br><span class="line">  <span class="attr">book2:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">world</span></span><br><span class="line">    <span class="attr">price:</span> <span class="number">24.5</span></span><br></pre></td></tr></table></figure>
+<h4 id="5-6-设置宽限时间"><a href="#5-6-设置宽限时间" class="headerlink" title="5.6. 设置宽限时间"></a>5.6. 设置宽限时间</h4><p>超出软限制后，允许继续使用的天数：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">edquota -t</span><br></pre></td></tr></table></figure>
 
-<p>user-api</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">user:</span></span><br><span class="line">  <span class="attr">user1:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">mike</span></span><br><span class="line">    <span class="attr">age:</span> <span class="number">22</span></span><br><span class="line">  <span class="attr">user2:</span></span><br><span class="line">    <span class="attr">name:</span> <span class="string">jack</span></span><br><span class="line">    <span class="attr">age:</span> <span class="number">23</span></span><br></pre></td></tr></table></figure>
+<h4 id="5-7-查看配额状态"><a href="#5-7-查看配额状态" class="headerlink" title="5.7. 查看配额状态"></a>5.7. 查看配额状态</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">quota 用户名        <span class="comment"># 查看单个用户配额</span></span><br><span class="line">quota -g 组名       <span class="comment"># 查看组配额</span></span><br><span class="line">repquota -a         <span class="comment"># 汇总查看所有分区配额报表（运维常用）</span></span><br></pre></td></tr></table></figure>
 
-<h3 id="4-2-2-注册中心"><a href="#4-2-2-注册中心" class="headerlink" title="4.2.2.注册中心"></a>4.2.2.注册中心</h3><p>1.新增一个etcd注册文件etcd.go</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> registry</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	clientv3 <span class="string">&quot;go.etcd.io/etcd/client/v3&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> EtcdRegistrar <span class="keyword">struct</span> &#123;</span><br><span class="line">	cli     *clientv3.Client</span><br><span class="line">	leaseID clientv3.LeaseID</span><br><span class="line">	key     <span class="type">string</span></span><br><span class="line">	val     <span class="type">string</span></span><br><span class="line">	ctx     context.Context</span><br><span class="line">	cancel  context.CancelFunc</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewEtcdRegistrar</span><span class="params">(hosts []<span class="type">string</span>, key, val <span class="type">string</span>)</span></span> (*EtcdRegistrar, <span class="type">error</span>) &#123;</span><br><span class="line">	cli, err := clientv3.New(clientv3.Config&#123;</span><br><span class="line">		Endpoints:   hosts,</span><br><span class="line">		DialTimeout: <span class="number">5</span> * time.Second,</span><br><span class="line">	&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;EtcdRegistrar&#123;cli: cli, key: key, val: val&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *EtcdRegistrar)</span></span> Register() <span class="type">error</span> &#123;</span><br><span class="line">	leaseResp, err := r.cli.Grant(context.Background(), <span class="number">10</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	r.leaseID = leaseResp.ID</span><br><span class="line"></span><br><span class="line">	_, err = r.cli.Put(context.Background(), r.key, r.val, clientv3.WithLease(r.leaseID))</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r.ctx, r.cancel = context.WithCancel(context.Background())</span><br><span class="line">	ch, err := r.cli.KeepAlive(r.ctx, r.leaseID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">go</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">		<span class="keyword">for</span> &#123;</span><br><span class="line">			<span class="keyword">select</span> &#123;</span><br><span class="line">			<span class="keyword">case</span> &lt;-r.ctx.Done():</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			<span class="keyword">case</span> _, ok := &lt;-ch:</span><br><span class="line">				<span class="keyword">if</span> !ok &#123;</span><br><span class="line">					<span class="keyword">return</span></span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(r *EtcdRegistrar)</span></span> Deregister() <span class="type">error</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> r.cancel != <span class="literal">nil</span> &#123;</span><br><span class="line">		r.cancel()</span><br><span class="line">	&#125;</span><br><span class="line">	_, err := r.cli.Revoke(context.Background(), r.leaseID)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="comment">// try to close client anyway</span></span><br><span class="line">		_ = r.cli.Close()</span><br><span class="line">		<span class="keyword">return</span> err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> r.cli.Close()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="6-XFS-文件系统配额（CentOS-7-默认）"><a href="#6-XFS-文件系统配额（CentOS-7-默认）" class="headerlink" title="6. XFS 文件系统配额（CentOS 7+ 默认）"></a>6. XFS 文件系统配额（CentOS 7+ 默认）</h3><p>XFS <strong>不使用 aquota 数据库</strong>，配额直接记录在文件系统内，命令不同：</p>
+<ol>
+<li>fstab 添加挂载参数：<code>uquota,gquota</code></li>
+<li>无需 <code>quotacheck</code>，挂载即生效</li>
+<li>管理命令：<code>xfs_quota</code></li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 进入交互模式</span></span><br><span class="line">xfs_quota -x /挂载点</span><br><span class="line"></span><br><span class="line"><span class="comment"># 设置用户配额</span></span><br><span class="line"><span class="built_in">limit</span> bsoft=10m bhard=20m isoft=200 ihard=500 用户名</span><br><span class="line"></span><br><span class="line"><span class="comment"># 查看配额</span></span><br><span class="line">report -ubh</span><br></pre></td></tr></table></figure>
 
-<p>2.修改两个服务的配置文件</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Code scaffolded by goctl. Safe to edit.</span></span><br><span class="line"><span class="comment">// goctl 1.10.1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> config</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/zeromicro/go-zero/rest&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">	rest.RestConf</span><br><span class="line">	Etcd EtcdConf <span class="string">`json:&quot;Etcd&quot; yaml:&quot;Etcd&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> EtcdConf <span class="keyword">struct</span> &#123;</span><br><span class="line">	Hosts []<span class="type">string</span> <span class="string">`json:&quot;Hosts&quot; yaml:&quot;Hosts&quot;`</span></span><br><span class="line">	Key   <span class="type">string</span>   <span class="string">`json:&quot;Key&quot; yaml:&quot;Key&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="二、进阶文件系统管理"><a href="#二、进阶文件系统管理" class="headerlink" title="二、进阶文件系统管理"></a>二、进阶文件系统管理</h2><h3 id="1-文件系统日志：日志式文件系统"><a href="#1-文件系统日志：日志式文件系统" class="headerlink" title="1. 文件系统日志：日志式文件系统"></a>1. 文件系统日志：日志式文件系统</h3><p>传统 ext2 无日志，异常断电易损坏文件系统。</p>
+<ul>
+<li><strong>ext3&#x2F;ext4&#x2F;xfs</strong> 均为<strong>日志文件系统</strong></li>
+<li>作用：记录文件读写操作日志，宕机后快速修复，减少数据丢失</li>
+<li>日志模式（ext3）：<ol>
+<li><code>journal</code>：完整日志，性能低、安全性高</li>
+<li><code>ordered</code>：默认，仅记录元数据，均衡性能与安全</li>
+<li><code>writeback</code>：只回写，性能高、安全性弱</li>
+</ol>
+</li>
+</ul>
+<h3 id="2-文件系统检测与修复"><a href="#2-文件系统检测与修复" class="headerlink" title="2. 文件系统检测与修复"></a>2. 文件系统检测与修复</h3><p>断电、异常关机导致文件系统损坏，使用 <code>fsck</code> 修复。</p>
+<blockquote>
+<p>⚠️ <strong>重要：修复时分区必须卸载，严禁在挂载状态执行！</strong></p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 卸载分区</span></span><br><span class="line">umount /dev/sdb1</span><br><span class="line"></span><br><span class="line"><span class="comment"># 自动修复交互问题</span></span><br><span class="line">fsck /dev/sdb1</span><br><span class="line">fsck -y /dev/sdb1  <span class="comment"># 全部自动确认修复（谨慎使用）</span></span><br></pre></td></tr></table></figure>
 
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Code scaffolded by goctl. Safe to edit.</span></span><br><span class="line"><span class="comment">// goctl 1.10.1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> config</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;github.com/zeromicro/go-zero/rest&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Config <span class="keyword">struct</span> &#123;</span><br><span class="line">	rest.RestConf</span><br><span class="line">	Etcd EtcdConf <span class="string">`json:&quot;Etcd&quot; yaml:&quot;Etcd&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> EtcdConf <span class="keyword">struct</span> &#123;</span><br><span class="line">	Hosts []<span class="type">string</span> <span class="string">`json:&quot;Hosts&quot; yaml:&quot;Hosts&quot;`</span></span><br><span class="line">	Key   <span class="type">string</span>   <span class="string">`json:&quot;Key&quot; yaml:&quot;Key&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// embed Etcd configuration into top-level config for services</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(c *Config)</span></span> EtcdConfig() EtcdConf &#123;</span><br><span class="line">	<span class="comment">// placeholder for compatibility; callers should access field directly when present</span></span><br><span class="line">	<span class="keyword">return</span> EtcdConf&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ul>
+<li>开机自检：系统异常关机，开机自动执行 <code>fsck</code></li>
+<li><code>/etc/fstab</code> 最后一列：设置开机自检优先级</li>
+</ul>
+<h3 id="3-调整文件系统大小（resize2fs-xfs-growfs）"><a href="#3-调整文件系统大小（resize2fs-xfs-growfs）" class="headerlink" title="3. 调整文件系统大小（resize2fs &#x2F;xfs_growfs）"></a>3. 调整文件系统大小（resize2fs &#x2F;xfs_growfs）</h3><h4 id="场景：分区扩容后，同步放大文件系统"><a href="#场景：分区扩容后，同步放大文件系统" class="headerlink" title="场景：分区扩容后，同步放大文件系统"></a>场景：分区扩容后，同步放大文件系统</h4><h4 id="1）ext2-ext3-ext4：resize2fs"><a href="#1）ext2-ext3-ext4：resize2fs" class="headerlink" title="1）ext2&#x2F;ext3&#x2F;ext4：resize2fs"></a>1）ext2&#x2F;ext3&#x2F;ext4：resize2fs</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 先卸载分区</span></span><br><span class="line">umount /data</span><br><span class="line"><span class="comment"># 检测文件系统</span></span><br><span class="line">e2fsck -f /dev/sdb1</span><br><span class="line"><span class="comment"># 扩容文件系统（匹配分区大小）</span></span><br><span class="line">resize2fs /dev/sdb1</span><br><span class="line"><span class="comment"># 重新挂载</span></span><br><span class="line">mount /dev/sdb1 /data</span><br></pre></td></tr></table></figure>
 
-<p>3.修改俩个服务的启动文件，保证启动后注册到etcd，退出时注销</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Code scaffolded by goctl. Safe to edit.</span></span><br><span class="line"><span class="comment">// goctl 1.10.1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;flag&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;go-zero-project/book-server/internal/config&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/book-server/internal/handler&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/book-server/internal/svc&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/internal/registry&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/zeromicro/go-zero/core/conf&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/zeromicro/go-zero/rest&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> configFile = flag.String(<span class="string">&quot;f&quot;</span>, <span class="string">&quot;etc/book-api.yaml&quot;</span>, <span class="string">&quot;the config file&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> c config.Config</span><br><span class="line">	conf.MustLoad(*configFile, &amp;c)</span><br><span class="line"></span><br><span class="line">	server := rest.MustNewServer(c.RestConf)</span><br><span class="line">	<span class="keyword">defer</span> server.Stop()</span><br><span class="line"></span><br><span class="line">	ctx := svc.NewServiceContext(c)</span><br><span class="line">	handler.RegisterHandlers(server, ctx)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// register service to etcd if configured</span></span><br><span class="line">	addr := fmt.Sprintf(<span class="string">&quot;%s:%d&quot;</span>, c.Host, c.Port)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(c.Etcd.Hosts) &gt; <span class="number">0</span> &amp;&amp; c.Etcd.Key != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		reg, err := registry.NewEtcdRegistrar(c.Etcd.Hosts, c.Etcd.Key+<span class="string">&quot;/&quot;</span>+addr, addr)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;etcd init error: %v\n&quot;</span>, err)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err := reg.Register(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				fmt.Printf(<span class="string">&quot;etcd register error: %v\n&quot;</span>, err)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; _ = reg.Deregister() &#125;()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Starting server at %s:%d...\n&quot;</span>, c.Host, c.Port)</span><br><span class="line">	server.Start()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h4 id="2）XFS：仅支持扩容，不支持缩容"><a href="#2）XFS：仅支持扩容，不支持缩容" class="headerlink" title="2）XFS：仅支持扩容，不支持缩容"></a>2）XFS：仅支持扩容，不支持缩容</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 无需卸载，直接在线扩容</span></span><br><span class="line">xfs_growfs /挂载点</span><br></pre></td></tr></table></figure>
 
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Code scaffolded by goctl. Safe to edit.</span></span><br><span class="line"><span class="comment">// goctl 1.10.1</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;flag&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;go-zero-project/internal/registry&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/user-server/internal/config&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/user-server/internal/handler&quot;</span></span><br><span class="line">	<span class="string">&quot;go-zero-project/user-server/internal/svc&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/zeromicro/go-zero/core/conf&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/zeromicro/go-zero/rest&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> configFile = flag.String(<span class="string">&quot;f&quot;</span>, <span class="string">&quot;etc/user-api.yaml&quot;</span>, <span class="string">&quot;the config file&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	flag.Parse()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> c config.Config</span><br><span class="line">	conf.MustLoad(*configFile, &amp;c)</span><br><span class="line"></span><br><span class="line">	server := rest.MustNewServer(c.RestConf)</span><br><span class="line">	<span class="keyword">defer</span> server.Stop()</span><br><span class="line"></span><br><span class="line">	ctx := svc.NewServiceContext(c)</span><br><span class="line">	handler.RegisterHandlers(server, ctx)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// register service to etcd if configured</span></span><br><span class="line">	addr := fmt.Sprintf(<span class="string">&quot;%s:%d&quot;</span>, c.Host, c.Port)</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(c.Etcd.Hosts) &gt; <span class="number">0</span> &amp;&amp; c.Etcd.Key != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">		reg, err := registry.NewEtcdRegistrar(c.Etcd.Hosts, c.Etcd.Key+<span class="string">&quot;/&quot;</span>+addr, addr)</span><br><span class="line">		<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">			fmt.Printf(<span class="string">&quot;etcd init error: %v\n&quot;</span>, err)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err := reg.Register(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				fmt.Printf(<span class="string">&quot;etcd register error: %v\n&quot;</span>, err)</span><br><span class="line">			&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">				<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123; _ = reg.Deregister() &#125;()</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	fmt.Printf(<span class="string">&quot;Starting server at %s:%d...\n&quot;</span>, c.Host, c.Port)</span><br><span class="line">	server.Start()</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="4-挂载参数进阶-特殊挂载"><a href="#4-挂载参数进阶-特殊挂载" class="headerlink" title="4. 挂载参数进阶 &amp; 特殊挂载"></a>4. 挂载参数进阶 &amp; 特殊挂载</h3><h4 id="1）常用高级挂载参数（写入-fstab）"><a href="#1）常用高级挂载参数（写入-fstab）" class="headerlink" title="1）常用高级挂载参数（写入 fstab）"></a>1）常用高级挂载参数（写入 fstab）</h4><table>
+<thead>
+<tr>
+<th align="center">参数</th>
+<th align="center">作用</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>ro</code></td>
+<td align="center">只读挂载</td>
+</tr>
+<tr>
+<td align="center"><code>rw</code></td>
+<td align="center">读写挂载（默认）</td>
+</tr>
+<tr>
+<td align="center"><code>noexec</code></td>
+<td align="center">禁止分区内执行二进制程序（安全加固）</td>
+</tr>
+<tr>
+<td align="center"><code>nosuid</code></td>
+<td align="center">禁用 SUID&#x2F;SGID 特殊权限</td>
+</tr>
+<tr>
+<td align="center"><code>nodev</code></td>
+<td align="center">不识别设备文件</td>
+</tr>
+<tr>
+<td align="center"><code>noatime</code></td>
+<td align="center">不更新文件访问时间，提升 IO 性能</td>
+</tr>
+</tbody></table>
+<p>示例（只读挂载）：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount -o ro /dev/sdb1 /data</span><br></pre></td></tr></table></figure>
 
-<p>4.启动服务后就可以在注册中心看到了</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">go run book.go</span><br><span class="line">go run user.go</span><br></pre></td></tr></table></figure>
+<h4 id="2）临时绑定挂载-bind"><a href="#2）临时绑定挂载-bind" class="headerlink" title="2）临时绑定挂载 --bind"></a>2）临时绑定挂载 <code>--bind</code></h4><p>将目录 A 挂载到目录 B，实现目录复用：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mount --<span class="built_in">bind</span> /原目录 /目标目录</span><br></pre></td></tr></table></figure>
 
-<h2 id="4-3-服务调用"><a href="#4-3-服务调用" class="headerlink" title="4.3.服务调用"></a>4.3.服务调用</h2><p>现在要在用户服务中调用图书服务，就可以这样操作。</p>
-<p>在user-server目录下，实现这样一个服务发现和调用的代码文件</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> book</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;encoding/json&quot;</span></span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">	<span class="string">&quot;time&quot;</span></span><br><span class="line"></span><br><span class="line">	clientv3 <span class="string">&quot;go.etcd.io/etcd/client/v3&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> Book <span class="keyword">struct</span> &#123;</span><br><span class="line">	Id          <span class="type">int64</span>  <span class="string">`json:&quot;id&quot;`</span></span><br><span class="line">	Title       <span class="type">string</span> <span class="string">`json:&quot;title&quot;`</span></span><br><span class="line">	Author      <span class="type">string</span> <span class="string">`json:&quot;author&quot;`</span></span><br><span class="line">	Isbn        <span class="type">string</span> <span class="string">`json:&quot;isbn&quot;`</span></span><br><span class="line">	PublishedAt <span class="type">int64</span>  <span class="string">`json:&quot;publishedAt&quot;`</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// DiscoverAddrs 查询 etcd 中指定服务 key 前缀下的实例地址列表。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">DiscoverAddrs</span><span class="params">(ctx context.Context, etcdHosts []<span class="type">string</span>, serviceKey <span class="type">string</span>)</span></span> ([]<span class="type">string</span>, <span class="type">error</span>) &#123;</span><br><span class="line">	cli, err := clientv3.New(clientv3.Config&#123;Endpoints: etcdHosts, DialTimeout: <span class="number">5</span> * time.Second&#125;)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> cli.Close()</span><br><span class="line"></span><br><span class="line">	prefix := serviceKey</span><br><span class="line">	<span class="keyword">if</span> !strings.HasSuffix(prefix, <span class="string">&quot;/&quot;</span>) &#123;</span><br><span class="line">		prefix = prefix + <span class="string">&quot;/&quot;</span></span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	resp, err := cli.Get(ctx, prefix, clientv3.WithPrefix())</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	addrs := <span class="built_in">make</span>([]<span class="type">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(resp.Kvs))</span><br><span class="line">	<span class="keyword">for</span> _, kv := <span class="keyword">range</span> resp.Kvs &#123;</span><br><span class="line">		v := <span class="type">string</span>(kv.Value)</span><br><span class="line">		<span class="keyword">if</span> v != <span class="string">&quot;&quot;</span> &#123;</span><br><span class="line">			addrs = <span class="built_in">append</span>(addrs, v)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> addrs, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// GetBookByIDFromEtcd 通过 etcd 发现 book 服务实例并调用返回 Book。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetBookByIDFromEtcd</span><span class="params">(ctx context.Context, etcdHosts []<span class="type">string</span>, serviceKey <span class="type">string</span>, id <span class="type">int64</span>)</span></span> (*Book, <span class="type">error</span>) &#123;</span><br><span class="line">	addrs, err := DiscoverAddrs(ctx, etcdHosts, serviceKey)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">if</span> <span class="built_in">len</span>(addrs) == <span class="number">0</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;no book service instances found in etcd for key %s&quot;</span>, serviceKey)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// pick first for simplicity</span></span><br><span class="line">	addr := addrs[<span class="number">0</span>]</span><br><span class="line">	<span class="keyword">if</span> !strings.HasPrefix(addr, <span class="string">&quot;http://&quot;</span>) &amp;&amp; !strings.HasPrefix(addr, <span class="string">&quot;https://&quot;</span>) &#123;</span><br><span class="line">		addr = <span class="string">&quot;http://&quot;</span> + addr</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	url := fmt.Sprintf(<span class="string">&quot;%s/books/%d&quot;</span>, addr, id)</span><br><span class="line">	req, err := http.NewRequestWithContext(ctx, http.MethodGet, url, <span class="literal">nil</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	client := &amp;http.Client&#123;Timeout: <span class="number">5</span> * time.Second&#125;</span><br><span class="line">	resp, err := client.Do(req)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">defer</span> resp.Body.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> resp.StatusCode != http.StatusOK &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, fmt.Errorf(<span class="string">&quot;book service returned status %d&quot;</span>, resp.StatusCode)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> b Book</span><br><span class="line">	<span class="keyword">if</span> err := json.NewDecoder(resp.Body).Decode(&amp;b); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> &amp;b, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h3 id="5-虚拟内存：Swap-交换分区"><a href="#5-虚拟内存：Swap-交换分区" class="headerlink" title="5. 虚拟内存：Swap 交换分区"></a>5. 虚拟内存：Swap 交换分区</h3><p>Swap 即<strong>交换分区</strong>，硬盘空间充当虚拟内存，物理内存不足时使用。</p>
+<h4 id="1）查看当前-Swap"><a href="#1）查看当前-Swap" class="headerlink" title="1）查看当前 Swap"></a>1）查看当前 Swap</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">free -h</span><br><span class="line">swapon -s</span><br></pre></td></tr></table></figure>
 
-<p>然后在逻辑实现层调用就可以了。</p>
+<h4 id="2）新建-Swap-分区（分区方式）"><a href="#2）新建-Swap-分区（分区方式）" class="headerlink" title="2）新建 Swap 分区（分区方式）"></a>2）新建 Swap 分区（分区方式）</h4><ol>
+<li>用 <code>fdisk</code> 新建分区，分区类型设为 <strong>82(Linux swap)</strong></li>
+<li>格式化 swap：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">mkswap /dev/sdb2</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>启用 swap：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">swapon /dev/sdb2</span><br></pre></td></tr></table></figure>
+
+<ol>
+<li>永久启用（写入 <code>/etc/fstab</code>）：</li>
+</ol>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/dev/sdb2  swap  swap  defaults  0 0</span><br></pre></td></tr></table></figure>
+
+<h4 id="3）新建-Swap-文件（文件形式，无需分区）"><a href="#3）新建-Swap-文件（文件形式，无需分区）" class="headerlink" title="3）新建 Swap 文件（文件形式，无需分区）"></a>3）新建 Swap 文件（文件形式，无需分区）</h4><p>适合无空闲分区场景：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 生成 1G 空文件</span></span><br><span class="line"><span class="built_in">dd</span> <span class="keyword">if</span>=/dev/zero of=/swapfile bs=1M count=1024</span><br><span class="line"><span class="comment"># 格式化为swap</span></span><br><span class="line">mkswap /swapfile</span><br><span class="line"><span class="comment"># 设置权限（安全）</span></span><br><span class="line"><span class="built_in">chmod</span> 0600 /swapfile</span><br><span class="line"><span class="comment"># 启用</span></span><br><span class="line">swapon /swapfile</span><br></pre></td></tr></table></figure>
+
+<h4 id="4）关闭-Swap"><a href="#4）关闭-Swap" class="headerlink" title="4）关闭 Swap"></a>4）关闭 Swap</h4><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">swapoff /dev/sdb2</span><br><span class="line">swapoff /swapfile</span><br></pre></td></tr></table></figure>
+
+<h3 id="6-大容量磁盘：GPT-分区-parted"><a href="#6-大容量磁盘：GPT-分区-parted" class="headerlink" title="6. 大容量磁盘：GPT 分区 &amp; parted"></a>6. 大容量磁盘：GPT 分区 &amp; parted</h3><p>传统 MBR 分区限制：</p>
+<ul>
+<li>最大支持 <strong>2TB</strong> 磁盘</li>
+<li>最多 4 个主分区</li>
+</ul>
+<p><strong>GPT</strong>：突破 2TB，支持 128 个分区，搭配 <code>parted</code> 工具。</p>
+<p>简单用法：</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">parted /dev/sdb</span><br><span class="line">(parted) mklabel gpt    <span class="comment"># 设置分区表为GPT</span></span><br><span class="line">(parted) mkpart         <span class="comment"># 交互式新建分区</span></span><br><span class="line">(parted) quit</span><br></pre></td></tr></table></figure>
+
 
       
     </div>
@@ -358,7 +512,7 @@
 
   
   <nav class="pagination">
-    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/14/">14</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/page/4/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><span class="page-number current">5</span><a class="page-number" href="/page/6/">6</a><span class="space">&hellip;</span><a class="page-number" href="/page/15/">15</a><a class="extend next" rel="next" href="/page/6/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -428,7 +582,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-count">15</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -441,7 +595,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-count">14</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
